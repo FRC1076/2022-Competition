@@ -68,6 +68,8 @@ class MyRobot(wpilib.TimedRobot):
         self.solenoid_left = wpilib.DoubleSolenoid(robotmap.SOLENOID_LEFT_FORWARD_ID, robotmap.SOLENOID_LEFT_REVERSE_ID)
         self.solenoid_right = wpilib.DoubleSolenoid(robotmap.SOLENOID_LEFT_FORWARD_ID, robotmap.SOLENOID_LEFT_REVERSE_ID)
 
+        
+
         # Change these depending on the controller
         self.left_trigger_axis = 2 
         self.right_trigger_axis = 5
