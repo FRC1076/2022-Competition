@@ -54,6 +54,20 @@ class MyRobot(wpilib.TimedRobot):
         self.right_hand = wpilib.interfaces.GenericHID.Hand.kRightHand
         self.left_hand = wpilib.interfaces.GenericHID.Hand.kLeftHand
 
+        #Climber
+        __init__(wpilib._wpilib.DoubleSolenoid, forwardChannel: int, reverseChannel: int)
+
+        self.winch_right = rev.CANSparkMax(robotmap.WINCH_RIGHT_ID, rev.MotorType.kBrushless)
+        self.winch_left = rev.CANSparkMax(robotmap.WINCH_LEFT_ID, rev.MotorType.kBrushless)
+
+        self.winch_right.setClosedLoopRampRate(1.0)
+        self.winch_left.setClosedLoopRampRate(1.0)
+
+        self.winch = wpilib.SpeedControllerGroup(self.winch_left, self.winch_right)
+
+        self.solenoid_left = wpilib.DoubleSolenoid(robotmap.SOLENOID_LEFT_FORWARD_ID, robotmap.SOLENOID_LEFT_REVERSE_ID)
+        self.solenoid_right = wpilib.DoubleSolenoid(robotmap.SOLENOID_LEFT_FORWARD_ID, robotmap.SOLENOID_LEFT_REVERSE_ID)
+
         # Change these depending on the controller
         self.left_trigger_axis = 2 
         self.right_trigger_axis = 5
