@@ -1,9 +1,12 @@
 import wpilib
-from wpilib._wpilib.DoubleSolenoid.Value import kOff
-from wpilib.DoubleSolenoid.Value import kForward 
-from wpilib.DoubleSolenoid.Value import kReverse 
+from wpilib import DoubleSolenoid
+
 from robotmap import SOLENOID_LEFT_REVERSE_ID
 
+# shorthands
+kOff = DoubleSolenoid.Value.kOff
+kForward = DoubleSolenoid.Value.kForward
+kReverse = DoubleSolenoid.Value.kReverse
 
 class Climber: 
     '''

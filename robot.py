@@ -1,10 +1,12 @@
 import math
 import time
+
 import wpilib
 import wpilib.drive
-from shooter import Shooter
 from wpilib import interfaces
 import rev
+
+from shooter import Shooter
 import robotmap
 import climber
 
@@ -20,17 +22,13 @@ class MyRobot(wpilib.TimedRobot):
         self.driver = wpilib.XboxController(0)
         self.operator = wpilib.XboxController(1)
 
-        self.LEFT_HAND = wpilib._wpilib.XboxController.Hand.kLeftHand
-        self.RIGHT_HAND = wpilib._wpilib.XboxController.Hand.kRightHand
-
         # Motors
-        
-        self.left_motor_1 = rev.CANSparkMax(robotmap.LEFT_LEADER_ID, rev.MotorType.kBrushed)
-        self.left_motor_2 = rev.CANSparkMax(robotmap.LEFT_MIDDLE_ID, rev.MotorType.kBrushed)
-        self.left_motor_3  = rev.CANSparkMax(robotmap.LEFT_FOLLOWER_ID, rev.MotorType.kBrushed)
-        self.right_motor_1 = rev.CANSparkMax(robotmap.RIGHT_LEADER_ID, rev.MotorType.kBrushed)
-        self.right_motor_2 = rev.CANSparkMax(robotmap.RIGHT_MIDDLE_ID, rev.MotorType.kBrushed)
-        self.right_motor_3 = rev.CANSparkMax(robotmap.RIGHT_FOLLOWER_ID, rev.MotorType.kBrushed)
+        self.left_motor_1 = rev.CANSparkMax(robotmap.LEFT_LEADER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
+        self.left_motor_2 = rev.CANSparkMax(robotmap.LEFT_MIDDLE_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
+        self.left_motor_3  = rev.CANSparkMax(robotmap.LEFT_FOLLOWER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
+        self.right_motor_1 = rev.CANSparkMax(robotmap.RIGHT_LEADER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
+        self.right_motor_2 = rev.CANSparkMax(robotmap.RIGHT_MIDDLE_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
+        self.right_motor_3 = rev.CANSparkMax(robotmap.RIGHT_FOLLOWER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
         
         shooter = rev.CANSparkMax(robotmap.SHOOTER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless)
         self.shooter = Shooter(shooter)
@@ -51,17 +49,15 @@ class MyRobot(wpilib.TimedRobot):
         self.drive = TANK
 
         # Climber
-
-
-        self.right_winch = rev.CANSparkMax(robotmap.WINCH_RIGHT_ID, rev.MotorType.kBrushless) # assuming this is a Neo; otherwise it may not be brushless
-        self.left_winch = rev.CANSparkMax(robotmap.WINCH_LEFT_ID, rev.MotorType.kBrushless)
+        self.right_winch = rev.CANSparkMax(robotmap.WINCH_RIGHT_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless) # assuming this is a Neo; otherwise it may not be brushless
+        self.left_winch = rev.CANSparkMax(robotmap.WINCH_LEFT_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless)
 
         self.winch = wpilib.SpeedControllerGroup(self.right_winch, self.left_winch)
 
         self.right_piston = wpilib.DoubleSolenoid(0, wpilib.PneumaticsModuleType.CTREPCM, robotmap.SOLENOID_RIGHT_FORWARD_ID, robotmap.SOLENOID_RIGHT_REVERSE_ID)
         self.left_piston = wpilib.DoubleSolenoid(0, wpilib.PneumaticsModuleType.CTREPCM, robotmap.SOLENOID_LEFT_FORWARD_ID, robotmap.SOLENOID_LEFT_REVERSE_ID)
 
-        self.piston = climber.SolenoidGroup(self.right_piston, self.left_piston)
+        self.piston = climber.SolenoidGroup([self.right_piston, self.left_piston])
         # Change these depending on the controller
         self.left_trigger_axis = 2 
         self.right_trigger_axis = 5
@@ -109,8 +105,8 @@ class MyRobot(wpilib.TimedRobot):
 
             #Get left and right joystick values.
 
-            leftspeed = self.driver.getY(LEFT_HAND)
-            rightspeed = self.driver.getY(RIGHT_HAND)
+            leftspeed = self.driver.getLeftY()
+            rightspeed = self.driver.getRightY()
             #leftspeed = 0.5
             #rightspeed = 0.5
             #Invoke deadzone on speed.
@@ -125,11 +121,11 @@ class MyRobot(wpilib.TimedRobot):
         elif (self.drive == ARCADE):
 
             #Get left (forward) joystick value
-            forward = self.driver.getY(RIGHT_HAND) 
+            forward = self.driver.getRightY() 
             forward = 0.80 * self.deadzone(forward, robotmap.deadzone)
 
             #Get right (rotation) joystack Value
-            rotation_value = -0.8 * self.driver.getX(LEFT_HAND)
+            rotation_value = -0.8 * self.driver.getLeftX()
         
             #Invoke Arcade Drive
             self.drivetrain.arcadeDrive(forward, rotation_value)
