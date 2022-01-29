@@ -14,7 +14,23 @@ class Climber:
         self.winch = winch
         pass
 
-    def climb():
+    #Actions to Climb
+    def pistonforward(self):
+        self.solenoids.set(kForward)
+
+    def winchforward(self):
+        self.winch.set(1.0)
+    
+    def pistonback(self):
+        self.solenoids.set(kReverse)
+
+    def winchback(self):
+        self.winch.set(-1.0)
+
+    def climb(self):
+        climbActions = [winchforward, self.winch.set(1.0), self.solenoids.set(kReverse), self.winch.set(-1.0)]
+        for i in range(len(climbActions)):
+            climbActions[i]
         pass
 
 class SolenoidGroup:
@@ -23,7 +39,9 @@ class SolenoidGroup:
         self.set(kOff)
     
     def set(self, value): #value will be Forward, Reverse, or Off
-        for s in self.solenoids
+        for s in self.solenoids:
             s.set(value)
+    
+
 
 
