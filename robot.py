@@ -154,7 +154,9 @@ class MyRobot(wpilib.TimedRobot):
                 self.climber.stepAction()
         
         else:
+            self.climber.setWinch(self.operator.getLeftY())
             self.climber.climberOff()
+        
 
     def autonomousInit(self):
         pass
