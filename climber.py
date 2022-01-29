@@ -3,6 +3,8 @@ from wpilib import DoubleSolenoid
 
 from robotmap import SOLENOID_LEFT_REVERSE_ID
 
+import time
+
 # shorthands
 kOff = DoubleSolenoid.Value.kOff
 kForward = DoubleSolenoid.Value.kForward
@@ -15,31 +17,44 @@ class Climber:
     def __init__(self, solenoidGroup, winch):
         self.solenoids = solenoidGroup
         self.winch = winch
+        self.climbstep = 0
+        self.climbActions = [[self.pistonForward, 0.5], [self.winchForward, 3.0], [self.winchOff, 0.1], [self.pistonReverse, 0.5], [self.winchReverse, 3.0], [self.winchOff, 0.1]]
         pass
 
     #Actions to Climb
 
-    def pistonforward(self):
+    def climberOff(self):
+         self.winch.set(0.0)  
+         self.solenoids.set(kOff) 
+
+    def setWinch(self, x):
+        self.winch.set(x)
+
+    def pistonForward(self):
         self.solenoids.set(kForward)
-    
-    def winchforward(self):
-        self.winch.set(1.0)
-    
-    def pistonback(self):
+
+    def pistonReverse(self):
         self.solenoids.set(kReverse)
 
-    def winchback(self):
-        self.winch.set(-1.0)
+    def winchForward(self):
+        self.winch.set(0.7)
 
-    climbActions = [pistonforward, winchforward, pistonback, winchback]
+    def winchReverse(self):
+        self.winch.set(-0.7)
+
+    def winchOff(self):
+        self.winch.set(0.0)
+
+    
 
     #Climbing
-    def startclimb(self):
+    def resetClimb(self):
         self.climbstep = 0
 
-    def nextclimb(self):
-        self.climbActions[self.climbstep]()
-        self.climbstep += 1
+    def nextStep(self):
+        self.climbstep = (self.climbstep + 1) % 6
+    def stepAction(self):
+        self.climbActions[self.climbstep][0]()
 
 class SolenoidGroup:
     def __init__(self, solenoids):

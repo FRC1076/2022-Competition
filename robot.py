@@ -58,6 +58,9 @@ class MyRobot(wpilib.TimedRobot):
         self.left_piston = wpilib.DoubleSolenoid(0, wpilib.PneumaticsModuleType.CTREPCM, robotmap.SOLENOID_LEFT_FORWARD_ID, robotmap.SOLENOID_LEFT_REVERSE_ID)
 
         self.piston = climber.SolenoidGroup([self.right_piston, self.left_piston])
+
+        self.climber = climber.Climber(self.piston, self.winch)
+
         # Change these depending on the controller
         self.left_trigger_axis = 2 
         self.right_trigger_axis = 5
@@ -70,6 +73,8 @@ class MyRobot(wpilib.TimedRobot):
     def teleopInit(self):
         self.shooter_mod = 1
         self.running = 0
+        self.climbRunning = False
+        self.t = time.time()
 
     def teleopPeriodic(self):
         #print("starting teleop periodic")
@@ -131,8 +136,25 @@ class MyRobot(wpilib.TimedRobot):
             self.drivetrain.arcadeDrive(forward, rotation_value)
 
         else: #self.drive == SWERVE
-            #Panic
+            #Panik
             return
+
+        if self.operator.getAButtonPressed() and self.operator.getBButtonPressed() and self.driver.getAButtonPressed() and self.driver.getBButtonPressed():
+            self.climbRunning = True
+            self.duration = self.climber.climbActions[self.climber.climbstep][1]
+            self.t = time.time()
+        
+        if self.climbRunning:
+            if self.operator.getAButtonPressed():
+                self.climbRunning = False
+            elif time.time()-self.t > self.duration:
+                self.climbRunning = False
+                self.climber.nextStep()
+            else:
+                self.climber.stepAction()
+        
+        else:
+            self.climber.climberOff()
 
     def autonomousInit(self):
         pass
