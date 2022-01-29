@@ -139,7 +139,7 @@ class MyRobot(wpilib.TimedRobot):
         #ARCADE DRIVE
         elif (self.drive == ARCADE):
             """
-            #Get left (forward) joystick value
+            #Get left (forward) joystick value v
             forward = self.driver.getY(RIGHT_HAND) 
             forward = 0.80 * self.deadzone(forward, robotmap.deadzone)
 
