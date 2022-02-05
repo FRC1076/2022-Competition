@@ -2,7 +2,7 @@ import math
 import time
 import wpilib
 import wpilib.drive
-import wpilib.controller
+import wpimath.controller
 from shooter import Shooter
 from wpilib import interfaces
 import rev
@@ -10,8 +10,8 @@ import robotmap
 from navx import AHRS
 
 #Controller hands (sides)
-LEFT_HAND = wpilib._wpilib.XboxController.Hand.kLeftHand
-RIGHT_HAND = wpilib._wpilib.XboxController.Hand.kRightHand
+#LEFT_HAND = wpilib._wpilib.XboxController.Hand.kLeftHand
+#RIGHT_HAND = wpilib._wpilib.XboxController.Hand.kRightHand
 
 #Drive Types
 ARCADE = 1
@@ -33,26 +33,28 @@ class MyRobot(wpilib.TimedRobot):
         self.operator = wpilib.XboxController(1)
 
         # Motors
-        self.left_motor_1 = rev.CANSparkMax(robotmap.LEFT_LEADER_ID, rev.MotorType.kBrushed)
-        self.left_motor_2 = rev.CANSparkMax(robotmap.LEFT_MIDDLE_ID, rev.MotorType.kBrushed)
-        self.left_motor_3  = rev.CANSparkMax(robotmap.LEFT_FOLLOWER_ID, rev.MotorType.kBrushed)
-        self.right_motor_1 = rev.CANSparkMax(robotmap.RIGHT_LEADER_ID, rev.MotorType.kBrushed)
-        self.right_motor_2 = rev.CANSparkMax(robotmap.RIGHT_MIDDLE_ID, rev.MotorType.kBrushed)
-        self.right_motor_3 = rev.CANSparkMax(robotmap.RIGHT_FOLLOWER_ID, rev.MotorType.kBrushed)
+        self.left_motor_1 = rev.CANSparkMax(robotmap.LEFT_LEADER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
+        self.left_motor_2 = rev.CANSparkMax(robotmap.LEFT_MIDDLE_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
+        self.left_motor_3  = rev.CANSparkMax(robotmap.LEFT_FOLLOWER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
+        self.right_motor_1 = rev.CANSparkMax(robotmap.RIGHT_LEADER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
+        self.right_motor_2 = rev.CANSparkMax(robotmap.RIGHT_MIDDLE_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
+        self.right_motor_3 = rev.CANSparkMax(robotmap.RIGHT_FOLLOWER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
         
         
         #gyros
-        self.navx = navx.AHRS.create_spi()
+        self.AHRS = AHRS.create_spi()
         # self.navx = navx.AHRS.create_i2c()
 
-        turnController = wpilib.controler.PIDControler(self.kP, self.kI, self.kD)
+        turnController = wpimath.controller.PIDController(self.kP, self.kI, self.kD)
         turnController.enableContinuousInput(-180.0, 180.0)
         turnController.setTolerance(self.kToleranceDegrees)
 
-        self.angleSetPoint = 0.0
-        self.pGain = 1
-        self.gyro = wpilib.AnalogGyro(robotmap.GYRO_ID)
+        self.turnController = turnController
 
+        #self.angleSetPoint = 0.0
+        #self.pGain = 1
+        #self.gyro = wpilib.AnalogGyro(robotmap.GYRO_ID)
+        
         shooter = rev.CANSparkMax(robotmap.SHOOTER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless)
         self.shooter = Shooter(shooter)
         
@@ -72,13 +74,13 @@ class MyRobot(wpilib.TimedRobot):
         self.drivetrain = wpilib.drive.DifferentialDrive(self.left_side, self.right_side)
         self.drive = ARCADE
 
-        self.right_hand = wpilib.interfaces.GenericHID.Hand.kRightHand
-        self.left_hand = wpilib.interfaces.GenericHID.Hand.kLeftHand
+        #self.right_hand = wpilib.interfaces.GenericHID.Hand.kRightHand
+        #self.left_hand = wpilib.interfaces.GenericHID.Hand.kLeftHand
 
         # Change these depending on the controller
         self.left_trigger_axis = 2 
         self.right_trigger_axis = 5
-        print("running!")
+        #print("running!")
 
 
     def robotPeriodic(self):
@@ -98,7 +100,7 @@ class MyRobot(wpilib.TimedRobot):
         a reduces the speed the most
         """
         if self.operator.getRawAxis(self.right_trigger_axis) > 0.95:
-            print("got trigger")
+            #print("got trigger")
             self.running = 1
         elif self.operator.getRawAxis(self.left_trigger_axis) > 0.95:
             self.running = -0.2
@@ -106,7 +108,7 @@ class MyRobot(wpilib.TimedRobot):
             self.running = 0 
 
         if self.operator.getAButton():
-            print("got A button!")
+            #print("got A button!")
             self.shooter_mod = 0.2
         elif self.operator.getBButton():
             self.shooter_mod = 0.4
@@ -131,8 +133,8 @@ class MyRobot(wpilib.TimedRobot):
             #Invoke deadzone on speed.
             leftspeed = 0.80 * self.deadzone(leftspeed, robotmap.deadzone)
             rightspeed = 0.80 * self.deadzone(rightspeed, robotmap.deadzone)
-            print("Right Speed: ", rightspeed)
-            print("Left Speed: ", leftspeed)
+            #print("Right Speed: ", rightspeed)
+            #print("Left Speed: ", leftspeed)
             #Invoke Tank Drive
             self.drivetrain.tankDrive(leftspeed, rightspeed)
 
@@ -151,30 +153,47 @@ class MyRobot(wpilib.TimedRobot):
             #Invoke Arcade Drive
             self.drivetrain.arcadeDrive(forward, rotation_value)
             """
+            print("0", self.turnController.calculate(self.AHRS.getYaw(),0.0))
+            print("90", self.turnController.calculate(self.AHRS.getYaw(),90.0))
+            print("179.9", self.turnController.calculate(self.AHRS.getYaw(),179.9))
+            print("-90", self.turnController.calculate(self.AHRS.getYaw(),-90.0))
+            print("RightX", self.driver.getRightX())
             if self.tm.hasPeriodPassed(1.0):
-                print("NavX Gyro", self.AHRS.getYaw(), self.AHRS.getAngle())
-            rotateToAngle = False
-            if self.stick.getRawButton(1):
+                #print("NavX Gyro", self.AHRS.getYaw(), self.AHRS.getAngle())
+                rotateToAngle = False
+            if self.driver.getRightBumper():
+                print("Right bumper")
                 self.AHRS.reset()
-            if self.stick.getRawButton(2):
+                rotateToAngle = False
+            if self.driver.getYButton():
+                print("Y button")
                 setPoint = 0.0
                 rotateToAngle = True
-            elif self.stick.getRawButton(3):
+            elif self.driver.getBButton():
+                print("B button")
                 setPoint = 90.0
                 rotateToAngle = True
-            elif self.stick.getRawButton(4):
+            elif self.driver.getAButton():
+                print("A button")
                 setPoint = 179.9
                 rotateToAngle = True
-            elif self.stick.getRawButton(5):
+            elif self.driver.getXButton():
+                print("X Button")
                 setPoint = -90.0
                 rotateToAngle = True
+            else:
+                rotateToAngle = False
 
             if rotateToAngle:
                 currentRotationRate = self.turnController.calculate(self.AHRS.getYaw(), setPoint)
+                print(setPoint, " ", currentRotationRate)
             else:
                 self.turnController.reset()
                 currentRotationRate = self.driver.getRightX()
-                self.drivetrain.arcadeDrive(-self.driver.getRightY(), currentRotationRate)
+                #print("No Button ", currentRotationRate)
+
+            #self.drivetrain.arcadeDrive(-self.driver.getRightY(), currentRotationRate)
+            self.drivetrain.arcadeDrive(currentRotationRate, -self.driver.getRightY())
 
         else: #self.drive == SWERVE
             #Panic
