@@ -8,10 +8,7 @@ from wpilib import interfaces
 import rev
 import robotmap
 from navx import AHRS
-
-#Controller hands (sides)
-#LEFT_HAND = wpilib._wpilib.XboxController.Hand.kLeftHand
-#RIGHT_HAND = wpilib._wpilib.XboxController.Hand.kRightHand
+from aimer import Aimer
 
 #Drive Types
 ARCADE = 1
@@ -25,6 +22,7 @@ class MyRobot(wpilib.TimedRobot):
     kI = 0.00
     kD = 0.00
     kToleranceDegrees = 2.0
+
 
     def robotInit(self):
 
@@ -42,18 +40,9 @@ class MyRobot(wpilib.TimedRobot):
         
         
         #gyros
-        self.AHRS = AHRS.create_spi()
+        self.ahrs = AHRS.create_spi()
         # self.navx = navx.AHRS.create_i2c()
-
-        turnController = wpimath.controller.PIDController(self.kP, self.kI, self.kD)
-        turnController.enableContinuousInput(-180.0, 180.0)
-        turnController.setTolerance(self.kToleranceDegrees)
-
-        self.turnController = turnController
-
-        #self.angleSetPoint = 0.0
-        #self.pGain = 1
-        #self.gyro = wpilib.AnalogGyro(robotmap.GYRO_ID)
+        self.aimer = Aimer(self.ahrs)
         
         shooter = rev.CANSparkMax(robotmap.SHOOTER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless)
         self.shooter = Shooter(shooter)
@@ -73,9 +62,6 @@ class MyRobot(wpilib.TimedRobot):
         #Drivetrain
         self.drivetrain = wpilib.drive.DifferentialDrive(self.left_side, self.right_side)
         self.drive = ARCADE
-
-        #self.right_hand = wpilib.interfaces.GenericHID.Hand.kRightHand
-        #self.left_hand = wpilib.interfaces.GenericHID.Hand.kLeftHand
 
         # Change these depending on the controller
         self.left_trigger_axis = 2 
@@ -153,11 +139,21 @@ class MyRobot(wpilib.TimedRobot):
             #Invoke Arcade Drive
             self.drivetrain.arcadeDrive(forward, rotation_value)
             """
-            print("0", self.turnController.calculate(self.AHRS.getYaw(),0.0))
-            print("90", self.turnController.calculate(self.AHRS.getYaw(),90.0))
-            print("179.9", self.turnController.calculate(self.AHRS.getYaw(),179.9))
-            print("-90", self.turnController.calculate(self.AHRS.getYaw(),-90.0))
-            print("RightX", self.driver.getRightX())
+
+            
+            self.ahrs.reset()
+            theta = self.calculateTheta(self.driver.getLeftX(), self.driver.getLeftY())
+            #self.driver.rotateVector(self.driver.getLeftX(), self.driver.getLeftY(), theta)
+            print("(", self.driver.getLeftX(), ", ", self.driver.getLeftY(), ") = ", theta)
+            
+            self.rotateToTheta(theta)
+
+            '''
+            #print("0", self.turnController.calculate(self.AHRS.getYaw(),0.0))
+            #print("90", self.turnController.calculate(self.AHRS.getYaw(),90.0))
+            #print("179.9", self.turnController.calculate(self.AHRS.getYaw(),179.9))
+            #print("-90", self.turnController.calculate(self.AHRS.getYaw(),-90.0))
+            #print("RightX", self.driver.getRightX())
             if self.tm.hasPeriodPassed(1.0):
                 #print("NavX Gyro", self.AHRS.getYaw(), self.AHRS.getAngle())
                 rotateToAngle = False
@@ -194,6 +190,10 @@ class MyRobot(wpilib.TimedRobot):
 
             #self.drivetrain.arcadeDrive(-self.driver.getRightY(), currentRotationRate)
             self.drivetrain.arcadeDrive(currentRotationRate, -self.driver.getRightY())
+            '''
+            #self.turnController.reset()
+            currentRotationRate = self.driver.getRightX()
+            self.drivetrain.arcadeDrive(-self.driver.getRightY(), currentRotationRate)
 
         else: #self.drive == SWERVE
             #Panic
@@ -204,6 +204,44 @@ class MyRobot(wpilib.TimedRobot):
 
     def autonomousPeriodic(self):
         pass
+
+    def rotateToTheta(self, theta):
+        self.aimer.reset()
+        amount = self.aimer.calculate(theta)
+        print("theta = ", theta, " amount = ", amount)
+        #self.drivetrain.arcadeDrive(0, amount)
+
+
+        '''
+        while(abs(theta - self.AHRS.getYaw()) > 1.0):
+            currentRotationRate = self.turnController.calculate(self.AHRS.getYaw(), theta)
+            #self.drivetrain.arcadeDrive(currentRotationRate, -self.driver.getRightY())
+            #self.drivetrain.arcadeDrive(currentRotationRate, -0.01)
+            print("theta = ", theta, "yaw = ", self.AHRS.getYaw())
+            #print(currentRotationRate)
+        '''
+
+    def calculateTheta(self, x, y):
+        y = -y
+        theta = 0.0
+        absY = abs(float(y))
+        absX = abs(float(x))
+        if(x == 0) and (y >= 0):
+            theta = 0.0
+        elif(x == 0) and (y <= 0):
+            theta = 179.9
+        elif(x > 0) and (y >= 0):
+            theta = 90 - (math.atan(absY/absX)*180/math.pi)
+        elif(x < 0) and (y >= 0):
+            theta = -(90 - (math.atan(absY/absX)*180/math.pi))
+        elif(x > 0) and (y < 0):
+            theta = 90 + (90 - (math.atan(absY/absX)*180/math.pi))
+        elif(x < 0) and (y < 0):
+            theta = -(90 + (math.atan(absY/absX)*180/math.pi))
+        else:
+            theta = 0.0
+            print("unknown coordinates (", x, ", ", y, ")")
+        return(theta)
 
     def deadzone(self, val, deadzone): 
         """
