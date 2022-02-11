@@ -8,7 +8,6 @@ RIGHT_LEADER_ID = 14
 RIGHT_MIDDLE_ID = 15
 RIGHT_FOLLOWER_ID = 2
 SHOOTER_ID = 7
-
 # Climber Components
 
 # Winch motor CAN IDs
