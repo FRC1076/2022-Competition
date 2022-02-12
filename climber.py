@@ -1,4 +1,3 @@
-import wpilib
 from wpilib import DoubleSolenoid
 
 from robotmap import SOLENOID_LEFT_REVERSE_ID
@@ -10,6 +9,7 @@ kOff = DoubleSolenoid.Value.kOff
 kForward = DoubleSolenoid.Value.kForward
 kReverse = DoubleSolenoid.Value.kReverse
 
+
 class Climber: 
     '''
     takes an array 'solenoids'of DoubleSolenoid objects, and a winch speed controller group
@@ -18,10 +18,9 @@ class Climber:
         self.solenoids = solenoidGroup
         self.winch = winch
         self.climbstep = 0
-        self.climbActions = [[self.pistonForward, 0.5], [self.winchForward, 3.0], [self.winchOff, 0.1], [self.pistonReverse, 0.5], [self.winchReverse, 3.0], [self.winchOff, 0.1]]
-        pass
-
-    #Actions to Climb
+        # Actions to Climb
+        self.climbActions = [[self.winchForward(), 0.5], [self.pistonForward, 0.5], [self.winchForward, 2.5],
+                             [self.pistonReverse, 0.5], [self.winchReverse, 3.0], [self.winchOff, 0.1]]
 
     def climberOff(self):
          self.winch.set(0.0)  
@@ -45,9 +44,7 @@ class Climber:
     def winchOff(self):
         self.winch.set(0.0)
 
-    
-
-    #Climbing
+    # Climbing
     def resetClimb(self):
         self.climbstep = 0
 
@@ -64,7 +61,3 @@ class SolenoidGroup:
     def set(self, value): #value will be Forward, Reverse, or Off
         for s in self.solenoids:
             s.set(value)
-    
-
-
-
