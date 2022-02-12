@@ -59,3 +59,7 @@ class SolenoidGroup:
     def set(self, value):  # value will be Forward, Reverse, or Off
         for s in self.solenoids:
             s.set(value)
+    
+    def toggle(self):
+        for s in self.solenoids:
+            s.toggle()
