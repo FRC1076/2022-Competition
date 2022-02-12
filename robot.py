@@ -123,7 +123,7 @@ class MyRobot(wpilib.TimedRobot):
         else: # self.drive == SWERVE
             # Panik
             return
-
+        '''
         if self.operator.getAButtonPressed() and self.operator.getBButtonPressed() and self.driver.getAButtonPressed() and self.driver.getBButtonPressed():
             self.climbRunning = True
             self.duration = self.climber.climbActions[self.climber.climbstep][1]
@@ -137,10 +137,9 @@ class MyRobot(wpilib.TimedRobot):
                 self.climber.nextStep()
             else:
                 self.climber.stepAction()
-        
-        else:
-            self.climber.setWinch(self.operator.getLeftY())
-            self.climber.climberOff()
+        '''
+        self.climber.setWinch(self.operator.getLeftY())
+        self.climber.climberOff()
 
     def autonomousInit(self):
         pass
