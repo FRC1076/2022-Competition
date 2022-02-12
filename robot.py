@@ -117,12 +117,16 @@ class MyRobot(wpilib.TimedRobot):
 
         #ARCADE DRIVE
         elif (self.drive == ARCADE):
-            theta = self.calculateTheta(self.driver.getLeftX(), self.driver.getLeftY())
-            self.rotateToTheta(theta)
+            if (self.driver.getLeftBumper()):
+                self.aimer.reset()
 
-            #self.turnController.reset()
-            currentRotationRate = self.driver.getRightY()
-            self.drivetrain.arcadeDrive(-self.driver.getRightX(), currentRotationRate)
+            theta = self.calculateTheta(self.driver.getLeftX(), self.driver.getLeftY())
+        
+            #print("X = ", -(self.driver.getRightX()), " Y = ", self.driver.getRightY())
+            if (self.driver.getRightBumper()):
+                self.rotateToTheta(theta)
+            else:
+                self.drivetrain.arcadeDrive(-self.driver.getRightX(), self.driver.getRightY())
 
         else: #self.drive == SWERVE
             #Panic
@@ -135,15 +139,19 @@ class MyRobot(wpilib.TimedRobot):
         pass
 
     def rotateToTheta(self, theta):
-        #self.aimer.reset()
-        angle = self.aimer.getAngle()
-        amount = self.aimer.calculate(theta - angle)
-        while((((theta - angle) > 10) or ((theta - angle) < -10)) and (self.driver.getRightBumper())):
-            print("theta = ", theta, " angle = ", angle, " amount = ", amount)
-            self.drivetrain.arcadeDrive(amount, 0)
-            angle = self.aimer.getAngle()
-            amount = self.aimer.calculate(theta - angle)
-
+        angle = self.aimer.getYaw()
+        diff = abs(angle - theta)
+        correctionFactor = (diff / 10.0)
+        if (correctionFactor > 1.0):
+            correctionFactor = 1.0
+        if (diff > 1):
+            if (theta > 0):
+                #print("turning left")
+                self.drivetrain.arcadeDrive(-(0.5 * correctionFactor), 0)
+            else:
+                #print("turning right")
+                self.drivetrain.arcadeDrive((0.5 * correctionFactor), 0)
+    
     def calculateTheta(self, x, y):
         y = -y
         theta = 0.0

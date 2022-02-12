@@ -25,6 +25,10 @@ class Aimer:
         self.setPoint = setPoint
         self.turnController.setSetPoint(self.gyro.getAngle() + self.setPoint())
     
+    def getYaw(self):
+        self.yaw = self.gyro.getYaw()
+        return(self.yaw)
+
     def getAngle(self):
         self.ag = abs(self.gyro.getAngle()) % 360
         return self.ag
