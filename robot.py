@@ -43,6 +43,7 @@ class MyRobot(wpilib.TimedRobot):
         self.ahrs = AHRS.create_spi()
         # self.navx = navx.AHRS.create_i2c()
         self.aimer = Aimer(self.ahrs)
+        self.aimer.reset()
         
         shooter = rev.CANSparkMax(robotmap.SHOOTER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless)
         self.shooter = Shooter(shooter)
@@ -65,7 +66,7 @@ class MyRobot(wpilib.TimedRobot):
 
         # Change these depending on the controller
         self.left_trigger_axis = 2 
-        self.right_trigger_axis = 5
+        self.right_trigger_axis = 3
         #print("running!")
 
 
@@ -88,112 +89,40 @@ class MyRobot(wpilib.TimedRobot):
         if self.operator.getRawAxis(self.right_trigger_axis) > 0.95:
             #print("got trigger")
             self.running = 1
-        elif self.operator.getRawAxis(self.left_trigger_axis) > 0.95:
-            self.running = -0.2
         else:
             self.running = 0 
 
-        if self.operator.getAButton():
-            #print("got A button!")
-            self.shooter_mod = 0.2
-        elif self.operator.getBButton():
+        if self.operator.getXButton():
             self.shooter_mod = 0.4
-        elif self.operator.getYButton():
-            self.shooter_mod = 0.6
-        elif self.operator.getXButton():
-            self.shooter_mod = 0.8
         else:
             self.shooter_mod = 1
 
+        #print(self.running * self.shooter_mod)
         self.shooter.set(self.running * self.shooter_mod)
+        #print(self.shooter.get())
 
         #TANK DRIVE
         if (self.drive == TANK):
 
             #Get left and right joystick values.
+            leftspeed = self.driver.getLeftY()
+            rightspeed = -(self.driver.getRightY())
 
-            leftspeed = self.driver.getRightX()
-            rightspeed = self.driver.getRightY()
-            #leftspeed = 0.5
-            #rightspeed = 0.5
             #Invoke deadzone on speed.
             leftspeed = 0.80 * self.deadzone(leftspeed, robotmap.deadzone)
             rightspeed = 0.80 * self.deadzone(rightspeed, robotmap.deadzone)
-            #print("Right Speed: ", rightspeed)
-            #print("Left Speed: ", leftspeed)
+            
             #Invoke Tank Drive
             self.drivetrain.tankDrive(leftspeed, rightspeed)
 
         #ARCADE DRIVE
         elif (self.drive == ARCADE):
-            """
-            #Get left (forward) joystick value v
-            forward = self.driver.getY(RIGHT_HAND) 
-            forward = 0.80 * self.deadzone(forward, robotmap.deadzone)
-
-            #Get right (rotation) joystack Value
-            rotation_value = -0.8 * self.driver.getX(LEFT_HAND)
-
-            rotation_value = self.pGain *  (self.angleSetPoint - self.gyro.calculate(self.gyro.getAngle()))
-        
-            #Invoke Arcade Drive
-            self.drivetrain.arcadeDrive(forward, rotation_value)
-            """
-
-            
-            self.ahrs.reset()
             theta = self.calculateTheta(self.driver.getLeftX(), self.driver.getLeftY())
-            #self.driver.rotateVector(self.driver.getLeftX(), self.driver.getLeftY(), theta)
-            print("(", self.driver.getLeftX(), ", ", self.driver.getLeftY(), ") = ", theta)
-            
             self.rotateToTheta(theta)
 
-            '''
-            #print("0", self.turnController.calculate(self.AHRS.getYaw(),0.0))
-            #print("90", self.turnController.calculate(self.AHRS.getYaw(),90.0))
-            #print("179.9", self.turnController.calculate(self.AHRS.getYaw(),179.9))
-            #print("-90", self.turnController.calculate(self.AHRS.getYaw(),-90.0))
-            #print("RightX", self.driver.getRightX())
-            if self.tm.hasPeriodPassed(1.0):
-                #print("NavX Gyro", self.AHRS.getYaw(), self.AHRS.getAngle())
-                rotateToAngle = False
-            if self.driver.getRightBumper():
-                print("Right bumper")
-                self.AHRS.reset()
-                rotateToAngle = False
-            if self.driver.getYButton():
-                print("Y button")
-                setPoint = 0.0
-                rotateToAngle = True
-            elif self.driver.getBButton():
-                print("B button")
-                setPoint = 90.0
-                rotateToAngle = True
-            elif self.driver.getAButton():
-                print("A button")
-                setPoint = 179.9
-                rotateToAngle = True
-            elif self.driver.getXButton():
-                print("X Button")
-                setPoint = -90.0
-                rotateToAngle = True
-            else:
-                rotateToAngle = False
-
-            if rotateToAngle:
-                currentRotationRate = self.turnController.calculate(self.AHRS.getYaw(), setPoint)
-                print(setPoint, " ", currentRotationRate)
-            else:
-                self.turnController.reset()
-                currentRotationRate = self.driver.getRightX()
-                #print("No Button ", currentRotationRate)
-
-            #self.drivetrain.arcadeDrive(-self.driver.getRightY(), currentRotationRate)
-            self.drivetrain.arcadeDrive(currentRotationRate, -self.driver.getRightY())
-            '''
             #self.turnController.reset()
-            currentRotationRate = self.driver.getRightX()
-            self.drivetrain.arcadeDrive(-self.driver.getRightY(), currentRotationRate)
+            currentRotationRate = self.driver.getRightY()
+            self.drivetrain.arcadeDrive(-self.driver.getRightX(), currentRotationRate)
 
         else: #self.drive == SWERVE
             #Panic
@@ -206,20 +135,14 @@ class MyRobot(wpilib.TimedRobot):
         pass
 
     def rotateToTheta(self, theta):
-        self.aimer.reset()
-        amount = self.aimer.calculate(theta)
-        print("theta = ", theta, " amount = ", amount)
-        #self.drivetrain.arcadeDrive(0, amount)
-
-
-        '''
-        while(abs(theta - self.AHRS.getYaw()) > 1.0):
-            currentRotationRate = self.turnController.calculate(self.AHRS.getYaw(), theta)
-            #self.drivetrain.arcadeDrive(currentRotationRate, -self.driver.getRightY())
-            #self.drivetrain.arcadeDrive(currentRotationRate, -0.01)
-            print("theta = ", theta, "yaw = ", self.AHRS.getYaw())
-            #print(currentRotationRate)
-        '''
+        #self.aimer.reset()
+        angle = self.aimer.getAngle()
+        amount = self.aimer.calculate(theta - angle)
+        while((((theta - angle) > 10) or ((theta - angle) < -10)) and (self.driver.getRightBumper())):
+            print("theta = ", theta, " angle = ", angle, " amount = ", amount)
+            self.drivetrain.arcadeDrive(amount, 0)
+            angle = self.aimer.getAngle()
+            amount = self.aimer.calculate(theta - angle)
 
     def calculateTheta(self, x, y):
         y = -y
@@ -240,7 +163,7 @@ class MyRobot(wpilib.TimedRobot):
             theta = -(90 + (math.atan(absY/absX)*180/math.pi))
         else:
             theta = 0.0
-            print("unknown coordinates (", x, ", ", y, ")")
+            #print("unknown coordinates (", x, ", ", y, ")")
         return(theta)
 
     def deadzone(self, val, deadzone): 

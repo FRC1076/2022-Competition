@@ -7,3 +7,6 @@ class Shooter:
 
     def set(self, speed):
         self.motor.set(speed)
+    
+    def get(self):
+        return self.motor.get()
