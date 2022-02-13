@@ -22,26 +22,26 @@ class MyRobot(wpilib.TimedRobot):
 
         # Motors
         self.left_motor_1 = rev.CANSparkMax(robotmap.LEFT_LEADER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
-        self.left_motor_2 = rev.CANSparkMax(robotmap.LEFT_MIDDLE_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
+        # self.left_motor_2 = rev.CANSparkMax(robotmap.LEFT_MIDDLE_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
         self.left_motor_3  = rev.CANSparkMax(robotmap.LEFT_FOLLOWER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
         self.right_motor_1 = rev.CANSparkMax(robotmap.RIGHT_LEADER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
-        self.right_motor_2 = rev.CANSparkMax(robotmap.RIGHT_MIDDLE_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
+        # self.right_motor_2 = rev.CANSparkMax(robotmap.RIGHT_MIDDLE_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
         self.right_motor_3 = rev.CANSparkMax(robotmap.RIGHT_FOLLOWER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
         
-        shooter = rev.CANSparkMax(robotmap.SHOOTER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless)
-        self.shooter = Shooter(shooter)
+        # shooter = rev.CANSparkMax(robotmap.SHOOTER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless)
+        # self.shooter = Shooter(shooter)
         
         self.left_motor_1.setClosedLoopRampRate(1.0)
-        self.left_motor_2.setClosedLoopRampRate(1.0)
+        # self.left_motor_2.setClosedLoopRampRate(1.0)
         self.left_motor_3.setClosedLoopRampRate(1.0)
 
         self.right_motor_1.setClosedLoopRampRate(1.0)
-        self.right_motor_2.setClosedLoopRampRate(1.0)
+        # self.right_motor_2.setClosedLoopRampRate(1.0)
         self.right_motor_3.setClosedLoopRampRate(1.0)
         #self.shooter.setClosedLoopRampRate(1.0)
         
-        self.left_side = wpilib.SpeedControllerGroup(self.left_motor_1, self.left_motor_2, self.left_motor_3)
-        self.right_side = wpilib.SpeedControllerGroup(self.right_motor_1, self.right_motor_2, self.right_motor_3)
+        self.left_side = wpilib.SpeedControllerGroup(self.left_motor_1, self.left_motor_3)
+        self.right_side = wpilib.SpeedControllerGroup(self.right_motor_1, self.right_motor_3)
         
         # Drivetrain
         self.drivetrain = wpilib.drive.DifferentialDrive(self.left_side, self.right_side)
@@ -81,12 +81,15 @@ class MyRobot(wpilib.TimedRobot):
         self.tm = wpilib.Timer()
         self.tm.start()
 
+        self.climber.solenoids.set(wpilib.DoubleSolenoid.Value.kReverse)
+
     def teleopPeriodic(self):
         # print("starting teleop periodic")
         """
         Makes the shooter motor spin. Right trigger -> 1, left trigger -> -0.2, 
         x reduces the speed, y reduces the speed more, b reduces the speed even more, 
         a reduces the speed the most
+        """
         """
         if self.operator.getRawAxis(self.right_trigger_axis) > 0.95:
             # print("got trigger")
@@ -100,6 +103,7 @@ class MyRobot(wpilib.TimedRobot):
             self.shooter_mod = 1
 
         self.shooter.set(self.running * self.shooter_mod)
+        """
 
         # TANK DRIVE
         if self.drive == TANK:
@@ -138,8 +142,12 @@ class MyRobot(wpilib.TimedRobot):
             else:
                 self.climber.stepAction()
         '''
+        if self.operator.getXButtonPressed():
+            self.climber.solenoids.toggle()
+            print(self.right_piston.get())
+
         self.climber.setWinch(self.operator.getLeftY())
-        self.climber.climberOff()
+        print(self.climber.winch.get())
 
     def autonomousInit(self):
         pass
