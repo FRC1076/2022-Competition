@@ -60,6 +60,10 @@ class SolenoidGroup:
         for s in self.solenoids:
             s.set(value)
     
+    def get(self):  # value will be Forward, Reverse, or Off
+        for s in self.solenoids:
+            print(s.get())
+    
     def toggle(self):
         for s in self.solenoids:
             s.toggle()

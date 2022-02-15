@@ -142,11 +142,13 @@ class MyRobot(wpilib.TimedRobot):
             else:
                 self.climber.stepAction()
         '''
+        # self.climber.solenoids.get()
         if self.operator.getXButtonPressed():
             self.climber.solenoids.toggle()
-            print(self.right_piston.get())
+        if self.operator.getBButtonPressed():
+            self.right_piston.toggle()
 
-        self.climber.setWinch(self.operator.getLeftY())
+        self.climber.setWinch(self.deadzone(self.operator.getLeftY(), robotmap.deadzone))
         print(self.climber.winch.get())
 
     def autonomousInit(self):
