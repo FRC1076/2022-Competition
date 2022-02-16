@@ -31,6 +31,15 @@ class MyRobot(wpilib.TimedRobot):
         # shooter = rev.CANSparkMax(robotmap.SHOOTER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless)
         # self.shooter = Shooter(shooter)
         
+        #gyros
+        self.ahrs = AHRS.create_spi()
+        # self.navx = navx.AHRS.create_i2c()
+        self.aimer = Aimer(self.ahrs)
+        self.aimer.reset()
+        
+        shooter = rev.CANSparkMax(robotmap.SHOOTER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless)
+        self.shooter = Shooter(shooter)
+        
         self.left_motor_1.setClosedLoopRampRate(1.0)
         # self.left_motor_2.setClosedLoopRampRate(1.0)
         self.left_motor_3.setClosedLoopRampRate(1.0)
@@ -63,7 +72,7 @@ class MyRobot(wpilib.TimedRobot):
 
         # Change these depending on the controller
         self.left_trigger_axis = 2 
-        self.right_trigger_axis = 5
+        self.right_trigger_axis = 3
         #print("running!")
 
     def robotPeriodic(self):
@@ -102,31 +111,42 @@ class MyRobot(wpilib.TimedRobot):
         else:
             self.shooter_mod = 1
 
+        #print(self.running * self.shooter_mod)
         self.shooter.set(self.running * self.shooter_mod)
-        """
 
-        # TANK DRIVE
-        if self.drive == TANK:
-            # Get left and right joystick values.
-            leftspeed = self.driver.getRightX()
-            rightspeed = self.driver.getRightY()
+        #print(self.shooter.get())
 
-            # Invoke deadzone on speed.
+        #TANK DRIVE
+        if (self.drive == TANK):
+
+            #Get left and right joystick values.
+            leftspeed = self.driver.getLeftY()
+            rightspeed = -(self.driver.getRightY())
+
+            #Invoke deadzone on speed.
             leftspeed = 0.80 * self.deadzone(leftspeed, robotmap.deadzone)
             rightspeed = 0.80 * self.deadzone(rightspeed, robotmap.deadzone)
-
-            # Invoke Tank Drive
+            
+            #Invoke Tank Drive
             self.drivetrain.tankDrive(leftspeed, rightspeed)
 
-        # ARCADE DRIVE
-        elif self.drive == ARCADE:
-            # self.turnController.reset()
-            currentRotationRate = self.driver.getRightX()
-            self.drivetrain.arcadeDrive(-self.driver.getRightY(), currentRotationRate)
+        #ARCADE DRIVE
+        elif (self.drive == ARCADE):
+            if (self.driver.getLeftBumper()):
+                self.aimer.reset()
+
+            theta = self.calculateTheta(self.driver.getLeftX(), self.driver.getLeftY())
+        
+            #print("X = ", -(self.driver.getRightX()), " Y = ", self.driver.getRightY())
+            if (self.driver.getRightBumper()):
+                self.rotateToTheta(theta)
+            else:
+                self.drivetrain.arcadeDrive(-self.driver.getRightX(), self.driver.getRightY())
 
         else: # self.drive == SWERVE
             # Panik
             return
+            
         '''
         if self.operator.getAButtonPressed() and self.operator.getBButtonPressed() and self.driver.getAButtonPressed() and self.driver.getBButtonPressed():
             self.climbRunning = True
@@ -142,6 +162,7 @@ class MyRobot(wpilib.TimedRobot):
             else:
                 self.climber.stepAction()
         '''
+        
         # self.climber.solenoids.get()
         if self.operator.getXButtonPressed():
             self.climber.solenoids.toggle()
@@ -156,6 +177,43 @@ class MyRobot(wpilib.TimedRobot):
 
     def autonomousPeriodic(self):
         pass
+
+
+    def rotateToTheta(self, theta):
+        angle = self.aimer.getYaw()
+        diff = abs(angle - theta)
+        correctionFactor = (diff / 10.0)
+        if (correctionFactor > 1.0):
+            correctionFactor = 1.0
+        if (diff > 1):
+            if (theta > 0):
+                #print("turning left")
+                self.drivetrain.arcadeDrive(-(0.5 * correctionFactor), 0)
+            else:
+                #print("turning right")
+                self.drivetrain.arcadeDrive((0.5 * correctionFactor), 0)
+    
+    def calculateTheta(self, x, y):
+        y = -y
+        theta = 0.0
+        absY = abs(float(y))
+        absX = abs(float(x))
+        if(x == 0) and (y >= 0):
+            theta = 0.0
+        elif(x == 0) and (y <= 0):
+            theta = 179.9
+        elif(x > 0) and (y >= 0):
+            theta = 90 - (math.atan(absY/absX)*180/math.pi)
+        elif(x < 0) and (y >= 0):
+            theta = -(90 - (math.atan(absY/absX)*180/math.pi))
+        elif(x > 0) and (y < 0):
+            theta = 90 + (90 - (math.atan(absY/absX)*180/math.pi))
+        elif(x < 0) and (y < 0):
+            theta = -(90 + (math.atan(absY/absX)*180/math.pi))
+        else:
+            theta = 0.0
+            #print("unknown coordinates (", x, ", ", y, ")")
+        return(theta)
 
     def deadzone(self, val, deadzone): 
         """
