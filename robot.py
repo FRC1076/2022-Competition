@@ -1,12 +1,18 @@
+import math
 import time
 
 import wpilib
 import wpilib.drive
+import wpimath.controller
+from wpilib import interfaces
 import rev
+from navx import AHRS
 
-from shooter import Shooter
 import robotmap
 import climber
+from aimer import Aimer
+from shooter import Shooter
+
 
 # Drive Types
 ARCADE = 1
@@ -115,6 +121,7 @@ class MyRobot(wpilib.TimedRobot):
         self.shooter.set(self.running * self.shooter_mod)
 
         #print(self.shooter.get())
+        """
 
         #TANK DRIVE
         if (self.drive == TANK):
@@ -148,6 +155,7 @@ class MyRobot(wpilib.TimedRobot):
             return
             
         '''
+        # AUTO CLIMBER
         if self.operator.getAButtonPressed() and self.operator.getBButtonPressed() and self.driver.getAButtonPressed() and self.driver.getBButtonPressed():
             self.climbRunning = True
             self.duration = self.climber.climbActions[self.climber.climbstep][1]
@@ -163,6 +171,7 @@ class MyRobot(wpilib.TimedRobot):
                 self.climber.stepAction()
         '''
         
+        # MANUAL CLIMBER
         # self.climber.solenoids.get()
         if self.operator.getXButtonPressed():
             self.climber.solenoids.toggle()
