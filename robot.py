@@ -42,10 +42,10 @@ class MyRobot(wpilib.TimedRobot):
         # self.navx = navx.AHRS.create_i2c()
         self.aimer = Aimer(self.ahrs)
         self.aimer.reset()
-        
+        '''
         shooter = rev.CANSparkMax(robotmap.SHOOTER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless)
         self.shooter = Shooter(shooter)
-        
+        '''
         self.left_motor_1.setClosedLoopRampRate(1.0)
         # self.left_motor_2.setClosedLoopRampRate(1.0)
         self.left_motor_3.setClosedLoopRampRate(1.0)
@@ -60,7 +60,7 @@ class MyRobot(wpilib.TimedRobot):
         
         # Drivetrain
         self.drivetrain = wpilib.drive.DifferentialDrive(self.left_side, self.right_side)
-
+        '''
         # Climber
         # assuming this is a Neo; otherwise it may not be brushless
         self.right_winch = rev.CANSparkMax(robotmap.WINCH_RIGHT_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless)
@@ -74,6 +74,7 @@ class MyRobot(wpilib.TimedRobot):
         self.piston = climber.SolenoidGroup([self.right_piston, self.left_piston])
 
         self.climber = climber.Climber(self.piston, self.winch)
+        '''
         self.drive = ARCADE
 
         # Change these depending on the controller
@@ -89,6 +90,7 @@ class MyRobot(wpilib.TimedRobot):
         self.shooter_mod = 1
         self.running = 0
         
+        '''
         # Climber presets
         self.climbRunning = False
         self.t = time.time()
@@ -97,6 +99,7 @@ class MyRobot(wpilib.TimedRobot):
         self.tm.start()
 
         self.climber.solenoids.set(wpilib.DoubleSolenoid.Value.kReverse)
+        '''
 
     def teleopPeriodic(self):
         # print("starting teleop periodic")
@@ -144,10 +147,11 @@ class MyRobot(wpilib.TimedRobot):
 
             theta = self.calculateTheta(self.driver.getLeftX(), self.driver.getLeftY())
         
-            #print("X = ", -(self.driver.getRightX()), " Y = ", self.driver.getRightY())
+            print("X = ", -(self.driver.getRightX()), " Y = ", self.driver.getRightY())
             if (self.driver.getRightBumper()):
                 self.rotateToTheta(theta)
             else:
+                print("hello")
                 self.drivetrain.arcadeDrive(-self.driver.getRightX(), self.driver.getRightY())
 
         else: # self.drive == SWERVE
@@ -170,7 +174,8 @@ class MyRobot(wpilib.TimedRobot):
             else:
                 self.climber.stepAction()
         '''
-        
+
+        '''
         # MANUAL CLIMBER
         # self.climber.solenoids.get()
         if self.operator.getXButtonPressed():
@@ -180,11 +185,24 @@ class MyRobot(wpilib.TimedRobot):
 
         self.climber.setWinch(self.deadzone(self.operator.getLeftY(), robotmap.deadzone))
         print(self.climber.winch.get())
+        '''
 
     def autonomousInit(self):
+        """
+        self.autonTimer = wpilib.Timer()
+        self.shooterTimer = wpilib.Timer()
+        self.autonTimer.start()
+        self.aimer.reset()
+        """
         pass
-
     def autonomousPeriodic(self):
+        """
+        if(self.driver.getLeftBumper() and self.driver.getRightBumper()):
+            if(self.autonTimer.get() < 0.5):
+                self.drivetrain.arcadeDrive(-0.75, 0)
+            elif(self.autonTimer.get() >= 0.5 and self.autonTimer.get() < 1.0):
+                self.drivetrain.arcadeDrive(0.75, 0)
+        """
         pass
 
 
@@ -196,10 +214,10 @@ class MyRobot(wpilib.TimedRobot):
             correctionFactor = 1.0
         if (diff > 1):
             if (theta > 0):
-                #print("turning left")
+                print("turning left")
                 self.drivetrain.arcadeDrive(-(0.5 * correctionFactor), 0)
             else:
-                #print("turning right")
+                print("turning right")
                 self.drivetrain.arcadeDrive((0.5 * correctionFactor), 0)
     
     def calculateTheta(self, x, y):
