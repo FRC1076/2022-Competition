@@ -12,7 +12,7 @@ import robotmap
 import climber
 from aimer import Aimer
 from shooter import Shooter
-
+from vision import Vision
 
 # Drive Types
 ARCADE = 1
@@ -80,6 +80,8 @@ class MyRobot(wpilib.TimedRobot):
         self.left_trigger_axis = 2 
         self.right_trigger_axis = 3
         #print("running!")
+
+        self.vision = Vision()
 
     def robotPeriodic(self):
         pass
@@ -179,7 +181,8 @@ class MyRobot(wpilib.TimedRobot):
             self.right_piston.toggle()
 
         self.climber.setWinch(self.deadzone(self.operator.getLeftY(), robotmap.deadzone))
-        print(self.climber.winch.get())
+
+        print(self.vision.get_yaw_degrees())
 
     def autonomousInit(self):
         pass
