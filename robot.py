@@ -10,6 +10,7 @@ from navx import AHRS
 
 import robotmap
 import climber
+from vision import Vision
 from aimer import Aimer
 from shooter import Shooter
 
@@ -20,6 +21,7 @@ BOT_HAS_GYRO = True
 BOT_HAS_SHOOTER = False
 DRIVER_HAS_CONTROLLER = True
 OPERATOR_HAS_CONTROLLER = True
+BOT_HAS_VISION = True
 
 # Drive Types
 ARCADE = 1
@@ -93,9 +95,13 @@ class MyRobot(wpilib.TimedRobot):
             self.left_piston = wpilib.DoubleSolenoid(0, wpilib.PneumaticsModuleType.CTREPCM, robotmap.SOLENOID_LEFT_FORWARD_ID, robotmap.SOLENOID_LEFT_REVERSE_ID)
 
             self.piston = climber.SolenoidGroup([self.right_piston, self.left_piston])
-
+            
             self.climber = climber.Climber(self.piston, self.winch)
         
+        if BOT_HAS_VISION:
+
+          self.vision = Vision()
+
     def robotPeriodic(self):
         pass
 
@@ -192,7 +198,6 @@ class MyRobot(wpilib.TimedRobot):
         
         # MANUAL CLIMBER
         if(BOT_HAS_CLIMBER):
-
             # self.climber.solenoids.get()
             if self.operator.getXButtonPressed():
                 self.climber.solenoids.toggle()
@@ -201,7 +206,6 @@ class MyRobot(wpilib.TimedRobot):
 
             self.climber.setWinch(self.deadzone(self.operator.getLeftY(), robotmap.deadzone))
             print(self.climber.winch.get())
-        
 
     def autonomousInit(self):
         """
