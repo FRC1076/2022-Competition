@@ -13,75 +13,89 @@ import climber
 from aimer import Aimer
 from shooter import Shooter
 
+# ROBOT COMPONENTS
+BOT_HAS_CLIMBER = False
+BOT_HAS_DRIVETRAIN = True
+BOT_HAS_GYRO = True
+BOT_HAS_SHOOTER = False
+DRIVER_HAS_CONTROLLER = True
+OPERATOR_HAS_CONTROLLER = True
 
 # Drive Types
 ARCADE = 1
 TANK = 2
 SWERVE = 3
 
-
 class MyRobot(wpilib.TimedRobot):
     def robotInit(self):
         # Create both xbox controllers
-        self.driver = wpilib.XboxController(0)
-        self.operator = wpilib.XboxController(1)
-
-        # Motors
-        self.left_motor_1 = rev.CANSparkMax(robotmap.LEFT_LEADER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
-        # self.left_motor_2 = rev.CANSparkMax(robotmap.LEFT_MIDDLE_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
-        self.left_motor_3  = rev.CANSparkMax(robotmap.LEFT_FOLLOWER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
-        self.right_motor_1 = rev.CANSparkMax(robotmap.RIGHT_LEADER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
-        # self.right_motor_2 = rev.CANSparkMax(robotmap.RIGHT_MIDDLE_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
-        self.right_motor_3 = rev.CANSparkMax(robotmap.RIGHT_FOLLOWER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
-        
-        # shooter = rev.CANSparkMax(robotmap.SHOOTER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless)
-        # self.shooter = Shooter(shooter)
-        
-        #gyros
-        self.ahrs = AHRS.create_spi()
-        # self.navx = navx.AHRS.create_i2c()
-        self.aimer = Aimer(self.ahrs)
-        self.aimer.reset()
-        '''
-        shooter = rev.CANSparkMax(robotmap.SHOOTER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless)
-        self.shooter = Shooter(shooter)
-        '''
-        self.left_motor_1.setClosedLoopRampRate(1.0)
-        # self.left_motor_2.setClosedLoopRampRate(1.0)
-        self.left_motor_3.setClosedLoopRampRate(1.0)
-
-        self.right_motor_1.setClosedLoopRampRate(1.0)
-        # self.right_motor_2.setClosedLoopRampRate(1.0)
-        self.right_motor_3.setClosedLoopRampRate(1.0)
-        #self.shooter.setClosedLoopRampRate(1.0)
-        
-        self.left_side = wpilib.SpeedControllerGroup(self.left_motor_1, self.left_motor_3)
-        self.right_side = wpilib.SpeedControllerGroup(self.right_motor_1, self.right_motor_3)
-        
-        # Drivetrain
-        self.drivetrain = wpilib.drive.DifferentialDrive(self.left_side, self.right_side)
-        '''
-        # Climber
-        # assuming this is a Neo; otherwise it may not be brushless
-        self.right_winch = rev.CANSparkMax(robotmap.WINCH_RIGHT_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless)
-        self.left_winch = rev.CANSparkMax(robotmap.WINCH_LEFT_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless)
-
-        self.winch = wpilib.SpeedControllerGroup(self.right_winch, self.left_winch)
-
-        self.right_piston = wpilib.DoubleSolenoid(0, wpilib.PneumaticsModuleType.CTREPCM, robotmap.SOLENOID_RIGHT_FORWARD_ID, robotmap.SOLENOID_RIGHT_REVERSE_ID)
-        self.left_piston = wpilib.DoubleSolenoid(0, wpilib.PneumaticsModuleType.CTREPCM, robotmap.SOLENOID_LEFT_FORWARD_ID, robotmap.SOLENOID_LEFT_REVERSE_ID)
-
-        self.piston = climber.SolenoidGroup([self.right_piston, self.left_piston])
-
-        self.climber = climber.Climber(self.piston, self.winch)
-        '''
-        self.drive = ARCADE
-
+        if(DRIVER_HAS_CONTROLLER):
+            self.driver = wpilib.XboxController(0)
+        if(OPERATOR_HAS_CONTROLLER):
+            self.operator = wpilib.XboxController(1)
         # Change these depending on the controller
         self.left_trigger_axis = 2 
         self.right_trigger_axis = 3
         #print("running!")
 
+        # Motors
+        if(BOT_HAS_DRIVETRAIN):
+            # Instantiate Motors
+            self.left_motor_1 = rev.CANSparkMax(robotmap.LEFT_LEADER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
+            # self.left_motor_2 = rev.CANSparkMax(robotmap.LEFT_MIDDLE_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
+            self.left_motor_3  = rev.CANSparkMax(robotmap.LEFT_FOLLOWER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
+            self.right_motor_1 = rev.CANSparkMax(robotmap.RIGHT_LEADER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
+            # self.right_motor_2 = rev.CANSparkMax(robotmap.RIGHT_MIDDLE_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
+            self.right_motor_3 = rev.CANSparkMax(robotmap.RIGHT_FOLLOWER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
+
+            # Set Closed Loop Ramp Rate
+            self.left_motor_1.setClosedLoopRampRate(1.0)
+            # self.left_motor_2.setClosedLoopRampRate(1.0)
+            self.left_motor_3.setClosedLoopRampRate(1.0)
+            self.right_motor_1.setClosedLoopRampRate(1.0)
+            # self.right_motor_2.setClosedLoopRampRate(1.0)
+            self.right_motor_3.setClosedLoopRampRate(1.0)
+
+            # Create Controller Groups
+            self.left_side = wpilib.SpeedControllerGroup(self.left_motor_1, self.left_motor_3)
+            self.right_side = wpilib.SpeedControllerGroup(self.right_motor_1, self.right_motor_3)
+            
+            # Create Drivetrain
+            self.drivetrain = wpilib.drive.DifferentialDrive(self.left_side, self.right_side)
+
+            # Set Drive Type
+            self.drive = ARCADE
+            
+        # Gyros
+        if(BOT_HAS_GYRO):
+            self.ahrs = AHRS.create_spi()
+            # self.navx = navx.AHRS.create_i2c()
+            self.aimer = Aimer(self.ahrs)
+            self.aimer.reset()
+
+        # Shooter
+        if(BOT_HAS_SHOOTER):
+            shooter = rev.CANSparkMax(robotmap.SHOOTER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless)
+            self.shooter = Shooter(shooter)
+            shooter = rev.CANSparkMax(robotmap.SHOOTER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless)
+            self.shooter = Shooter(shooter)
+            self.shooter.setClosedLoopRampRate(1.0)
+
+        # Climber
+        if(BOT_HAS_CLIMBER):
+            # assuming this is a Neo; otherwise it may not be brushless
+            self.right_winch = rev.CANSparkMax(robotmap.WINCH_RIGHT_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless)
+            self.left_winch = rev.CANSparkMax(robotmap.WINCH_LEFT_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless)
+
+            self.winch = wpilib.SpeedControllerGroup(self.right_winch, self.left_winch)
+
+            self.right_piston = wpilib.DoubleSolenoid(0, wpilib.PneumaticsModuleType.CTREPCM, robotmap.SOLENOID_RIGHT_FORWARD_ID, robotmap.SOLENOID_RIGHT_REVERSE_ID)
+            self.left_piston = wpilib.DoubleSolenoid(0, wpilib.PneumaticsModuleType.CTREPCM, robotmap.SOLENOID_LEFT_FORWARD_ID, robotmap.SOLENOID_LEFT_REVERSE_ID)
+
+            self.piston = climber.SolenoidGroup([self.right_piston, self.left_piston])
+
+            self.climber = climber.Climber(self.piston, self.winch)
+        
     def robotPeriodic(self):
         pass
 
@@ -90,102 +104,104 @@ class MyRobot(wpilib.TimedRobot):
         self.shooter_mod = 1
         self.running = 0
         
-        '''
-        # Climber presets
-        self.climbRunning = False
-        self.t = time.time()
+        if(BOT_HAS_CLIMBER):
+            # Climber presets
+            self.climbRunning = False
+            self.t = time.time()
 
-        self.tm = wpilib.Timer()
-        self.tm.start()
+            self.tm = wpilib.Timer()
+            self.tm.start()
 
-        self.climber.solenoids.set(wpilib.DoubleSolenoid.Value.kReverse)
-        '''
+            self.climber.solenoids.set(wpilib.DoubleSolenoid.Value.kReverse)
+        
 
     def teleopPeriodic(self):
         # print("starting teleop periodic")
-        """
-        Makes the shooter motor spin. Right trigger -> 1, left trigger -> -0.2, 
-        x reduces the speed, y reduces the speed more, b reduces the speed even more, 
-        a reduces the speed the most
-        """
-        """
-        if self.operator.getRawAxis(self.right_trigger_axis) > 0.95:
-            # print("got trigger")
-            self.running = 1
-        else:
-            self.running = 0 
 
-        if self.operator.getXButton():
-            self.shooter_mod = 0.4
-        else:
-            self.shooter_mod = 1
+        if(BOT_HAS_DRIVETRAIN):
+            #TANK DRIVE
+            if (self.drive == TANK):
 
-        #print(self.running * self.shooter_mod)
-        self.shooter.set(self.running * self.shooter_mod)
+                #Get left and right joystick values.
+                leftspeed = self.driver.getLeftY()
+                rightspeed = -(self.driver.getRightY())
 
-        #print(self.shooter.get())
-        """
+                #Invoke deadzone on speed.
+                leftspeed = 0.80 * self.deadzone(leftspeed, robotmap.deadzone)
+                rightspeed = 0.80 * self.deadzone(rightspeed, robotmap.deadzone)
+                
+                #Invoke Tank Drive
+                self.drivetrain.tankDrive(leftspeed, rightspeed)
 
-        #TANK DRIVE
-        if (self.drive == TANK):
+            #ARCADE DRIVE
+            elif (self.drive == ARCADE):
+                if (self.driver.getLeftBumper()):
+                    self.aimer.reset()
 
-            #Get left and right joystick values.
-            leftspeed = self.driver.getLeftY()
-            rightspeed = -(self.driver.getRightY())
-
-            #Invoke deadzone on speed.
-            leftspeed = 0.80 * self.deadzone(leftspeed, robotmap.deadzone)
-            rightspeed = 0.80 * self.deadzone(rightspeed, robotmap.deadzone)
+                theta = self.calculateTheta(self.driver.getLeftX(), self.driver.getLeftY())
             
-            #Invoke Tank Drive
-            self.drivetrain.tankDrive(leftspeed, rightspeed)
+                print("X = ", -(self.driver.getRightX()), " Y = ", self.driver.getRightY())
+                if (self.driver.getRightBumper()):
+                    self.rotateToTheta(theta)
+                else:
+                    print("hello")
+                    self.drivetrain.arcadeDrive(-self.driver.getRightX(), self.driver.getRightY())
 
-        #ARCADE DRIVE
-        elif (self.drive == ARCADE):
-            if (self.driver.getLeftBumper()):
-                self.aimer.reset()
+            else: # self.drive == SWERVE
+                # Panic
+                return
 
-            theta = self.calculateTheta(self.driver.getLeftX(), self.driver.getLeftY())
+        if(BOT_HAS_SHOOTER):
+            """
+            Makes the shooter motor spin. Right trigger -> 1, left trigger -> -0.2, 
+            x reduces the speed, y reduces the speed more, b reduces the speed even more, 
+            a reduces the speed the most
+            """
         
-            print("X = ", -(self.driver.getRightX()), " Y = ", self.driver.getRightY())
-            if (self.driver.getRightBumper()):
-                self.rotateToTheta(theta)
+            if self.operator.getRawAxis(self.right_trigger_axis) > 0.95:
+                # print("got trigger")
+                self.running = 1
             else:
-                print("hello")
-                self.drivetrain.arcadeDrive(-self.driver.getRightX(), self.driver.getRightY())
+                self.running = 0 
 
-        else: # self.drive == SWERVE
-            # Panik
-            return
+            if self.operator.getXButton():
+                self.shooter_mod = 0.4
+            else:
+                self.shooter_mod = 1
+
+            #print(self.running * self.shooter_mod)
+            self.shooter.set(self.running * self.shooter_mod)
+
+            #print(self.shooter.get())
             
-        '''
         # AUTO CLIMBER
-        if self.operator.getAButtonPressed() and self.operator.getBButtonPressed() and self.driver.getAButtonPressed() and self.driver.getBButtonPressed():
-            self.climbRunning = True
-            self.duration = self.climber.climbActions[self.climber.climbstep][1]
-            self.t = time.time()
+        if(BOT_HAS_CLIMBER):
+            if self.operator.getAButtonPressed() and self.operator.getBButtonPressed() and self.driver.getAButtonPressed() and self.driver.getBButtonPressed():
+                self.climbRunning = True
+                self.duration = self.climber.climbActions[self.climber.climbstep][1]
+                self.t = time.time()
         
-        if self.climbRunning:
-            if self.operator.getAButtonPressed():
-                self.climbRunning = False
-            elif time.time()-self.t > self.duration:
-                self.climbRunning = False
-                self.climber.nextStep()
-            else:
-                self.climber.stepAction()
-        '''
-
-        '''
+            if self.climbRunning:
+                if self.operator.getAButtonPressed():
+                    self.climbRunning = False
+                elif time.time()-self.t > self.duration:
+                    self.climbRunning = False
+                    self.climber.nextStep()
+                else:
+                    self.climber.stepAction()
+        
         # MANUAL CLIMBER
-        # self.climber.solenoids.get()
-        if self.operator.getXButtonPressed():
-            self.climber.solenoids.toggle()
-        if self.operator.getBButtonPressed():
-            self.right_piston.toggle()
+        if(BOT_HAS_CLIMBER):
 
-        self.climber.setWinch(self.deadzone(self.operator.getLeftY(), robotmap.deadzone))
-        print(self.climber.winch.get())
-        '''
+            # self.climber.solenoids.get()
+            if self.operator.getXButtonPressed():
+                self.climber.solenoids.toggle()
+            if self.operator.getBButtonPressed():
+                self.right_piston.toggle()
+
+            self.climber.setWinch(self.deadzone(self.operator.getLeftY(), robotmap.deadzone))
+            print(self.climber.winch.get())
+        
 
     def autonomousInit(self):
         """
