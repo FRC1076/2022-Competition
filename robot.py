@@ -144,14 +144,14 @@ class MyRobot(wpilib.TimedRobot):
                 if (self.driver.getLeftBumper()):
                     self.aimer.reset()
 
-                theta = self.calculateTheta(self.driver.getLeftX(), self.driver.getLeftY())
+                theta = self.aimer.calculateTheta(self.driver.getLeftX(), self.driver.getLeftY())
             
-                print("X = ", -(self.driver.getRightX()), " Y = ", self.driver.getRightY())
                 if (self.driver.getRightBumper()):
-                    self.rotateToTheta(theta)
+                    result = self.aimer.calcRotationCoordinates(theta)
                 else:
-                    print("hello")
-                    self.drivetrain.arcadeDrive(-self.driver.getRightX(), self.driver.getRightY())
+                    result = (-self.driver.getRightX(), self.driver.getRightY())
+                
+                self.drivetrain.arcadeDrive(result[0], result[1])
 
             else: # self.drive == SWERVE
                 # Panic
@@ -220,43 +220,10 @@ class MyRobot(wpilib.TimedRobot):
                 self.drivetrain.arcadeDrive(0, -0.75)
             elif(self.autonTimer.get() >= 1.0 and self.autonTimer.get() < 2.0):
                 self.drivetrain.arcadeDrive(0, 0.75)
-
-
-    def rotateToTheta(self, theta):
-        angle = self.aimer.getYaw()
-        diff = abs(angle - theta)
-        correctionFactor = (diff / 10.0)
-        if (correctionFactor > 1.0):
-            correctionFactor = 1.0
-        if (diff > 1):
-            if (theta > 0):
-                print("turning left")
-                self.drivetrain.arcadeDrive(-(0.6 * correctionFactor), 0)
-            else:
-                print("turning right")
-                self.drivetrain.arcadeDrive((0.6 * correctionFactor), 0)
-    
-    def calculateTheta(self, x, y):
-        y = -y
-        theta = 0.0
-        absY = abs(float(y))
-        absX = abs(float(x))
-        if(x == 0) and (y >= 0):
-            theta = 0.0
-        elif(x == 0) and (y <= 0):
-            theta = 179.9
-        elif(x > 0) and (y >= 0):
-            theta = 90 - (math.atan(absY/absX)*180/math.pi)
-        elif(x < 0) and (y >= 0):
-            theta = -(90 - (math.atan(absY/absX)*180/math.pi))
-        elif(x > 0) and (y < 0):
-            theta = 90 + (90 - (math.atan(absY/absX)*180/math.pi))
-        elif(x < 0) and (y < 0):
-            theta = -(90 + (math.atan(absY/absX)*180/math.pi))
-        else:
-            theta = 0.0
-            #print("unknown coordinates (", x, ", ", y, ")")
-        return(theta)
+            elif(self.autonTimer.get() >= 2.0 and self.autonTimer.get() < 3.0):
+                theta = self.aimer.calculateTheta(self.driver.getLeftX(), self.driver.getLeftY())
+                result = self.aimer.calcRotationCoordinates(theta)
+                self.drivetrain.arcadeDrive(result[0], result[1])
 
     def deadzone(self, val, deadzone): 
         """
