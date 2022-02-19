@@ -7,6 +7,7 @@ import wpimath.controller
 from wpilib import interfaces
 import rev
 from navx import AHRS
+from intake import Intake
 
 from robotconfig import robotconfig
 from climber import Climber, SolenoidGroup
@@ -42,6 +43,7 @@ class MyRobot(wpilib.TimedRobot):
         self.operator = None
         self.drivetrain = None
         self.shooter = None
+        self.intake = None
         self.climber = None
         self.aimer = None
         self.vision = None
@@ -56,6 +58,8 @@ class MyRobot(wpilib.TimedRobot):
                 self.drivetrain = self.initDrivetrain(config)
             if key == 'SHOOTER':
                 self.shooter = self.initShooter(config)
+            if key == 'INTAKE':
+                self.intake = self.initIntake(config)
             if key == 'CLIMBER':
                 self.climber = self.initClimber(config)
             if key == 'AIMER':
@@ -104,6 +108,19 @@ class MyRobot(wpilib.TimedRobot):
         shooter = Shooter(shooter)
         return shooter
 
+    def initIntake (self, config):
+        # assuming this is a Neo; otherwise it may not be brushless
+        motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
+        pneumatics_module_type = wpilib.PneumaticsModuleType.CTREPCM
+        motor = rev.CANSparkMax(config['INTAKE_MOTOR_ID'], motor_type)
+        piston = wpilib.DoubleSolenoid(0, 
+            pneumatics_module_type, 
+            config['INTAKE_SOLENOID_FORWARD_ID'], 
+            config['INTAKE_SOLENOID_REVERSE_ID'])
+        
+        return Intake(motor, piston)
+
+
     def initClimber (self, config):
         # assuming this is a Neo; otherwise it may not be brushless
         winch_motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
@@ -125,14 +142,14 @@ class MyRobot(wpilib.TimedRobot):
         piston = SolenoidGroup([right_piston, left_piston])
         return Climber(piston, winch)
 
-    def initAimer(self):
+    def initAimer(self, config):
         ahrs = AHRS.create_spi()
         # navx = navx.AHRS.create_i2c()
         aimer = Aimer(ahrs)
         aimer.reset()
         return aimer
 
-    def initVision():
+    def initVision(self, config):
         pass
 
     def robotPeriodic(self):
@@ -202,7 +219,19 @@ class MyRobot(wpilib.TimedRobot):
 
 
     def teleopIntake(self):
-        pass
+        if self.intake == None:
+            return
+        
+        operator = self.operator.controller
+        lta = self.operator.left_trigger_axis
+
+        if operator.getLeftBumper():
+            self.intake.togglePiston()
+        
+        if operator.getRawAxis(lta) > 0.95:
+            self.intake.motorOn()
+        else:
+            self.intake.motorOff()
 
 
     def teleopShooter(self):
