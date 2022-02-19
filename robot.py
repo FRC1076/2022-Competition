@@ -11,7 +11,7 @@ from intake import Intake
 
 from robotconfig import robotconfig
 from climber import Climber, SolenoidGroup
-from vision import Vision
+#from vision import Vision
 from aimer import Aimer
 from shooter import Shooter
 from controller import Controller

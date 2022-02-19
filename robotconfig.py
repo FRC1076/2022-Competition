@@ -104,9 +104,9 @@ intakeTest = {
     }
   },
   'INTAKE' : {
-    'INTAKE_MOTOR_ID' : 8,
-    'INTAKE_SOLENOID_FORWARD_ID' : 1,
-    'INTAKE_SOLENOID_REVERSE_ID' : 2
+    'INTAKE_MOTOR_ID' : 15,
+    'INTAKE_SOLENOID_FORWARD_ID' : 4,
+    'INTAKE_SOLENOID_REVERSE_ID' : 5
   }
 }
 
