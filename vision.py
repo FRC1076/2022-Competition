@@ -1,3 +1,4 @@
+from unittest import result
 import photonvision
 import math
 
@@ -5,7 +6,6 @@ import math
 class Vision:
     def __init__(self):
         self.camera = photonvision.PhotonCamera('photonvision')
-
         self.yawlog = []
         self.pitchlog = []
 
