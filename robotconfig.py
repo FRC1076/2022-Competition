@@ -87,4 +87,27 @@ practice = {
   },
 }
 
-robotconfig = competition
+intakeTest = {
+  'CONTROLLERS' : {
+    'DRIVER': {
+      'ID': 0,
+      'DEADZONE': DEADZONE,
+      'LEFT_TRIGGER_AXIS': 2,
+      'RIGHT_TRIGGER_AXIS': 3,
+
+    },
+    'OPERATOR': {
+      'ID': 1,
+      'DEADZONE': DEADZONE,
+      'LEFT_TRIGGER_AXIS': 2,
+      'RIGHT_TRIGGER_AXIS': 3,
+    }
+  },
+  'INTAKE' : {
+    'INTAKE_MOTOR_ID' : 8,
+    'INTAKE_SOLENOID_FORWARD_ID' : 1,
+    'INTAKE_SOLENOID_REVERSE_ID' : 2
+  }
+}
+
+robotconfig = intakeTest
