@@ -10,7 +10,7 @@ from navx import AHRS
 
 import robotmap
 import climber
-from vision import Vision
+#from vision import Vision
 from aimer import Aimer
 from shooter import Shooter
 
@@ -21,7 +21,7 @@ BOT_HAS_GYRO = True
 BOT_HAS_SHOOTER = False
 DRIVER_HAS_CONTROLLER = True
 OPERATOR_HAS_CONTROLLER = True
-BOT_HAS_VISION = True
+BOT_HAS_VISION = False
 
 # Drive Types
 ARCADE = 1
@@ -98,9 +98,9 @@ class MyRobot(wpilib.TimedRobot):
             
             self.climber = climber.Climber(self.piston, self.winch)
         
-        if BOT_HAS_VISION:
-
-          self.vision = Vision()
+        if(BOT_HAS_VISION):
+            pass
+            #self.vision = Vision()
 
     def robotPeriodic(self):
         pass
@@ -235,10 +235,10 @@ class MyRobot(wpilib.TimedRobot):
         if (diff > 1):
             if (theta > 0):
                 print("turning left")
-                self.drivetrain.arcadeDrive(-(0.5 * correctionFactor), 0)
+                self.drivetrain.arcadeDrive(-(0.6 * correctionFactor), 0)
             else:
                 print("turning right")
-                self.drivetrain.arcadeDrive((0.5 * correctionFactor), 0)
+                self.drivetrain.arcadeDrive((0.6 * correctionFactor), 0)
     
     def calculateTheta(self, x, y):
         y = -y
