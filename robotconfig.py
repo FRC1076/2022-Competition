@@ -78,6 +78,7 @@ practice = {
     },
     'DRIVETYPE': ARCADE
   },
+  'AIMER': 'enabled'
 }
 
 robotconfig = practice

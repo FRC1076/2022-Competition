@@ -126,7 +126,7 @@ class MyRobot(wpilib.TimedRobot):
         piston = SolenoidGroup([right_piston, left_piston])
         return Climber(piston, winch)
 
-    def initAimer(self):
+    def initAimer(self, config):
         ahrs = AHRS.create_spi()
         # navx = navx.AHRS.create_i2c()
         aimer = Aimer(ahrs)
@@ -188,10 +188,10 @@ class MyRobot(wpilib.TimedRobot):
                 self.aimer.reset()
 
             if (driver.getRightBumper()): # for testing auto-rotate    
-                theta = self.aimer.calculateTheta(self.driver.getLeftX(), self.driver.getLeftY())            
+                theta = self.aimer.calculateTheta(driver.getLeftX(), driver.getLeftY())            
                 result = self.aimer.calcRotationCoordinates(theta)
             else:
-                result = (-self.driver.getRightX(), self.driver.getRightY())
+                result = (-driver.getRightX(), driver.getRightY())
                 
             self.drivetrain.arcadeDrive(result[0], result[1])
             
@@ -271,19 +271,21 @@ class MyRobot(wpilib.TimedRobot):
         self.autonTimer = wpilib.Timer()
         self.shooterTimer = wpilib.Timer()
         self.autonTimer.start()
-        self.aimer.reset()
+        if(self.aimer):
+            self.aimer.reset()
         
     def autonomousPeriodic(self):
         self.autonForwardAndBack()
 
-    def autonForwardAndBack():
-        if(self.driver.getLeftBumper() and self.driver.getRightBumper()):
+    def autonForwardAndBack(self):
+        driver = self.driver.xboxController
+        if(driver.getLeftBumper() and driver.getRightBumper()):
             if(self.autonTimer.get() < 1.0):
                 self.drivetrain.arcadeDrive(0, -0.75)
             elif(self.autonTimer.get() >= 1.0 and self.autonTimer.get() < 2.0):
                 self.drivetrain.arcadeDrive(0, 0.75)
             elif(self.autonTimer.get() >= 2.0 and self.autonTimer.get() < 3.0):
-                theta = self.aimer.calculateTheta(self.driver.getLeftX(), self.driver.getLeftY())
+                theta = self.aimer.calculateTheta(driver.getLeftX(), driver.getLeftY())
                 result = self.aimer.calcRotationCoordinates(theta)
                 self.drivetrain.arcadeDrive(result[0], result[1])
 
