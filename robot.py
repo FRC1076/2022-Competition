@@ -219,6 +219,12 @@ class MyRobot(wpilib.TimedRobot):
 
 
     def teleopIntake(self):
+        '''
+        Manually controls the intake solenoid and motor.
+        The left bumper toggles the position of the solenoid,
+        and the left trigger turns the motor on when pressed
+        in fully.
+        '''
         if self.intake == None:
             return
         
