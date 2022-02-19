@@ -208,22 +208,18 @@ class MyRobot(wpilib.TimedRobot):
             print(self.climber.winch.get())
 
     def autonomousInit(self):
-        """
         self.autonTimer = wpilib.Timer()
         self.shooterTimer = wpilib.Timer()
         self.autonTimer.start()
         self.aimer.reset()
-        """
-        pass
+        
+        
     def autonomousPeriodic(self):
-        """
         if(self.driver.getLeftBumper() and self.driver.getRightBumper()):
-            if(self.autonTimer.get() < 0.5):
-                self.drivetrain.arcadeDrive(-0.75, 0)
-            elif(self.autonTimer.get() >= 0.5 and self.autonTimer.get() < 1.0):
-                self.drivetrain.arcadeDrive(0.75, 0)
-        """
-        pass
+            if(self.autonTimer.get() < 1.0):
+                self.drivetrain.arcadeDrive(0, -0.75)
+            elif(self.autonTimer.get() >= 1.0 and self.autonTimer.get() < 2.0):
+                self.drivetrain.arcadeDrive(0, 0.75)
 
 
     def rotateToTheta(self, theta):
