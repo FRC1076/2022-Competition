@@ -3,7 +3,7 @@ import wpilib
 import math
 import wpimath.controller
 
-kP = 0.05
+kP = 0.06
 kI = 0.02
 kD = 0.0
 kF = 0.0
@@ -41,6 +41,8 @@ class Aimer:
 
     def calcRotationCoordinates(self, theta):
         angle = self.getYaw()
+        #rotationRate = self.turnController.calculate(angle, theta)
+        #return(rotationRate, 0)
         diff = abs(angle - theta)
         correctionFactor = (diff / 10.0)
         if (correctionFactor > 1.0):
@@ -52,7 +54,7 @@ class Aimer:
                 return ((0.6 * correctionFactor), 0)
         else:
             return (0, 0)
-
+            
     def calculateTheta(self, x, y):
         y = -y
         theta = 0.0
