@@ -29,78 +29,152 @@ TANK = 2
 SWERVE = 3
 
 class MyRobot(wpilib.TimedRobot):
+
     def robotInit(self):
-        # Create both xbox controllers
-        if(DRIVER_HAS_CONTROLLER):
-            self.driver = wpilib.XboxController(0)
-        if(OPERATOR_HAS_CONTROLLER):
-            self.operator = wpilib.XboxController(1)
+
+        # Controllers
+        self.driver = self.initXBoxController(0)
+        self.operator = self.initXBoxController(1)
+
         # Change these depending on the controller
         self.left_trigger_axis = 2 
         self.right_trigger_axis = 3
         #print("running!")
 
-        # Motors
-        if(BOT_HAS_DRIVETRAIN):
-            # Instantiate Motors
-            self.left_motor_1 = rev.CANSparkMax(robotmap.LEFT_LEADER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
-            # self.left_motor_2 = rev.CANSparkMax(robotmap.LEFT_MIDDLE_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
-            self.left_motor_3  = rev.CANSparkMax(robotmap.LEFT_FOLLOWER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
-            self.right_motor_1 = rev.CANSparkMax(robotmap.RIGHT_LEADER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
-            # self.right_motor_2 = rev.CANSparkMax(robotmap.RIGHT_MIDDLE_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
-            self.right_motor_3 = rev.CANSparkMax(robotmap.RIGHT_FOLLOWER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
-
-            # Set Closed Loop Ramp Rate
-            self.left_motor_1.setClosedLoopRampRate(1.0)
-            # self.left_motor_2.setClosedLoopRampRate(1.0)
-            self.left_motor_3.setClosedLoopRampRate(1.0)
-            self.right_motor_1.setClosedLoopRampRate(1.0)
-            # self.right_motor_2.setClosedLoopRampRate(1.0)
-            self.right_motor_3.setClosedLoopRampRate(1.0)
-
-            # Create Controller Groups
-            self.left_side = wpilib.SpeedControllerGroup(self.left_motor_1, self.left_motor_3)
-            self.right_side = wpilib.SpeedControllerGroup(self.right_motor_1, self.right_motor_3)
-            
-            # Create Drivetrain
-            self.drivetrain = wpilib.drive.DifferentialDrive(self.left_side, self.right_side)
-
-            # Set Drive Type
-            self.drive = ARCADE
-            
-        # Gyros
-        if(BOT_HAS_GYRO):
-            self.ahrs = AHRS.create_spi()
-            # self.navx = navx.AHRS.create_i2c()
-            self.aimer = Aimer(self.ahrs)
-            self.aimer.reset()
+        # Drivetrain
+        self.drivetrain = self.initDriveTrain()
+        # Set Drive Type
+        self.drive = ARCADE
+        
+        # Gyro
+        self.aimer = self.initAimer()
 
         # Shooter
-        if(BOT_HAS_SHOOTER):
-            shooter = rev.CANSparkMax(robotmap.SHOOTER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless)
-            self.shooter = Shooter(shooter)
-            shooter = rev.CANSparkMax(robotmap.SHOOTER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless)
-            self.shooter = Shooter(shooter)
-            self.shooter.setClosedLoopRampRate(1.0)
+        self.shooter = self.initShooter()
 
         # Climber
-        if(BOT_HAS_CLIMBER):
-            # assuming this is a Neo; otherwise it may not be brushless
-            self.right_winch = rev.CANSparkMax(robotmap.WINCH_RIGHT_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless)
-            self.left_winch = rev.CANSparkMax(robotmap.WINCH_LEFT_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless)
-
-            self.winch = wpilib.SpeedControllerGroup(self.right_winch, self.left_winch)
-
-            self.right_piston = wpilib.DoubleSolenoid(0, wpilib.PneumaticsModuleType.CTREPCM, robotmap.SOLENOID_RIGHT_FORWARD_ID, robotmap.SOLENOID_RIGHT_REVERSE_ID)
-            self.left_piston = wpilib.DoubleSolenoid(0, wpilib.PneumaticsModuleType.CTREPCM, robotmap.SOLENOID_LEFT_FORWARD_ID, robotmap.SOLENOID_LEFT_REVERSE_ID)
-
-            self.piston = climber.SolenoidGroup([self.right_piston, self.left_piston])
-            
-            self.climber = climber.Climber(self.piston, self.winch)
+        self.climber = self.initClimber()
         
         if BOT_HAS_VISION:
+            self.vision = Vision()
 
-          self.vision = Vision()
+    def initXBoxController(self, id):
+        '''
+        Try to initialize an XBoxController with `id`
+        returns: an XBoxController object or None if it fails
+        '''
+        try:
+            ctrl = wpilib.XboxController(id)
+            return ctrl
+        except:
+            print("INIT FAILED: XBoxController", id)
+            return None
+
+    def initDriveTrain(self):
+        '''
+        Try to initialize the drive train by initializing pairs of motors
+        (left and right front, left and right middle...)
+        returns: 
+            a drivetrain object if at least one pair can be initialized
+            None otherwise
+        '''
+        left_motors = []
+        right_motors = []
+
+        try:
+            left_motor_1 = rev.CANSparkMax(robotmap.LEFT_LEADER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
+            right_motor_1 = rev.CANSparkMax(robotmap.RIGHT_LEADER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
+
+            left_motor_1.setClosedLoopRampRate(1.0)
+            right_motor_1.setClosedLoopRampRate(1.0)
+
+            left_motors.append(left_motor_1)
+            right_motors.append(right_motor_1)
+        except:
+            print("INIT FAILED: Could not instantiate lead motors")
+
+        try:
+            left_motor_2 = rev.CANSparkMax(robotmap.LEFT_MIDDLE_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
+            right_motor_2 = rev.CANSparkMax(robotmap.RIGHT_MIDDLE_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
+            
+            left_motor_2.setClosedLoopRampRate(1.0)
+            right_motor_2.setClosedLoopRampRate(1.0)
+
+            left_motors.append(left_motor_2)
+            right_motors.append(right_motor_2)
+        except:
+            print("INIT FAILED: Could not instantiate middle motors")
+        
+        try:
+            left_motor_3  = rev.CANSparkMax(robotmap.LEFT_FOLLOWER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
+            right_motor_3 = rev.CANSparkMax(robotmap.RIGHT_FOLLOWER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushed)
+
+            left_motor_3.setClosedLoopRampRate(1.0)
+            right_motor_3.setClosedLoopRampRate(1.0)
+
+            left_motors.append(left_motor_3)
+            right_motors.append(right_motor_3)
+        except:
+            print("INIT FAILED: Could not instantiate rear motors")
+
+        if (len(left_motors) == 0 or len(right_motors) == 0):
+            return None
+
+        # Create Controller Groups
+        left_side = wpilib.SpeedControllerGroup(*left_motors)
+        right_side = wpilib.SpeedControllerGroup(*right_motors)
+        
+        # Create Drivetrain
+        return wpilib.drive.DifferentialDrive(left_side, right_side)
+
+    def initAimer(self):
+        '''
+        Try to initialize an Aimer
+        returns: an Aimer object or None if it fails
+        '''
+        try:
+            ahrs = AHRS.create_spi()
+            # navx = navx.AHRS.create_i2c()
+            aimer = Aimer(ahrs)
+            aimer.reset()
+
+            return aimer
+        except:
+            print("INIT FAILED: Could not instantiate gyro")
+            return None
+
+    def initShooter(self):
+        '''
+        Try to initialize a Shooter
+        returns: a Shooter object or None if it fails
+        '''
+        try:
+            shooter = rev.CANSparkMax(robotmap.SHOOTER_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless)
+            shooter = Shooter(shooter)
+            shooter.setClosedLoopRampRate(1.0)
+            
+            return shooter
+        except:
+            print("INIT FAILED: Could not instantiate shooter")
+            return None
+
+    def initClimber (self):
+        try:
+            # assuming this is a Neo; otherwise it may not be brushless
+            right_winch = rev.CANSparkMax(robotmap.WINCH_RIGHT_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless)
+            left_winch = rev.CANSparkMax(robotmap.WINCH_LEFT_ID, rev.CANSparkMaxLowLevel.MotorType.kBrushless)
+
+            winch = wpilib.SpeedControllerGroup(right_winch, left_winch)
+
+            right_piston = wpilib.DoubleSolenoid(0, wpilib.PneumaticsModuleType.CTREPCM, robotmap.SOLENOID_RIGHT_FORWARD_ID, robotmap.SOLENOID_RIGHT_REVERSE_ID)
+            left_piston = wpilib.DoubleSolenoid(0, wpilib.PneumaticsModuleType.CTREPCM, robotmap.SOLENOID_LEFT_FORWARD_ID, robotmap.SOLENOID_LEFT_REVERSE_ID)
+
+            piston = climber.SolenoidGroup([right_piston, left_piston])
+            
+            return climber.Climber(piston, winch)
+        except:
+            print("INIT FAILED: Could not instantiate shooter")
+            return None
 
     def robotPeriodic(self):
         pass
