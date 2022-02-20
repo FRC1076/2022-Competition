@@ -114,4 +114,4 @@ intakeTest = {
   }
 }
 
-robotconfig = intakeTest
+robotconfig = practice
