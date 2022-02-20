@@ -15,6 +15,7 @@ from climber import Climber, SolenoidGroup
 #from vision import Vision
 from aimer import Aimer
 from shooter import Shooter
+from tiltshooter import TiltShooter
 from controller import Controller
 
 # Drive Types
@@ -31,6 +32,7 @@ class MyRobot(wpilib.TimedRobot):
         self.operator = None
         self.drivetrain = None
         self.shooter = None
+        self.tiltShooter = None
         self.intake = None
         self.climber = None
         self.aimer = None
@@ -46,6 +48,8 @@ class MyRobot(wpilib.TimedRobot):
                 self.drivetrain = self.initDrivetrain(config)
             if key == 'SHOOTER':
                 self.shooter = self.initShooter(config)
+            if key == 'TILTSHOOTER':
+                self.tiltShooter = self.initTiltShooter(config)
             if key == 'INTAKE':
                 self.intake = self.initIntake(config)
             if key == 'CLIMBER':
@@ -95,6 +99,12 @@ class MyRobot(wpilib.TimedRobot):
         shooter = rev.CANSparkMax(config['SHOOTER_ID'], motor_type)
         shooter = Shooter(shooter)
         return shooter
+
+    def initTiltShooter(self, config):
+        motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
+        tiltShooter = rev.CANSparkMax(config['TILTSHOOTER_ID'], motor_type)
+        tiltShooter = TiltShooter(tiltShooter)
+        return tiltShooter
 
     def initIntake (self, config):
         # assuming this is a Neo; otherwise it may not be brushless
@@ -160,6 +170,7 @@ class MyRobot(wpilib.TimedRobot):
         self.teleopDrivetrain()
         self.teleopIntake()
         self.teleopShooter()
+        self.teleopTiltShooter()
         self.teleopClimber()
 
     def teleopDrivetrain(self):
@@ -271,6 +282,15 @@ class MyRobot(wpilib.TimedRobot):
 
         #print(running * shooter_mod)
         self.shooter.set(running * shooter_mod)
+    
+    def teleopTiltShooter(self):
+        if not self.tiltShooter:
+            return
+
+        operator = self.operator.xboxController
+        if(operator.getLeftBumper()):
+            self.tiltShooter.set(1.0)
+            print("testing")
 
     def teleopClimber(self):
 
