@@ -20,7 +20,7 @@ from controller import Controller
 BOT_HAS_CLIMBER = False
 BOT_HAS_DRIVETRAIN = True
 BOT_HAS_GYRO = True
-BOT_HAS_SHOOTER = False
+BOT_HAS_SHOOTER = True
 DRIVER_HAS_CONTROLLER = True
 OPERATOR_HAS_CONTROLLER = True
 BOT_HAS_VISION = False
@@ -204,7 +204,7 @@ class MyRobot(wpilib.TimedRobot):
         pass
 
 
-    def teleopShooter(self):
+    def teleopShooter(self, *shooterVelocity):
         """
         NOTE: This description seems inaccurate!
 
@@ -218,21 +218,38 @@ class MyRobot(wpilib.TimedRobot):
         if not self.shooter:
             return
 
-        operator = self.operator.controller
+        operator = self.operator.xboxController
         rta = self.operator.right_trigger_axis
 
-        if operator.getRawAxis(rta) > 0.95:
-            self.running = 1 # does this need to be 'self'?
+        if(shooterVelocity):
+            if operator.getRawAxis(rta) > 0.95:
+                shooter_mod = shooterVelocity[0]
+                running = 1
+                if(shooter_mod > 1):
+                    shooter_mod = 1
+            else:
+                running = 0
+                shooter_mod = 1
+                
         else:
-            self.running = 0 
+            if operator.getRawAxis(rta) > 0.95:
+                running = 1
+            else:
+                running = 0 
 
-        if operator.getXButton():
-            shooter_mod = 0.4
-        else:
-            shooter_mod = 1
+            if operator.getXButton():
+                shooter_mod = 0.4
+            elif operator.getYButton():
+                shooter_mod = 0.3
+            elif operator.getBButton():
+                shooter_mod = 0.2
+            elif operator.getAButton():
+                shooter_mod = 0.1
+            else:
+                shooter_mod = 1
 
-        #print(self.running * self.shooter_mod)
-        self.shooter.set(self.running * shooter_mod)
+        #print(running * shooter_mod)
+        self.shooter.set(running * shooter_mod)
 
     def teleopClimber(self):
 

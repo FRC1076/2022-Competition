@@ -36,7 +36,7 @@ competition = {
     'DRIVETYPE': ARCADE
   },
   'SHOOTER' : {
-    'SHOOTER_ID': 7
+    'SHOOTER_ID': 1
   },
   'CLIMBER': {
     'WINCH_LEFT_ID': 1,
@@ -77,6 +77,9 @@ practice = {
       'RIGHT_FOLLOWER_ID': 2,
     },
     'DRIVETYPE': ARCADE
+  },
+  'SHOOTER' : {
+    'SHOOTER_ID': 1
   },
   'AIMER': 'enabled'
 }
