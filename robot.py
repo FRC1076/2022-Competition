@@ -113,12 +113,12 @@ class MyRobot(wpilib.TimedRobot):
         motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
         pneumatics_module_type = wpilib.PneumaticsModuleType.CTREPCM
         motor = rev.CANSparkMax(config['INTAKE_MOTOR_ID'], motor_type)
-        piston = wpilib.DoubleSolenoid(0, 
+        solenoid = wpilib.DoubleSolenoid(0, 
             pneumatics_module_type, 
             config['INTAKE_SOLENOID_FORWARD_ID'], 
             config['INTAKE_SOLENOID_REVERSE_ID'])
         
-        return Intake(motor, piston)
+        return Intake(solenoid, motor)
 
 
     def initClimber (self, config):
@@ -228,11 +228,11 @@ class MyRobot(wpilib.TimedRobot):
         if self.intake == None:
             return
         
-        operator = self.operator.controller
+        operator = self.operator.xboxController
         lta = self.operator.left_trigger_axis
 
         if operator.getLeftBumper():
-            self.intake.togglePiston()
+            self.intake.toggle()
         
         if operator.getRawAxis(lta) > 0.95:
             self.intake.motorOn()
