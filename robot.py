@@ -16,19 +16,6 @@ from aimer import Aimer
 from shooter import Shooter
 from controller import Controller
 
-# ROBOT COMPONENTS
-BOT_HAS_CLIMBER = False
-BOT_HAS_DRIVETRAIN = True
-BOT_HAS_GYRO = True
-BOT_HAS_SHOOTER = True
-DRIVER_HAS_CONTROLLER = True
-OPERATOR_HAS_CONTROLLER = True
-BOT_HAS_VISION = False
-
-# CONSTANTS
-PISTON_REVERSE = wpilib.DoubleSolenoid.Value.kReverse
-PISTON_FORWARD = wpilib.DoubleSolenoid.Value.kForward
-
 # Drive Types
 ARCADE = 1
 TANK = 2
@@ -172,7 +159,6 @@ class MyRobot(wpilib.TimedRobot):
             #Get left and right joystick values.
             leftspeed = driver.getLeftY()
             rightspeed = -(driver.getRightY())
-
 
             #Eliminate deadzone and correct speed
             leftspeed = speedratio * self.deadzoneCorrection(leftspeed, deadzone)
