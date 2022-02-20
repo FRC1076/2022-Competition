@@ -24,28 +24,35 @@ competition = {
   },
   'DRIVETRAIN' : {
     'LEFT': {
-      'LEFT_LEADER_ID': 13,
-      'LEFT_MIDDLE_ID': 1,
+      'LEFT_LEADER_ID': 1,
+      'LEFT_MIDDLE_ID': 2,
       'LEFT_FOLLOWER_ID': 3,
     },
     'RIGHT': {
-      'RIGHT_LEADER_ID': 14,
-      'RIGHT_MIDDLE_ID': 15,
-      'RIGHT_FOLLOWER_ID': 2,
+      'RIGHT_LEADER_ID': 4,
+      'RIGHT_MIDDLE_ID': 5,
+      'RIGHT_FOLLOWER_ID': 6,
     },
     'DRIVETYPE': ARCADE
   },
   'SHOOTER' : {
     'SHOOTER_ID': 1
   },
+  'INTAKE' : 
+  {
+    # Update IDs when known
+    'INTAKE_MOTOR_ID' : 8,
+    'INTAKE_SOLENOID_FORWARD_ID' : 1,
+    'INTAKE_SOLENOID_REVERSE_ID' : 2,
+  },
   'CLIMBER': {
-    'WINCH_LEFT_ID': 1,
-    'WINCH_RIGHT_ID': 15,
+    'WINCH_LEFT_ID': 9,
+    'WINCH_RIGHT_ID': 10,
     # Pneumatic board IDs
-    'SOLENOID_LEFT_FORWARD_ID': 0,
-    'SOLENOID_LEFT_REVERSE_ID': 1,
-    'SOLENOID_RIGHT_FORWARD_ID': 4,  # 2
-    'SOLENOID_RIGHT_REVERSE_ID': 5,  # 3
+    'SOLENOID_LEFT_FORWARD_ID': 3,
+    'SOLENOID_LEFT_REVERSE_ID': 4,
+    'SOLENOID_RIGHT_FORWARD_ID': 5,  # 2
+    'SOLENOID_RIGHT_REVERSE_ID': 6,  # 3
   },
   'AIMER': 'enabled',
   'VISION': 'enabled'
@@ -84,4 +91,27 @@ practice = {
   'AIMER': 'enabled'
 }
 
-robotconfig = practice
+intakeTest = {
+  'CONTROLLERS' : {
+    'DRIVER': {
+      'ID': 0,
+      'DEADZONE': DEADZONE,
+      'LEFT_TRIGGER_AXIS': 2,
+      'RIGHT_TRIGGER_AXIS': 3,
+
+    },
+    'OPERATOR': {
+      'ID': 1,
+      'DEADZONE': DEADZONE,
+      'LEFT_TRIGGER_AXIS': 2,
+      'RIGHT_TRIGGER_AXIS': 3,
+    }
+  },
+  'INTAKE' : {
+    'INTAKE_MOTOR_ID' : 15,
+    'INTAKE_SOLENOID_FORWARD_ID' : 4,
+    'INTAKE_SOLENOID_REVERSE_ID' : 5
+  }
+}
+
+robotconfig = intakeTest

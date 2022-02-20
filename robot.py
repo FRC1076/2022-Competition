@@ -7,6 +7,7 @@ import wpimath.controller
 from wpilib import interfaces
 import rev
 from navx import AHRS
+from intake import Intake
 
 
 from robotconfig import robotconfig
@@ -30,6 +31,7 @@ class MyRobot(wpilib.TimedRobot):
         self.operator = None
         self.drivetrain = None
         self.shooter = None
+        self.intake = None
         self.climber = None
         self.aimer = None
         self.vision = None
@@ -44,6 +46,8 @@ class MyRobot(wpilib.TimedRobot):
                 self.drivetrain = self.initDrivetrain(config)
             if key == 'SHOOTER':
                 self.shooter = self.initShooter(config)
+            if key == 'INTAKE':
+                self.intake = self.initIntake(config)
             if key == 'CLIMBER':
                 self.climber = self.initClimber(config)
             if key == 'AIMER':
@@ -92,6 +96,19 @@ class MyRobot(wpilib.TimedRobot):
         shooter = Shooter(shooter)
         return shooter
 
+    def initIntake (self, config):
+        # assuming this is a Neo; otherwise it may not be brushless
+        motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
+        pneumatics_module_type = wpilib.PneumaticsModuleType.CTREPCM
+        motor = rev.CANSparkMax(config['INTAKE_MOTOR_ID'], motor_type)
+        solenoid = wpilib.DoubleSolenoid(0, 
+            pneumatics_module_type, 
+            config['INTAKE_SOLENOID_FORWARD_ID'], 
+            config['INTAKE_SOLENOID_REVERSE_ID'])
+        
+        return Intake(solenoid, motor)
+
+
     def initClimber (self, config):
         # assuming this is a Neo; otherwise it may not be brushless
         winch_motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
@@ -120,7 +137,7 @@ class MyRobot(wpilib.TimedRobot):
         aimer.reset()
         return aimer
 
-    def initVision():
+    def initVision(self, config):
         pass
 
     def robotPeriodic(self):
@@ -187,7 +204,25 @@ class MyRobot(wpilib.TimedRobot):
 
 
     def teleopIntake(self):
-        pass
+        '''
+        Manually controls the intake solenoid and motor.
+        The left bumper toggles the position of the solenoid,
+        and the left trigger turns the motor on when pressed
+        in fully.
+        '''
+        if self.intake == None:
+            return
+        
+        operator = self.operator.xboxController
+        lta = self.operator.left_trigger_axis
+
+        if operator.getLeftBumper():
+            self.intake.toggle()
+        
+        if operator.getRawAxis(lta) > 0.95:
+            self.intake.motorOn()
+        else:
+            self.intake.motorOff()
 
 
     def teleopShooter(self, *shooterVelocity):
