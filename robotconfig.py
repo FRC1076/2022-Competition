@@ -117,4 +117,21 @@ intakeTest = {
   }
 }
 
+climberTest = {
+  'CONTROLLERS' : {
+    'OPERATOR': {
+      'ID': 0,
+      'DEADZONE': DEADZONE,
+      'LEFT_TRIGGER_AXIS': 2,
+      'RIGHT_TRIGGER_AXIS': 3,
+    }
+  },
+  'CLIMBER' : {
+    'WINCH_RIGHT_ID' : 15,
+    'WINCH_LEFT_ID' : 15,
+    'SOLENOID_RIGHT_FORWARD_ID' : 4,
+    'SOLENOID_RIGHT_REVERSE_ID' : 5
+  }
+}
+
 robotconfig = practice

@@ -11,6 +11,7 @@ from intake import Intake
 
 
 from robotconfig import robotconfig
+import climber
 from climber import Climber, SolenoidGroup
 #from vision import Vision
 from aimer import Aimer
@@ -125,19 +126,21 @@ class MyRobot(wpilib.TimedRobot):
         pneumatics_module_type = wpilib.PneumaticsModuleType.CTREPCM
 
         right_winch = rev.CANSparkMax(config['WINCH_RIGHT_ID'], winch_motor_type)
-        left_winch = rev.CANSparkMax(config['WINCH_LEFT_ID'], winch_motor_type)
-        winch = wpilib.MotorControllerGroup(right_winch, left_winch)
+        # left_winch = rev.CANSparkMax(config['WINCH_LEFT_ID'], winch_motor_type)
+        # winch = wpilib.MotorControllerGroup(right_winch, left_winch)
+        winch = right_winch
 
         right_piston = wpilib.DoubleSolenoid(0, 
             pneumatics_module_type, 
             config['SOLENOID_RIGHT_FORWARD_ID'], 
             config['SOLENOID_RIGHT_REVERSE_ID'])
-        left_piston = wpilib.DoubleSolenoid(0, 
-            pneumatics_module_type, 
-            config['SOLENOID_LEFT_FORWARD_ID'], 
-            config['SOLENOID_LEFT_REVERSE_ID'])
+        # left_piston = wpilib.DoubleSolenoid(0, 
+        #     pneumatics_module_type, 
+        #     config['SOLENOID_LEFT_FORWARD_ID'], 
+        #     config['SOLENOID_LEFT_REVERSE_ID'])
 
-        piston = SolenoidGroup([right_piston, left_piston])
+        # piston = SolenoidGroup([right_piston, left_piston])
+        piston = SolenoidGroup([right_piston])
         return Climber(piston, winch)
 
     def initAimer(self, config):
@@ -155,7 +158,7 @@ class MyRobot(wpilib.TimedRobot):
 
     def teleopInit(self):
         
-        if(self.climber): # false if no climber initialized
+        if self.climber: # false if no climber initialized
             # Climber presets
             self.climbRunning = False
             self.t = time.time()
@@ -163,7 +166,7 @@ class MyRobot(wpilib.TimedRobot):
             self.tm = wpilib.Timer()
             self.tm.start()
 
-            self.climber.solenoids.set(PISTON_REVERSE)
+            self.climber.solenoids.set(climber.kReverse)
         
 
     def teleopPeriodic(self):
@@ -176,7 +179,7 @@ class MyRobot(wpilib.TimedRobot):
     def teleopDrivetrain(self):
         if(not self.drivetrain):
             return
-
+    
         driver = self.driver.xboxController
         deadzone = self.driver.deadzone
 
@@ -197,7 +200,6 @@ class MyRobot(wpilib.TimedRobot):
 
         #ARCADE DRIVE
         elif (self.drive_type == ARCADE):
-
             if (driver.getLeftBumper()): # for testing auto-rotate
                 self.aimer.reset()
 
@@ -236,7 +238,7 @@ class MyRobot(wpilib.TimedRobot):
             self.intake.motorOff()
 
 
-    def teleopShooter(self, *shooterVelocity):
+    def teleopShooter(self, shooterVelocity=None):
         """
         NOTE: This description seems inaccurate!
 
@@ -253,7 +255,7 @@ class MyRobot(wpilib.TimedRobot):
         operator = self.operator.xboxController
         rta = self.operator.right_trigger_axis
 
-        if(shooterVelocity):
+        if shooterVelocity:
             if operator.getRawAxis(rta) > 0.95:
                 shooter_mod = shooterVelocity[0]
                 running = 1
@@ -271,12 +273,6 @@ class MyRobot(wpilib.TimedRobot):
 
             if operator.getXButton():
                 shooter_mod = 0.4
-            elif operator.getYButton():
-                shooter_mod = 0.3
-            elif operator.getBButton():
-                shooter_mod = 0.2
-            elif operator.getAButton():
-                shooter_mod = 0.1
             else:
                 shooter_mod = 1
 
@@ -297,18 +293,18 @@ class MyRobot(wpilib.TimedRobot):
         if not self.climber:
             return
         
-        operator = self.operator.controller
+        operator = self.operator.xboxController
         deadzone = self.operator.deadzone
 
         # AUTO CLIMBER
         # NOTE: None of this seems quite right... --mwn
-        if self.operator.getAButtonPressed() and self.operator.getBButtonPressed() and self.driver.getAButtonPressed() and self.driver.getBButtonPressed():
+        if operator.getAButtonPressed() and operator.getBButtonPressed():
             self.climbRunning = True
             self.duration = self.climber.climbActions[self.climber.climbstep][1] 
             self.t = time.time()
     
         if self.climbRunning:
-            if self.operator.getAButtonPressed():
+            if operator.getAButtonPressed():
                 self.climbRunning = False # cancel AutoClimb
             elif time.time() - self.t > self.duration:
                 self.climbRunning = False
@@ -319,8 +315,6 @@ class MyRobot(wpilib.TimedRobot):
         # self.climber.solenoids.get()
         if operator.getXButtonPressed():
             self.climber.solenoids.toggle()
-        if operator.getBButtonPressed():
-            self.right_piston.toggle() # what does this do?
 
         self.climber.setWinch(self.deadzoneCorrection(operator.getLeftY(), 
                               deadzone))
