@@ -31,7 +31,6 @@ class MyRobot(wpilib.TimedRobot):
         self.drivetrain = None
         self.driver = None
         self.operator = None
-        self.drivetrain = None
         self.shooter = None
         self.tiltShooter = None
         self.intake = None
@@ -200,6 +199,8 @@ class MyRobot(wpilib.TimedRobot):
 
         #ARCADE DRIVE
         elif (self.drive_type == ARCADE):
+            speedratio = 0.8 # ratio of joystick position to motor speed
+
             if (driver.getLeftBumper()): # for testing auto-rotate
                 self.aimer.reset()
 
@@ -209,7 +210,11 @@ class MyRobot(wpilib.TimedRobot):
             else:
                 result = (-driver.getRightX(), driver.getRightY())
                 
-            self.drivetrain.arcadeDrive(result[0], result[1])
+            rotateSpeed = result[0]
+            driveSpeed = result[1]
+            rotateSpeed = speedratio * self.deadzoneCorrection(rotateSpeed, deadzone)
+            driveSpeed = speedratio * self.deadzoneCorrection(driveSpeed, deadzone)
+            self.drivetrain.arcadeDrive(rotateSpeed, driveSpeed)
             
         else: # self.drive == SWERVE
             # Panic
@@ -283,10 +288,13 @@ class MyRobot(wpilib.TimedRobot):
         if not self.tiltShooter:
             return
 
+        lta = self.operator.left_trigger_axis
         operator = self.operator.xboxController
-        if(operator.getLeftBumper()):
-            self.tiltShooter.set(1.0)
-            print("testing")
+        if operator.getRawAxis(lta) > 0.95:
+            print("testing tilt-shooter")
+            self.tiltShooter.set(0.5)
+        else:
+            self.tiltShooter.set(0.0)
 
     def teleopClimber(self):
 

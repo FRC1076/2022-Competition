@@ -89,7 +89,7 @@ practice = {
     'SHOOTER_ID': 1
   },
   'TILTSHOOTER' : {
-    'TILTSHOOTER_ID': 4
+    'TILTSHOOTER_ID': 7,
   },
   'AIMER': 'enabled'
 }
