@@ -5,9 +5,9 @@ class Shooter:
         self.motor = motor_controller
         self.motor.setClosedLoopRampRate(1.0)
 
-
     def set(self, speed):
         self.motor.set(speed)
 
     def get(self):
         return self.motor.get()
+    
