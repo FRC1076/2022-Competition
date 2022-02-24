@@ -9,11 +9,12 @@ from intake import Intake
 from robotconfig import robotconfig
 import climber
 from climber import Climber, SolenoidGroup
-# from vision import Vision
+from vision import Vision
 from aimer import Aimer
 from shooter import Shooter
 from tiltshooter import TiltShooter
 from controller import Controller
+from networktables import NetworkTables
 
 # Drive Types
 ARCADE = 1
@@ -119,9 +120,8 @@ class MyRobot(wpilib.TimedRobot):
         pneumatics_module_type = wpilib.PneumaticsModuleType.CTREPCM
 
         right_winch = rev.CANSparkMax(config['WINCH_RIGHT_ID'], winch_motor_type)
-        # left_winch = rev.CANSparkMax(config['WINCH_LEFT_ID'], winch_motor_type)
-        # winch = wpilib.MotorControllerGroup(right_winch, left_winch)
-        winch = right_winch
+        left_winch = rev.CANSparkMax(config['WINCH_LEFT_ID'], winch_motor_type)
+        winch = wpilib.MotorControllerGroup(right_winch, left_winch)
 
 
         right_piston = wpilib.DoubleSolenoid(0,
@@ -133,8 +133,7 @@ class MyRobot(wpilib.TimedRobot):
                                             config['SOLENOID_LEFT_FORWARD_ID'],
                                             config['SOLENOID_LEFT_REVERSE_ID'])
 
-        # piston = SolenoidGroup([right_piston, left_piston])
-        piston = SolenoidGroup([right_piston])
+        piston = SolenoidGroup([right_piston, left_piston])
         return Climber(piston, winch)
 
     def initAimer(self, config):
@@ -145,7 +144,9 @@ class MyRobot(wpilib.TimedRobot):
         return aimer
 
     def initVision(self, config):
-        pass
+        self.vision = Vision()
+        NetworkTables.initialize(server="10.10.76.2")
+        self.vision_table = NetworkTables.getTable("photonvision/mmal_service_16.1")
 
     def robotPeriodic(self):
         pass
@@ -164,6 +165,7 @@ class MyRobot(wpilib.TimedRobot):
             self.climber.solenoids.set(climber.kReverse)
 
     def teleopPeriodic(self):
+        self.teleopVision()
         self.teleopDrivetrain()
         self.teleopIntake()
         self.teleopShooter()
@@ -194,15 +196,15 @@ class MyRobot(wpilib.TimedRobot):
 
 
         #ARCADE DRIVE
-        elif (self.drive_type == ARCADE):
-            speedratio = 0.8 # ratio of joystick position to motor speed
-
+        elif self.drive_type == ARCADE:
+            speedratio = 0.8  # ratio of joystick position to motor speed
 
             if driver.getLeftBumper():  # for testing auto-rotate
                 self.aimer.reset()
 
             if driver.getRightBumper():  # for testing auto-rotate
-                theta = self.aimer.calculateTheta(driver.getLeftX(), driver.getLeftY())
+                # theta = self.aimer.calculateTheta(driver.getLeftX(), driver.getLeftY())
+                theta = self.vision.get_smooth_yaw()
                 result = self.aimer.calcRotationCoordinates(theta)
             else:
                 result = (-driver.getRightX(), driver.getRightY())
@@ -237,6 +239,10 @@ class MyRobot(wpilib.TimedRobot):
             self.intake.motorOn()
         else:
             self.intake.motorOff()
+
+    def teleopVision(self):
+        result = self.vision.get_latest_result()
+        print(self.vision.get_yaw_degrees(), self.vision.get_smooth_yaw())
 
     def teleopShooter(self, shooterVelocity=None):
 
