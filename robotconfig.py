@@ -88,6 +88,12 @@ practice = {
   'SHOOTER' : {
     'SHOOTER_ID': 1
   },
+  'FEEDER': {
+    'FEEDER_ID' : 15,
+  },
+  'TILTSHOOTER' : {
+    'TILTSHOOTER_ID': 7,
+  },
   'AIMER': 'enabled'
 }
 
@@ -111,6 +117,23 @@ intakeTest = {
     'INTAKE_MOTOR_ID' : 15,
     'INTAKE_SOLENOID_FORWARD_ID' : 4,
     'INTAKE_SOLENOID_REVERSE_ID' : 5
+  }
+}
+
+climberTest = {
+  'CONTROLLERS' : {
+    'OPERATOR': {
+      'ID': 0,
+      'DEADZONE': DEADZONE,
+      'LEFT_TRIGGER_AXIS': 2,
+      'RIGHT_TRIGGER_AXIS': 3,
+    }
+  },
+  'CLIMBER' : {
+    'WINCH_RIGHT_ID' : 15,
+    'WINCH_LEFT_ID' : 15,
+    'SOLENOID_RIGHT_FORWARD_ID' : 4,
+    'SOLENOID_RIGHT_REVERSE_ID' : 5
   }
 }
 
