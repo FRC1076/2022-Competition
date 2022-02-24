@@ -14,7 +14,7 @@ class Vision:
 
         # needs to be measured - position of the shooter is the center of mass of the ball as it leaves shooter
         self.shooter_height = 3.5
-        self.shooter_offset =  1 # horizontal offset of shooter from camera
+        self.shooter_offset = 1  # horizontal offset of shooter from camera
 
         # needs to be measured
         self.camera_height = 4
@@ -51,7 +51,7 @@ class Vision:
         y = self.target_height - self.shooter_height
 
         return math.sqrt(
-            (-16 * x ^ 2) / ((y * (math.cos(pitch)) ^ 2) - (x * math.sin(pitch) * math.cos(pitch)))
+            (-16 * x ** 2) / ((y * (math.cos(pitch)) ** 2) - (x * math.sin(pitch) * math.cos(pitch)))
         )
 
     def get_latest_result(self):
@@ -59,8 +59,8 @@ class Vision:
         targets = result.getTargets()
 
         if len(result.getTargets()) > 3:
-            self.pitch = sum([t.getPitch()t.getArea() for t in targets]) / sum([t.getArea() for t in targets])
-            self.yaw = sum([t.getYaw()t.getArea() for t in targets]) / sum([t.getArea() for t in targets])
+            self.pitch = sum([t.getPitch() * t.getArea() for t in targets]) / sum([t.getArea() for t in targets])
+            self.yaw = sum([t.getYaw() * t.getArea() for t in targets]) / sum([t.getArea() for t in targets])
 
             self.pitchlog.append(self.pitch)
             if len(self.pitchlog) > 3:
