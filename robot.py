@@ -15,6 +15,7 @@ from climber import Climber, SolenoidGroup
 #from vision import Vision
 from aimer import Aimer
 from shooter import Shooter
+from feeder import Feeder
 from controller import Controller
 
 # Drive Types
@@ -44,6 +45,8 @@ class MyRobot(wpilib.TimedRobot):
                 self.operator = controllers[1]
             if key == 'DRIVETRAIN':
                 self.drivetrain = self.initDrivetrain(config)
+            if key == 'FEEDER':
+                self.feeder = self.initFeeder()
             if key == 'SHOOTER':
                 self.shooter = self.initShooter(config)
             if key == 'INTAKE':
@@ -93,8 +96,13 @@ class MyRobot(wpilib.TimedRobot):
         # assuming this is a Neo; otherwise it may not be brushless
         motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
         shooter = rev.CANSparkMax(config['SHOOTER_ID'], motor_type)
-        shooter = Shooter(shooter)
-        return shooter
+        return Shooter(shooter)
+        
+    def initFeeder(self, config):
+        # assuming this is a Neo; otherwise it may not be brushless
+        motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
+        feeder = rev.CANSparkMax(config['FEEDER_ID'], motor_type)
+        return Feeder(feeder)
 
     def initIntake (self, config):
         # assuming this is a Neo; otherwise it may not be brushless
@@ -107,7 +115,6 @@ class MyRobot(wpilib.TimedRobot):
             config['INTAKE_SOLENOID_REVERSE_ID'])
         
         return Intake(solenoid, motor)
-
 
     def initClimber (self, config):
         # assuming this is a Neo; otherwise it may not be brushless
@@ -225,15 +232,12 @@ class MyRobot(wpilib.TimedRobot):
             self.intake.motorOff()
 
 
-    def teleopShooter(self, *shooterVelocity):
+    def teleopShooter(self, shooterVelocity = -1.0):
         """
-        NOTE: This description seems inaccurate!
+        Makes the shooter motor spin. Right trigger activates the trigger
+        The X Button reduces the speed.
 
-        Makes the shooter motor spin. Right trigger -> 1, left trigger -> -0.2, 
-        x reduces the speed, 
-        y reduces the speed more, 
-        b reduces the speed even more, 
-        a reduces the speed the most
+        The right bumper runs the feeder motor.
         """
 
         if not self.shooter:
@@ -242,9 +246,9 @@ class MyRobot(wpilib.TimedRobot):
         operator = self.operator.xboxController
         rta = self.operator.right_trigger_axis
 
-        if(shooterVelocity):
+        if shooterVelocity != -1.0:
             if operator.getRawAxis(rta) > 0.95:
-                shooter_mod = shooterVelocity[0]
+                shooter_mod = shooterVelocity
                 running = 1
                 if(shooter_mod > 1):
                     shooter_mod = 1
@@ -260,16 +264,15 @@ class MyRobot(wpilib.TimedRobot):
 
             if operator.getXButton():
                 shooter_mod = 0.4
-            elif operator.getYButton():
-                shooter_mod = 0.3
-            elif operator.getBButton():
-                shooter_mod = 0.2
-            elif operator.getAButton():
-                shooter_mod = 0.1
             else:
                 shooter_mod = 1
 
-        #print(running * shooter_mod)
+        # Feeder
+        if operator.getRightBumper():
+            self.shooter.setFeeder(0.4)
+        else:
+            self.shooter.setFeeder(0.0)
+
         self.shooter.set(running * shooter_mod)
 
     def teleopClimber(self):
@@ -311,6 +314,9 @@ class MyRobot(wpilib.TimedRobot):
         self.autonTimer.start()
         if(self.aimer):
             self.aimer.reset()
+
+        if(self.intake):
+            self.intake.extend()
         
     def autonomousPeriodic(self):
         self.autonForwardAndBack()
