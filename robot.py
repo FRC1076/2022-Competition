@@ -144,7 +144,7 @@ class MyRobot(wpilib.TimedRobot):
         return aimer
 
     def initVision(self, config):
-        self.vision = Vision()
+        self.camera = Vision()
         NetworkTables.initialize(server="10.10.76.2")
         self.vision_table = NetworkTables.getTable("photonvision/mmal_service_16.1")
 
@@ -204,7 +204,7 @@ class MyRobot(wpilib.TimedRobot):
 
             if driver.getRightBumper():  # for testing auto-rotate
                 # theta = self.aimer.calculateTheta(driver.getLeftX(), driver.getLeftY())
-                theta = self.vision.get_smooth_yaw()
+                theta = self.camera.get_smooth_yaw()
                 result = self.aimer.calcRotationCoordinates(theta)
             else:
                 result = (-driver.getRightX(), driver.getRightY())
@@ -241,8 +241,8 @@ class MyRobot(wpilib.TimedRobot):
             self.intake.motorOff()
 
     def teleopVision(self):
-        result = self.vision.get_latest_result()
-        print(self.vision.get_yaw_degrees(), self.vision.get_smooth_yaw())
+        result = self.camera.get_latest_result()
+        print(self.camera.get_yaw_degrees(), self.camera.get_smooth_yaw())
 
     def teleopShooter(self, shooterVelocity=None):
 
