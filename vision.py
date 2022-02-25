@@ -38,14 +38,14 @@ class Vision:
         try:
             return sortedlog[1]
         except IndexError:
-            return sortedlog[0]
+            pass
 
     def get_smooth_pitch(self):
         sortedlog = sorted(self.pitchlog)
         try:
             return sortedlog[1]
         except IndexError:
-            return sortedlog[0]
+            pass
 
     def get_dist_ft(self, pitch):  # the pitch is with respect to the ground
         dist = (self.target_height - self.camera_height) / math.tan(pitch)
