@@ -90,7 +90,8 @@ practice = {
     'TILTSHOOTER': {
         'TILTSHOOTER_ID': 7,
     },
-    'AIMER': 'enabled'
+    'AIMER': 'enabled',
+    'VISION': None
 }
 
 intakeTest = {
@@ -153,4 +154,4 @@ visionTest = {
     # Robot IP is 10.10.76.2
 }
 
-robotconfig = visionTest
+robotconfig = practice
