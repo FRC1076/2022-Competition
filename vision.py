@@ -58,7 +58,7 @@ class Vision:
         result = self.camera.getLatestResult()
         targets = result.getTargets()
 
-        # if len(result.getTargets()) > 3:
+        if len(result.getTargets()) > 3:
             self.pitch = sum([t.getPitch() * t.getArea() for t in targets]) / sum([t.getArea() for t in targets])
             self.yaw = sum([t.getYaw() * t.getArea() for t in targets]) / sum([t.getArea() for t in targets])
 
