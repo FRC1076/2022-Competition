@@ -27,10 +27,10 @@ class Vision:
         self.pitch = None
         self.yaw = None
 
-    def get_pitch_degrees(self, target):
+    def get_pitch_degrees(self):
         return self.pitch
 
-    def get_yaw_degrees(self, target):
+    def get_yaw_degrees(self):
         return self.yaw
 
     def get_smooth_yaw(self):
