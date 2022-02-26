@@ -1,3 +1,4 @@
+from pickle import TRUE
 import robotconfig
 
 defaultResponses = {
@@ -121,9 +122,15 @@ class Tester():
         self.robot.teleopPeriodic()
         print('Arcade Drive: Passed!') # no assert() needed, just testing code doesn't break
 
-    def testArcadeDriveWithAutoRotate(robot):
-        #TODO: test arcade drive with auto-rotate
-        pass
+    def testArcadeDriveWithAutoRotate(self):
+        # test arcade drive
+        self.testDriverXBC.reset()
+        self.testOperatorXBC.reset()
+        self.testDriverXBC.responses['RIGHT_BUMPER'] = True
+        self.testDriverXBC.responses['LEFT_Y'] = 0.9
+        self.testDriverXBC.responses['RIGHT_Y'] = 0.9
+        self.robot.teleopPeriodic()
+        print('Arcade Drive With Auto Rotate: Passed!')
 
 
 
