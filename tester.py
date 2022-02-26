@@ -101,8 +101,16 @@ class Tester():
         self.testArcadeDriveWithAutoRotate()
 
     def testTankDrive(self):
-        #TODO: test tank drive
-        pass
+        # test tank drive
+        self.robot.drive_type = robotconfig.TANK
+        self.testDriverXBC.reset()
+        self.testOperatorXBC.reset()
+        self.testDriverXBC.responses['LEFT_Y'] = 0.9
+        self.testDriverXBC.responses['RIGHT_Y'] = 0.9
+        self.robot.teleopPeriodic()
+        print('Tank Drive: Passed!')
+        self.robot.drive_type = robotconfig.ARCADE
+        
 
     def testArcadeDrive(self):
         # test arcade drive
