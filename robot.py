@@ -283,6 +283,11 @@ class MyRobot(wpilib.TimedRobot):
 
         #print(running * shooter_mod)
         self.shooter.set(running * shooter_mod)
+
+        print("Counts Per Revolution: " + str(self.shooter.getCPR()))
+        print("Rotations Per Minute : " + str(self.shooter.getRPM()))
+
+
     
     def teleopTiltShooter(self):
         if not self.tiltShooter:
