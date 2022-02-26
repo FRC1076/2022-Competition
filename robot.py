@@ -17,7 +17,7 @@ from controller import Controller
 
 # Drive Types
 ARCADE = 1
-TANK = 2
+TANK = 2 
 SWERVE = 3
 
 
@@ -170,6 +170,8 @@ class MyRobot(wpilib.TimedRobot):
         self.teleopTiltShooter()
         self.teleopClimber()
 
+        
+
     def teleopDrivetrain(self):
         if not self.drivetrain:
             return
@@ -279,6 +281,13 @@ class MyRobot(wpilib.TimedRobot):
 
         # print(running * shooter_mod)
         self.shooter.set(running * shooter_mod)
+
+        #Get Encoder
+        encoder = self.shooter.getEncoder()
+        
+        #Reads and Prints Out Number Of Encoder Ticks and RPM
+        print("Counts Per Revolution: " + str(encoder.getCountsPerRevolution()))
+        print("Rotations Per Minute: " + str(encoder.getVelocity()))
     
     def teleopTiltShooter(self):
         if not self.tiltShooter:
