@@ -1,4 +1,5 @@
 import time
+import sys
 
 import wpilib
 import wpilib.drive
@@ -7,19 +8,22 @@ from navx import AHRS
 from intake import Intake
 
 from robotconfig import robotconfig
-import climber
+import climber # not needed?
 from climber import Climber, SolenoidGroup
 # from vision import Vision
 from aimer import Aimer
 from shooter import Shooter
 from tiltshooter import TiltShooter
 from controller import Controller
+import tester
 
 # Drive Types
 ARCADE = 1
 TANK = 2
 SWERVE = 3
 
+# Test Mode
+TEST_MODE = False
 
 class MyRobot(wpilib.TimedRobot):
     def robotInit(self):
@@ -33,6 +37,9 @@ class MyRobot(wpilib.TimedRobot):
         self.aimer = None
         self.vision = None
         self.config = robotconfig
+
+        if TEST_MODE:
+            tester.initTestConfig(self)
 
         for key, config in self.config.items():
             if key == 'CONTROLLERS':
@@ -53,6 +60,11 @@ class MyRobot(wpilib.TimedRobot):
                 self.aimer = self.initAimer(config)
             if key == 'VISION':
                 self.vision = self.initVision(config)
+
+        if TEST_MODE:
+            tester.initTestControllers(self)
+            tester.initTestTeleop(self)
+            tester.testCodePaths(self)
 
     def initControllers(self, config):
         ctrls = {}
@@ -160,7 +172,6 @@ class MyRobot(wpilib.TimedRobot):
             self.tm = wpilib.Timer()
             self.tm.start()
 
-
             self.climber.solenoids.set(climber.kReverse)
 
     def teleopPeriodic(self):
@@ -196,7 +207,6 @@ class MyRobot(wpilib.TimedRobot):
         #ARCADE DRIVE
         elif (self.drive_type == ARCADE):
             speedratio = 0.8 # ratio of joystick position to motor speed
-
 
             if driver.getLeftBumper():  # for testing auto-rotate
                 self.aimer.reset()
@@ -365,4 +375,6 @@ class MyRobot(wpilib.TimedRobot):
 
 
 if __name__ == "__main__":
+    if sys.argv[1] == 'sim':
+        TEST_MODE = True
     wpilib.run(MyRobot)

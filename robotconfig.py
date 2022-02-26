@@ -13,7 +13,6 @@ competition = {
       'DEADZONE': DEADZONE,
       'LEFT_TRIGGER_AXIS': 2,
       'RIGHT_TRIGGER_AXIS': 3,
-
     },
     'OPERATOR': {
       'ID': 1,
@@ -36,7 +35,7 @@ competition = {
     'DRIVETYPE': ARCADE
   },
   'SHOOTER' : {
-    'SHOOTER_ID': 1
+    'SHOOTER_ID': 7
   },
   'INTAKE' : 
   {
