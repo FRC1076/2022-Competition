@@ -15,7 +15,7 @@ from aimer import Aimer
 from shooter import Shooter
 from tiltshooter import TiltShooter
 from controller import Controller
-import tester
+from tester import Tester
 
 # Drive Types
 ARCADE = 1
@@ -36,10 +36,12 @@ class MyRobot(wpilib.TimedRobot):
         self.climber = None
         self.aimer = None
         self.vision = None
-        self.config = robotconfig
-
+        self.tester = None
         if TEST_MODE:
-            tester.initTestConfig(self)
+            self.tester = Tester(self)         
+            self.config = self.tester.getTestConfig()
+        else:
+            self.config = robotconfig
 
         for key, config in self.config.items():
             if key == 'CONTROLLERS':
@@ -62,9 +64,8 @@ class MyRobot(wpilib.TimedRobot):
                 self.vision = self.initVision(config)
 
         if TEST_MODE:
-            tester.initTestControllers(self)
-            tester.initTestTeleop(self)
-            tester.testCodePaths(self)
+            self.tester.initTestTeleop()
+            self.tester.testCodePaths()
 
     def initControllers(self, config):
         ctrls = {}
@@ -222,6 +223,7 @@ class MyRobot(wpilib.TimedRobot):
             rotateSpeed = speedratio * self.deadzoneCorrection(rotateSpeed, deadzone)
             driveSpeed = speedratio * self.deadzoneCorrection(driveSpeed, deadzone)
             self.drivetrain.arcadeDrive(rotateSpeed, driveSpeed)
+            self.logResult('Arcade Drive', rotateSpeed, driveSpeed)
             
         else: # self.drive == SWERVE
             # Panic
@@ -373,6 +375,9 @@ class MyRobot(wpilib.TimedRobot):
             x = (val - deadzone) / (1 - deadzone)
             return x
 
+    def logResult(self, *result):
+        if (TEST_MODE):
+            print(result)
 
 if __name__ == "__main__":
     if sys.argv[1] == 'sim':

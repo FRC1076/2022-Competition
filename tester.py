@@ -76,49 +76,46 @@ class TestXBC():
     def getBButtonPressed(self):
         return self.responses['B_BUTTON']
 
-testDriverController = TestController()
-testOperatorController = TestController()
-testDriverXBC = testDriverController.xboxController
-testOperatorXBC = testDriverController.xboxController
+class Tester():
+    def __init__(self, robot):
+        self.robot = robot
 
-def initTestConfig(robot):
-    robot.config = robotconfig.competition
+    def getTestConfig(self):
+        return robotconfig.competition
 
-def initTestControllers(robot):
-    robot.driver = testDriverController
-    robot.operator = testOperatorController
+    def initTestTeleop(self):
+        self.testDriverController = TestController()
+        self.testOperatorController = TestController()
+        self.testDriverXBC = self.testDriverController.xboxController
+        self.testOperatorXBC = self.testDriverController.xboxController
+        self.robot.driver = self.testDriverController
+        self.robot.operator = self.testOperatorController
+        self.robot.teleopInit()
 
-def initTestTeleop(robot):
-    robot.teleopInit()
+    def logResult(self, result):
+        print(result)
 
-def testCodePaths(robot):
-    #TODO: test tank drive
+    def testCodePaths(self):
+        self.testTankDrive()
+        self.testArcadeDrive()
+        self.testArcadeDriveWithAutoRotate()
 
-    # test arcade drive
-    testDriverXBC.reset()
-    testOperatorXBC.reset()
+    def testTankDrive(self):
+        #TODO: test tank drive
+        pass
 
-    testDriverXBC.responses['RIGHT_X'] = 0.9
-    testDriverXBC.responses['RIGHT_Y'] = 0.9
+    def testArcadeDrive(self):
+        # test arcade drive
+        self.testDriverXBC.reset()
+        self.testOperatorXBC.reset()
+        self.testDriverXBC.responses['RIGHT_X'] = 0.9
+        self.testDriverXBC.responses['RIGHT_Y'] = 0.9
+        self.robot.teleopPeriodic()
+        print('Arcade Drive: Passed!') # no assert() needed, just testing code doesn't break
 
-    robot.teleopPeriodic()
-    print('Arcade Drive: Passed!') # no assert() needed, just testing code doesn't break
-
-    #TODO: test arcade drive with auto-rotate
-
-    #TODO: test intake
-
-    #TODO: test manual shooter (ignore auto-shooter)
-
-    #TODO: test tilt shooter
-
-    #TODO: test climber
-
-    #TODO: test intake
-
-    #TODO: other tests as needed...
-
-
+    def testArcadeDriveWithAutoRotate(robot):
+        #TODO: test arcade drive with auto-rotate
+        pass
 
 
 
