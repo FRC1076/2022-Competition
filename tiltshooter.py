@@ -9,13 +9,25 @@ class TiltShooter:
         self.rotationsPer360 = rotationsPer360
         self.encoder.setPosition(0) # Reset position of motor to zero
         self.minDegrees = minDegrees # Lower bound for tilt shooter
-        self.maxDegrees = maxDegrees # Upper bound for tilt shooer
+        self.maxDegrees = maxDegrees # Upper bound for tilt shooter
+        self.targetDegrees = self.minDegrees # Starting position
 
     def set(self, speed):
         self.motor.set(speed)
 
     def get(self):
         return self.motor.get()
+
+    def getTargetDegrees(self):
+        return(self.targetDegrees)
+
+    def setTargetDegrees(self, targetDegrees):
+        if (targetDegrees < self.minDegrees):
+            self.targetDegrees = self.minDegrees
+        elif (targetDegrees > self.maxDegrees):
+            self.targetDegrees = self.maxDegrees
+        else:
+            self.targetDegrees = targetDegrees
 
     def getMinDegrees(self):
         return(self.minDegrees)

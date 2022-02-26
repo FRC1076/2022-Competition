@@ -92,7 +92,7 @@ practice = {
     'TILTSHOOTER_ID': 7,
     'ROTATIONS_PER_360': 75,
     'MIN_DEGREES': 0,
-    'MAX_DEGREES': 10,
+    'MAX_DEGREES': 30,
   },
   'AIMER': 'enabled'
 }

@@ -166,6 +166,9 @@ class MyRobot(wpilib.TimedRobot):
             self.tm.start()
 
             self.climber.solenoids.set(climber.kReverse)
+
+        if self.tiltShooter:
+            self.tiltShooter.setTargetDegrees(15)
         
 
     def teleopPeriodic(self):
@@ -291,11 +294,16 @@ class MyRobot(wpilib.TimedRobot):
         lta = self.operator.left_trigger_axis
         operator = self.operator.xboxController
         if operator.getRawAxis(lta) > 0.95:                                                                                                                 
-            if(self.tiltShooter.getDegrees() < self.tiltShooter.getMaxDegrees()):
+            if (self.tiltShooter.getDegrees() < (self.tiltShooter.getTargetDegrees() -5)):
                 self.tiltShooter.set(0.1)
+            elif (self.tiltShooter.getDegrees() > (self.tiltShooter.getTargetDegrees() +5)):
+                self.tiltShooter.set(-0.1)
             else:
                 self.tiltShooter.set(0.0)
-            print("rotations = ", self.tiltShooter.getRotations(), " degrees = ", self.tiltShooter.getDegrees(), " velocity = ", self.tiltShooter.getVelocity())
+
+            print("rotations = ", self.tiltShooter.getRotations(),
+                  " degrees = ", self.tiltShooter.getDegrees(),
+                  " velocity = ", self.tiltShooter.getVelocity())
 
         else:
             self.tiltShooter.set(0.0)
@@ -367,6 +375,7 @@ class MyRobot(wpilib.TimedRobot):
         else:
             x = (val - deadzone)/(1-deadzone)
             return x
+
 
 if __name__ == "__main__":
     wpilib.run(MyRobot)
