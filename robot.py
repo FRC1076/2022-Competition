@@ -103,7 +103,7 @@ class MyRobot(wpilib.TimedRobot):
     def initTiltShooter(self, config):
         motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
         tiltShooter = rev.CANSparkMax(config['TILTSHOOTER_ID'], motor_type)
-        tiltShooter = TiltShooter(tiltShooter, config['ROTATIONS_PER_360'], config['MIN_DEGREES'], config['MAX_DEGREES'])
+        tiltShooter = TiltShooter(tiltShooter, config['ROTATIONS_PER_360'], config['MIN_DEGREES'], config['MAX_DEGREES'], config['BUFFER_DEGREES'], config['SPEED'])
         return tiltShooter
 
     def initIntake (self, config):
@@ -168,8 +168,8 @@ class MyRobot(wpilib.TimedRobot):
             self.climber.solenoids.set(climber.kReverse)
 
         if self.tiltShooter:
-            self.tiltShooter.setTargetDegrees(15)
-        
+            self.tiltShooter.setTargetDegrees(10)
+            self.tiltShooter.setManualTiltShooter(False)
 
     def teleopPeriodic(self):
         self.teleopDrivetrain()
@@ -291,23 +291,35 @@ class MyRobot(wpilib.TimedRobot):
         if not self.tiltShooter:
             return
 
+        speed = self.tiltShooter.getTargetSpeed()
+        buffer = self.tiltShooter.getBufferDegrees()
         lta = self.operator.left_trigger_axis
         operator = self.operator.xboxController
-        if operator.getRawAxis(lta) > 0.95:                                                                                                                 
-            if (self.tiltShooter.getDegrees() < (self.tiltShooter.getTargetDegrees() -5)):
-                self.tiltShooter.set(0.1)
-            elif (self.tiltShooter.getDegrees() > (self.tiltShooter.getTargetDegrees() +5)):
-                self.tiltShooter.set(-0.1)
-            else:
-                self.tiltShooter.set(0.0)
-
-            print("rotations = ", self.tiltShooter.getRotations(),
-                  " degrees = ", self.tiltShooter.getDegrees(),
-                  " velocity = ", self.tiltShooter.getVelocity())
-
-        else:
-            self.tiltShooter.set(0.0)
         
+        if(self.tiltShooter.manualTiltShooter): # Adjusting tiltShooter mannual
+            if(operator.getRightY() > 0.95) and (self.tiltShooter.getDegrees() < self.tiltShooter.getMaxDegrees()):
+                self.tiltShooter.setSpeed(speed)
+            elif(operator.getRightY() < -0.95) and (self.tiltShooter.getDegrees() > self.tiltShooter.getMinDegrees()):
+                if((self.tiltShooter.getSpeed() != 0) and (self.tiltShooter.getVelocity() == 0)): # Hit the limit switch
+                    self.tiltShooter.resetPosition() # Reset base position
+                    self.tiltShooter.setSpeed(0.0)
+                else:
+                    self.tiltShooter.setSpeed(-speed)
+            else:
+                self.tiltShooter.setSpeed(0.0)
+        else: # Adjusting tiltShooter automatically with targetDegrees
+            if (self.tiltShooter.getDegrees() < (self.tiltShooter.getTargetDegrees() - buffer)):
+                self.tiltShooter.setSpeed(speed)
+            elif (self.tiltShooter.getDegrees() > (self.tiltShooter.getTargetDegrees() + buffer)):
+                if((self.tiltShooter.getSpeed() != 0) and (self.tiltShooter.getVelocity() == 0)): # Hit the limit switch
+                    self.tiltShooter.resetPosition() # Reset base position
+                    self.tiltShooter.setSpeed(0.0)
+                else:
+                    self.tiltShooter.setSpeed(-speed)
+            else:
+                self.tiltShooter.setSpeed(0.0)
+                self.tiltShooter.setManualTiltShooter(True)
+
     def teleopClimber(self):
 
         if not self.climber:

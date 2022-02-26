@@ -93,6 +93,8 @@ practice = {
     'ROTATIONS_PER_360': 75,
     'MIN_DEGREES': 0,
     'MAX_DEGREES': 30,
+    'BUFFER_DEGREES': 2,
+    'SPEED': 0.1,
   },
   'AIMER': 'enabled'
 }
