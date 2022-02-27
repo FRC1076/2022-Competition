@@ -54,7 +54,7 @@ competition = {
         'SOLENOID_RIGHT_REVERSE_ID': 6,  # 3
     },
     'AIMER': 'enabled',
-    'VISION': 'enabled'
+    'VISION': 'enabled',
 }
 
 practice = {
@@ -95,8 +95,8 @@ practice = {
     'BUFFER_DEGREES': 2,
     'SPEED': 0.1,
   },
-  'AIMER': 'enabled'
-  'VISION': 'enabled'
+  'AIMER': 'enabled',
+  'VISION': 'enabled',
 }
 
 intakeTest = {
