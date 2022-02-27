@@ -109,10 +109,11 @@ class Tester():
         self.testDriverXBC.responses['LEFT_Y'] = 0.9
         self.testDriverXBC.responses['RIGHT_Y'] = 0.9
         self.robot.teleopPeriodic()
-        print('Tank Drive: Passed!')
         self.robot.drive_type = robotconfig.ARCADE
+        print('\n******************')
+        print('Tank Drive: Passed!')
+        print('******************\n')
         
-
     def testArcadeDrive(self):
         # test arcade drive
         self.testDriverXBC.reset()
@@ -120,8 +121,10 @@ class Tester():
         self.testDriverXBC.responses['RIGHT_X'] = 0.9
         self.testDriverXBC.responses['RIGHT_Y'] = 0.9
         self.robot.teleopPeriodic()
-        print('Arcade Drive: Passed!') # no assert() needed, just testing code doesn't break
-
+        print('\n******************')
+        print('Arcade Drive: Passed!')
+        print('******************\n')
+        
     def testArcadeDriveWithAutoRotate(self):
         # test arcade drive
         self.testDriverXBC.reset()
@@ -130,7 +133,9 @@ class Tester():
         self.testDriverXBC.responses['LEFT_Y'] = 0.9
         self.testDriverXBC.responses['RIGHT_Y'] = 0.9
         self.robot.teleopPeriodic()
+        print('\n******************')
         print('Arcade Drive With Auto Rotate: Passed!')
-
+        print('******************\n')
+        
 
 
