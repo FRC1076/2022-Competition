@@ -53,9 +53,9 @@ class Aimer:
 
         if diff > 1:
             if theta > 0:
-                return (-0.6 * correctionFactor), 0
+                return (-0.8 * correctionFactor), 0
             else:
-                return (0.6 * correctionFactor), 0
+                return (0.8 * correctionFactor), 0
         else:
             return 0, 0
 

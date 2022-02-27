@@ -33,6 +33,7 @@ class MyRobot(wpilib.TimedRobot):
         self.climber = None
         self.aimer = None
         self.vision = None
+        self.theta = None
         self.config = robotconfig
 
         for key, config in self.config.items():
@@ -145,8 +146,8 @@ class MyRobot(wpilib.TimedRobot):
 
     def initVision(self, config):
         self.camera = Vision()
-        NetworkTables.initialize(server="10.10.76.2")
-        self.vision_table = NetworkTables.getTable("photonvision/mmal_service_16.1")
+        # NetworkTables.initialize(server="10.10.76.2")
+        # self.vision_table = NetworkTables.getTable("photonvision/mmal_service_16.1")
 
     def robotPeriodic(self):
         pass
@@ -197,22 +198,27 @@ class MyRobot(wpilib.TimedRobot):
 
         #ARCADE DRIVE
         elif self.drive_type == ARCADE:
-            speedratio = 0.8  # ratio of joystick position to motor speed
+            speedratio = 1  # ratio of joystick position to motor speed
 
             if driver.getLeftBumper():  # for testing auto-rotate
                 self.aimer.reset()
 
             if driver.getRightBumper():  # for testing auto-rotate
                 # theta = self.aimer.calculateTheta(driver.getLeftX(), driver.getLeftY())
-                theta = self.camera.get_smooth_yaw()
-                result = self.aimer.calcRotationCoordinates(theta)
+                if not self.theta:
+                    self.theta = self.camera.get_smooth_yaw()
+                result = self.aimer.calcRotationCoordinates(self.theta)
+                if result == (0, 0):
+                    self.theta = None # we found it!
             else:
                 result = (-driver.getRightX(), driver.getRightY())
-                
+            
+            print(result)
             rotateSpeed = result[0]
             driveSpeed = result[1]
             rotateSpeed = speedratio * self.deadzoneCorrection(rotateSpeed, deadzone)
             driveSpeed = speedratio * self.deadzoneCorrection(driveSpeed, deadzone)
+            print(rotateSpeed, driveSpeed)
             self.drivetrain.arcadeDrive(rotateSpeed, driveSpeed)
             
         else: # self.drive == SWERVE
@@ -242,6 +248,7 @@ class MyRobot(wpilib.TimedRobot):
 
     def teleopVision(self):
         result = self.camera.get_latest_result()
+        # yaw = self.vision_table.getNumber("targetPitch", )
         print(self.camera.get_yaw_degrees(), self.camera.get_smooth_yaw())
 
     def teleopShooter(self, shooterVelocity=None):

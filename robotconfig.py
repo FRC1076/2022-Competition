@@ -150,8 +150,21 @@ visionTest = {
             'RIGHT_TRIGGER_AXIS': 3,
         }
     },
-    'VISION': None
+    'VISION': True,
+    'AIMER': True,
+    
+    'DRIVETRAIN': {
+        'LEFT': {
+            'LEFT_LEADER_ID': 13,
+            'LEFT_FOLLOWER_ID': 3,
+        },
+        'RIGHT': {
+            'RIGHT_LEADER_ID': 14,
+            'RIGHT_FOLLOWER_ID': 2,
+        },
+        'DRIVETYPE': ARCADE
+    }
     # Robot IP is 10.10.76.2
 }
 
-robotconfig = practice
+robotconfig = visionTest

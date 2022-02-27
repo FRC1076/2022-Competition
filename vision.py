@@ -4,7 +4,10 @@ import math
 
 class Vision:
     def __init__(self):
-        self.camera = photonvision.PhotonCamera('photonvision')
+        self.camera = photonvision.PhotonCamera('mmal_service_16.1')
+        self.camera.setDriverMode(False)
+        self.camera.setPipelineIndex(0)
+
         self.yawlog = []
         self.pitchlog = []
 
@@ -63,6 +66,8 @@ class Vision:
     def get_latest_result(self):
         result = self.camera.getLatestResult()
         targets = result.getTargets()
+        print(result.hasTargets())
+        self.camera.takeOutputSnapshot()
 
         if len(result.getTargets()) > 3:
             self.pitch = sum([t.getPitch() * t.getArea() for t in targets]) / sum([t.getArea() for t in targets])
