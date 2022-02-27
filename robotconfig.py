@@ -87,11 +87,16 @@ practice = {
     'SHOOTER': {
         'SHOOTER_ID': 1
     },
-    'TILTSHOOTER': {
-        'TILTSHOOTER_ID': 7,
-    },
-    'AIMER': 'enabled',
-    'VISION': None
+  'TILTSHOOTER' : {
+    'TILTSHOOTER_ID': 7,
+    'ROTATIONS_PER_360': 75,
+    'MIN_DEGREES': 0,
+    'MAX_DEGREES': 30,
+    'BUFFER_DEGREES': 2,
+    'SPEED': 0.1,
+  },
+  'AIMER': 'enabled'
+  'VISION': 'enabled'
 }
 
 intakeTest = {
