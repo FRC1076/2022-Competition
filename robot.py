@@ -215,8 +215,8 @@ class MyRobot(wpilib.TimedRobot):
                 
             rotateSpeed = result[0]
             driveSpeed = result[1]
-            rotateSpeed = speedratio * self.deadzoneCorrection(rotateSpeed, deadzone)
-            driveSpeed = speedratio * self.deadzoneCorrection(driveSpeed, deadzone)
+            #rotateSpeed = speedratio * self.deadzoneCorrection(rotateSpeed, deadzone)
+            #driveSpeed = speedratio * self.deadzoneCorrection(driveSpeed, deadzone)
             self.drivetrain.arcadeDrive(rotateSpeed, driveSpeed)
             
         else: # self.drive == SWERVE
