@@ -66,7 +66,7 @@ class Vision:
     def get_latest_result(self):
         result = self.camera.getLatestResult()
         targets = result.getTargets()
-        print(result.hasTargets())
+        #print(result.hasTargets())
         self.camera.takeOutputSnapshot()
 
         if len(result.getTargets()) > 3:
