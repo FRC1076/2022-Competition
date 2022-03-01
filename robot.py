@@ -150,7 +150,8 @@ class MyRobot(wpilib.TimedRobot):
     def initAimer(self, config):
         ahrs = AHRS.create_spi()
         # navx = navx.AHRS.create_i2c()
-        aimer = Aimer(ahrs)
+        #aimer = Aimer(ahrs, config['AIMING_ROTATION_SPEED'], config['AIMING_ACCURACY_DEGREES'])
+        aimer = Aimer(ahrs, 0.6, 3)
         aimer.reset()
         return aimer
 
@@ -232,13 +233,14 @@ class MyRobot(wpilib.TimedRobot):
                 else: # Stay in manual mode
                     result = (-driver.getRightX(), driver.getRightY())
             elif (self.phase == PHASE_1): # Rotate to target
-                print("In phase 1")
+                #print("In phase 1")
                 if (self.theta == None): # Should never happen
                     self.phase = PHASE_0
                     result = (-driver.getRightX(), driver.getRightY())
                     # CONSIDER STARTING FLYWHEEL
                 else: # Rotate towards target
                     result = self.aimer.calcRotationCoordinates(self.theta)
+                    #print(self.theta, " ", result)
                     if(result[0] == 0.0): # Target aquired FIX WITH A BETTER TEST
                         if (not(self.tiltShooter)): # No tilt-shooter. Skip step.
                             self.phase = PHASE_3
