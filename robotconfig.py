@@ -159,7 +159,10 @@ visionTest = {
         }
     },
     'VISION': True,
-    'AIMER': True,
+    'AIMER': {
+      'AIMING_ROTATION_SPEED': 0.6,
+      'AIMING_ACCURACY_DEGREES': 1,
+    },
     
     'DRIVETRAIN': {
         'LEFT': {
