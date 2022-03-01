@@ -85,10 +85,13 @@ practice = {
     'DRIVETYPE': ARCADE
   },
   'SHOOTER' : {
-    'SHOOTER_ID': 1
+    'SHOOTER_ID': 1,
   },
   'TILTSHOOTER' : {
     'TILTSHOOTER_ID': 7,
+    'ROTATIONS_PER_360': 75,
+    'MIN_DEGREES': 0,
+    'MAX_DEGREES': 10,
   },
   'AIMER': 'enabled'
 }

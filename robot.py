@@ -1,16 +1,20 @@
+import math
 import time
 import sys
 
 import wpilib
 import wpilib.drive
+import wpimath.controller
+from wpilib import interfaces
 import rev
 from navx import AHRS
 from intake import Intake
 
+
 from robotconfig import robotconfig
 import climber # not needed?
 from climber import Climber, SolenoidGroup
-# from vision import Vision
+#from vision import Vision
 from aimer import Aimer
 from shooter import Shooter
 from tiltshooter import TiltShooter
@@ -26,7 +30,9 @@ SWERVE = 3
 TEST_MODE = False
 
 class MyRobot(wpilib.TimedRobot):
+
     def robotInit(self):
+
         self.drivetrain = None
         self.driver = None
         self.operator = None
@@ -91,7 +97,7 @@ class MyRobot(wpilib.TimedRobot):
         for id in config['RIGHT'].values():
             right_motors.append(rev.CANSparkMax(id, motor_type))
 
-        self.drive_type = config['DRIVETYPE']  # side effect!
+        self.drive_type = config['DRIVETYPE'] # side effect!
 
         # Create Controller Groups
         left_side = wpilib.MotorControllerGroup(*left_motors)
@@ -107,26 +113,26 @@ class MyRobot(wpilib.TimedRobot):
         shooter = Shooter(shooter)
         return shooter
 
-
     def initTiltShooter(self, config):
         motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
         tiltShooter = rev.CANSparkMax(config['TILTSHOOTER_ID'], motor_type)
-        tiltShooter = TiltShooter(tiltShooter)
+        tiltShooter = TiltShooter(tiltShooter, config['ROTATIONS_PER_360'], config['MIN_DEGREES'], config['MAX_DEGREES'])
         return tiltShooter
 
-    def initIntake(self, config):
+    def initIntake (self, config):
         # assuming this is a Neo; otherwise it may not be brushless
         motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
         pneumatics_module_type = wpilib.PneumaticsModuleType.CTREPCM
         motor = rev.CANSparkMax(config['INTAKE_MOTOR_ID'], motor_type)
-        solenoid = wpilib.DoubleSolenoid(0,
-                                         pneumatics_module_type,
-                                         config['INTAKE_SOLENOID_FORWARD_ID'],
-                                         config['INTAKE_SOLENOID_REVERSE_ID'])
-
+        solenoid = wpilib.DoubleSolenoid(0, 
+            pneumatics_module_type, 
+            config['INTAKE_SOLENOID_FORWARD_ID'], 
+            config['INTAKE_SOLENOID_REVERSE_ID'])
+        
         return Intake(solenoid, motor)
 
-    def initClimber(self, config):
+
+    def initClimber (self, config):
         # assuming this is a Neo; otherwise it may not be brushless
         winch_motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
         pneumatics_module_type = wpilib.PneumaticsModuleType.CTREPCM
@@ -136,15 +142,14 @@ class MyRobot(wpilib.TimedRobot):
         # winch = wpilib.MotorControllerGroup(right_winch, left_winch)
         winch = right_winch
 
-
-        right_piston = wpilib.DoubleSolenoid(0,
-                                             pneumatics_module_type,
-                                             config['SOLENOID_RIGHT_FORWARD_ID'],
-                                             config['SOLENOID_RIGHT_REVERSE_ID'])
-        left_piston = wpilib.DoubleSolenoid(0,
-                                            pneumatics_module_type,
-                                            config['SOLENOID_LEFT_FORWARD_ID'],
-                                            config['SOLENOID_LEFT_REVERSE_ID'])
+        right_piston = wpilib.DoubleSolenoid(0, 
+            pneumatics_module_type, 
+            config['SOLENOID_RIGHT_FORWARD_ID'], 
+            config['SOLENOID_RIGHT_REVERSE_ID'])
+        # left_piston = wpilib.DoubleSolenoid(0, 
+        #     pneumatics_module_type, 
+        #     config['SOLENOID_LEFT_FORWARD_ID'], 
+        #     config['SOLENOID_LEFT_REVERSE_ID'])
 
         # piston = SolenoidGroup([right_piston, left_piston])
         piston = SolenoidGroup([right_piston])
@@ -164,8 +169,8 @@ class MyRobot(wpilib.TimedRobot):
         pass
 
     def teleopInit(self):
-
-        if self.climber:  # false if no climber initialized
+        
+        if self.climber: # false if no climber initialized
             # Climber presets
             self.climbRunning = False
             self.t = time.time()
@@ -174,6 +179,7 @@ class MyRobot(wpilib.TimedRobot):
             self.tm.start()
 
             self.climber.solenoids.set(climber.kReverse)
+        
 
     def teleopPeriodic(self):
         self.teleopDrivetrain()
@@ -183,37 +189,36 @@ class MyRobot(wpilib.TimedRobot):
         self.teleopClimber()
 
     def teleopDrivetrain(self):
-        if not self.drivetrain:
+        if(not self.drivetrain):
             return
     
         driver = self.driver.xboxController
         deadzone = self.driver.deadzone
 
-        # TANK DRIVE
-        if self.drive_type == TANK:
-            speedratio = 0.8  # ratio of joystick position to motor speed
+        #TANK DRIVE
+        if (self.drive_type == TANK):
+            speedratio = 0.8 # ratio of joystick position to motor speed
 
-            # Get left and right joystick values.
+            #Get left and right joystick values.
             leftspeed = driver.getLeftY()
             rightspeed = -(driver.getRightY())
 
-            # Eliminate deadzone and correct speed
+            #Eliminate deadzone and correct speed
             leftspeed = speedratio * self.deadzoneCorrection(leftspeed, deadzone)
             rightspeed = speedratio * self.deadzoneCorrection(rightspeed, deadzone)
-
-            # Invoke Tank Drive
+            
+            #Invoke Tank Drive
             self.drivetrain.tankDrive(leftspeed, rightspeed)
-
 
         #ARCADE DRIVE
         elif (self.drive_type == ARCADE):
             speedratio = 0.8 # ratio of joystick position to motor speed
 
-            if driver.getLeftBumper():  # for testing auto-rotate
+            if (driver.getLeftBumper()): # for testing auto-rotate
                 self.aimer.reset()
 
-            if driver.getRightBumper():  # for testing auto-rotate
-                theta = self.aimer.calculateTheta(driver.getLeftX(), driver.getLeftY())
+            if (driver.getRightBumper()): # for testing auto-rotate    
+                theta = self.aimer.calculateTheta(driver.getLeftX(), driver.getLeftY())            
                 result = self.aimer.calcRotationCoordinates(theta)
             else:
                 result = (-driver.getRightX(), driver.getRightY())
@@ -229,29 +234,30 @@ class MyRobot(wpilib.TimedRobot):
             # Panic
             return
 
+
     def teleopIntake(self):
-        """
+        '''
         Manually controls the intake solenoid and motor.
         The left bumper toggles the position of the solenoid,
         and the left trigger turns the motor on when pressed
         in fully.
-        """
-        if self.intake is None:
+        '''
+        if self.intake == None:
             return
-
+        
         operator = self.operator.xboxController
         lta = self.operator.left_trigger_axis
 
         if operator.getLeftBumper():
             self.intake.toggle()
-
+        
         if operator.getRawAxis(lta) > 0.95:
             self.intake.motorOn()
         else:
             self.intake.motorOff()
 
-    def teleopShooter(self, shooterVelocity=None):
 
+    def teleopShooter(self, shooterVelocity=None):
         """
         NOTE: This description seems inaccurate!
 
@@ -272,24 +278,24 @@ class MyRobot(wpilib.TimedRobot):
             if operator.getRawAxis(rta) > 0.95:
                 shooter_mod = shooterVelocity[0]
                 running = 1
-                if shooter_mod > 1:
+                if(shooter_mod > 1):
                     shooter_mod = 1
             else:
                 running = 0
                 shooter_mod = 1
-
+                
         else:
             if operator.getRawAxis(rta) > 0.95:
                 running = 1
             else:
-                running = 0
+                running = 0 
 
             if operator.getXButton():
                 shooter_mod = 0.4
             else:
                 shooter_mod = 1
 
-        # print(running * shooter_mod)
+        #print(running * shooter_mod)
         self.shooter.set(running * shooter_mod)
     
     def teleopTiltShooter(self):
@@ -298,69 +304,70 @@ class MyRobot(wpilib.TimedRobot):
 
         lta = self.operator.left_trigger_axis
         operator = self.operator.xboxController
-        if operator.getRawAxis(lta) > 0.95:
-            print("testing tilt-shooter")
-            self.tiltShooter.set(0.5)
+        if operator.getRawAxis(lta) > 0.95:                                                                                                                 
+            if(self.tiltShooter.getDegrees() < self.tiltShooter.getMaxDegrees()):
+                self.tiltShooter.set(0.1)
+            else:
+                self.tiltShooter.set(0.0)
+            print("rotations = ", self.tiltShooter.getRotations(), " degrees = ", self.tiltShooter.getDegrees(), " velocity = ", self.tiltShooter.getVelocity())
+
         else:
             self.tiltShooter.set(0.0)
-
+        
     def teleopClimber(self):
 
         if not self.climber:
             return
-          
+        
         operator = self.operator.xboxController
         deadzone = self.operator.deadzone
-        driver = self.driver.xboxController
 
         # AUTO CLIMBER
         # NOTE: None of this seems quite right... --mwn
-        
         if operator.getAButtonPressed() and operator.getBButtonPressed():
-
             self.climbRunning = True
-            self.duration = self.climber.climbActions[self.climber.climbstep][1]
+            self.duration = self.climber.climbActions[self.climber.climbstep][1] 
             self.t = time.time()
-
+    
         if self.climbRunning:
             if operator.getAButtonPressed():
                 self.climbRunning = False # cancel AutoClimb
-
             elif time.time() - self.t > self.duration:
                 self.climbRunning = False
                 self.climber.nextStep()
             else:
                 self.climber.stepAction()
-
+        
         # self.climber.solenoids.get()
         if operator.getXButtonPressed():
             self.climber.solenoids.toggle()
 
-        self.climber.setWinch(self.deadzoneCorrection(operator.getLeftY(), deadzone))
-
+        self.climber.setWinch(self.deadzoneCorrection(operator.getLeftY(), 
+                              deadzone))
+        
     def autonomousInit(self):
         self.autonTimer = wpilib.Timer()
         self.shooterTimer = wpilib.Timer()
         self.autonTimer.start()
-        if self.aimer:
+        if(self.aimer):
             self.aimer.reset()
-
+        
     def autonomousPeriodic(self):
         self.autonForwardAndBack()
 
     def autonForwardAndBack(self):
         driver = self.driver.xboxController
-        if driver.getLeftBumper() and driver.getRightBumper():
-            if self.autonTimer.get() < 1.0:
+        if(driver.getLeftBumper() and driver.getRightBumper()):
+            if(self.autonTimer.get() < 1.0):
                 self.drivetrain.arcadeDrive(0, -0.75)
-            elif 1.0 <= self.autonTimer.get() < 2.0:
+            elif(self.autonTimer.get() >= 1.0 and self.autonTimer.get() < 2.0):
                 self.drivetrain.arcadeDrive(0, 0.75)
-            elif 2.0 <= self.autonTimer.get() < 3.0:
+            elif(self.autonTimer.get() >= 2.0 and self.autonTimer.get() < 3.0):
                 theta = self.aimer.calculateTheta(driver.getLeftX(), driver.getLeftY())
                 result = self.aimer.calcRotationCoordinates(theta)
                 self.drivetrain.arcadeDrive(result[0], result[1])
 
-    def deadzoneCorrection(self, val, deadzone):
+    def deadzoneCorrection(self, val, deadzone): 
         """
         Given the deadzone value x, the deadzone both eliminates all
         values between -x and x, and scales the remaining values from
@@ -369,10 +376,10 @@ class MyRobot(wpilib.TimedRobot):
         if abs(val) < deadzone:
             return 0
         elif val < 0:
-            x = (abs(val) - deadzone) / (1 - deadzone)
+            x = (abs(val) - deadzone)/(1-deadzone)
             return -x
         else:
-            x = (val - deadzone) / (1 - deadzone)
+            x = (val - deadzone)/(1-deadzone)
             return x
 
     def logResult(self, *result):
