@@ -95,7 +95,10 @@ practice = {
     'BUFFER_DEGREES': 2,
     'SPEED': 0.1,
   },
-  'AIMER': 'enabled',
+  'AIMER': {
+      'AIMING_ROTATION_SPEED': 0.6,
+      'AIMING_ACCURACY_DEGREES': 3,
+  },
   'VISION': 'enabled',
 }
 
@@ -156,7 +159,10 @@ visionTest = {
         }
     },
     'VISION': True,
-    'AIMER': True,
+    'AIMER': {
+      'AIMING_ROTATION_SPEED': 0.6,
+      'AIMING_ACCURACY_DEGREES': 3,
+    },
     
     'DRIVETRAIN': {
         'LEFT': {
@@ -172,4 +178,4 @@ visionTest = {
     # Robot IP is 10.10.76.2
 }
 
-robotconfig = visionTest
+robotconfig = practice

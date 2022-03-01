@@ -61,6 +61,12 @@ class TiltShooter:
     def getDegrees(self):
         return(self.rotationsToDegrees(self.getRotations()))
 
+    def getNearTarget(self):
+        if((self.getDegrees() > (self.getTargetDegrees() - self.bufferDegrees)) and (self.getDegrees() > (self.getTargetDegrees() - self.bufferDegrees))):
+            return True
+        else:
+            return False
+    
     def getVelocity(self):
         return(self.encoder.getVelocity())
 

@@ -11,11 +11,13 @@ kToleranceDegrees = 2.0
 
 
 class Aimer:
-    def __init__(self, gyro):
+    def __init__(self, gyro, rotationSpeed, accuracyDegrees):
         self.gyro = gyro
         turnController = wpimath.controller.PIDController(kP, kI, kD)
         turnController.setTolerance(kToleranceDegrees)
         turnController.enableContinuousInput(-180.0, 180.0)
+        self.rotationSpeed = rotationSpeed
+        self.accuracyDegrees = accuracyDegrees
         self.turnController = turnController
 
     #    setRotateToAngleRate = 0
@@ -51,13 +53,15 @@ class Aimer:
         if correctionFactor > 1.0:
             correctionFactor = 1.0
 
-        if diff > 1:
+        if (diff > self.accuracyDegrees):
             if theta > 0:
-                return (-0.8 * correctionFactor), 0
+                return (-self.rotationSpeed * correctionFactor), 0
             else:
-                return (0.8 * correctionFactor), 0
+                return (self.rotationSpeed
+                 * correctionFactor), 0
         else:
-            return 0, 0
+            print("diff <= ", self.accuracyDegrees)
+            return (0, 0)
 
     def calculateTheta(self, x, y):
         y = -y

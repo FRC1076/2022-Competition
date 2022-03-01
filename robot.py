@@ -25,6 +25,12 @@ ARCADE = 1
 TANK = 2
 SWERVE = 3
 
+# Shooting phases
+PHASE_0 = 0
+PHASE_1 = 1
+PHASE_2 = 2
+PHASE_3 = 3
+
 class MyRobot(wpilib.TimedRobot):
 
     def robotInit(self):
@@ -144,7 +150,8 @@ class MyRobot(wpilib.TimedRobot):
     def initAimer(self, config):
         ahrs = AHRS.create_spi()
         # navx = navx.AHRS.create_i2c()
-        aimer = Aimer(ahrs)
+        aimer = Aimer(ahrs, config['AIMING_ROTATION_SPEED'], config['AIMING_ACCURACY_DEGREES'])
+        #aimer = Aimer(ahrs, 0.6, 3)
         aimer.reset()
         return aimer
 
@@ -158,6 +165,9 @@ class MyRobot(wpilib.TimedRobot):
 
     def teleopInit(self):
         
+        if self.drivetrain:
+            self.phase = PHASE_0
+
         if self.climber: # false if no climber initialized
             # Climber presets
             self.climbRunning = False
@@ -209,17 +219,52 @@ class MyRobot(wpilib.TimedRobot):
             if driver.getLeftBumper():  # for testing auto-rotate
                 self.aimer.reset()
 
-            if driver.getRightBumper():  # for testing auto-rotate
-                # theta = self.aimer.calculateTheta(driver.getLeftX(), driver.getLeftY())
-                if not self.theta:
-                    self.theta = self.camera.get_smooth_yaw()
-                result = self.aimer.calcRotationCoordinates(self.theta)
-                if result == (0, 0):
-                    self.theta = None # we found it!
-            else:
-                result = (-driver.getRightX(), driver.getRightY())
             
-            print(result)
+            if (self.phase == PHASE_0): # Manual mode
+                print("In phase 0")
+                if (driver.getRightBumper()): # Automatically aim and shoot
+                    # theta = self.aimer.calculateTheta(driver.getLeftX(), driver.getLeftY())
+                    self.theta = self.camera.get_smooth_yaw()
+                    if (self.theta != None):
+                        self.phase = PHASE_1
+                        result = self.aimer.calcRotationCoordinates(self.theta)
+                    else:
+                        result = (-driver.getRightX(), driver.getRightY())
+                else: # Stay in manual mode
+                    result = (-driver.getRightX(), driver.getRightY())
+            elif (self.phase == PHASE_1): # Rotate to target
+                print("In phase 1")
+                if (self.theta == None): # Should never happen
+                    self.phase = PHASE_0
+                    result = (-driver.getRightX(), driver.getRightY())
+                    # CONSIDER STARTING FLYWHEEL
+                else: # Rotate towards target
+                    result = self.aimer.calcRotationCoordinates(self.theta)
+                    #print(self.theta, " ", result)
+                    if(result[0] == 0.0): # Target aquired FIX WITH A BETTER TEST
+                        if (not(self.tiltShooter)): # No tilt-shooter. Skip step.
+                            self.phase = PHASE_3
+                            result = (0, 0)
+                        else: # Set target for shooting
+                            self.phase = PHASE_2
+                            self.tiltShooter.setTargetDegrees(10) # ASK VISION REAL NUMBER
+                            self.tiltShooter.setManualTiltShooter(False)
+                            result = (0, 0)
+            elif (self.phase == PHASE_2): # Tilt tilt-shooter
+                print("In phase 2")
+                if (not(self.tiltShooter)): # Should never happen
+                    self.phase = PHASE_3
+                else: # There IS a tilt-shooter
+                    if(self.tiltShooter.getNearTarget()): # Tilter stopped moving
+                        self.phase = PHASE_3
+                result = (0, 0)
+            elif (self.phase == PHASE_3): # Fire missiles
+                print("In phase 3")
+                print("Fire Missiles")
+                self.phase = PHASE_0
+                result = (0, 0)
+            
+            #print(result)
             rotateSpeed = result[0]
             driveSpeed = result[1]
 
@@ -258,7 +303,7 @@ class MyRobot(wpilib.TimedRobot):
     def teleopVision(self):
         result = self.camera.get_latest_result()
         # yaw = self.vision_table.getNumber("targetPitch", )
-        print(self.camera.get_yaw_degrees(), self.camera.get_smooth_yaw())
+        #print(self.camera.get_yaw_degrees(), self.camera.get_smooth_yaw())
 
     def teleopShooter(self, shooterVelocity=None):
         """
