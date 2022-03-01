@@ -102,6 +102,7 @@ class Tester():
         self.testArcadeDriveWithAutoRotate()
         self.testIntake()
         self.testManualShooter()
+        self.testManualClimber()
 
     def testTankDrive(self):
         self.robot.drive_type = robotconfig.TANK
@@ -196,3 +197,23 @@ class Tester():
         print('\n******************')
         print('Reduced Speed Non-Shooter: Passed!')
         print('******************\n')
+
+    def testManualClimber(self):
+        self.testDriverXBC.reset()
+        self.testOperatorXBC.reset()
+
+        self.testOperatorXBC.responses['X_BUTTON'] = True
+        self.robot.teleopPeriodic()
+        self.testOperatorXBC.responses['X_BUTTON'] = True
+        self.robot.teleopPeriodic()
+        print('\n******************')
+        print('Manual Climber Piston Toggle: Passed!')
+        print('******************\n')
+
+        self.testOperatorXBC.responses['X_BUTTON'] = False
+        self.testOperatorXBC.responses['LEFT_Y'] = 0.8
+        self.robot.teleopPeriodic()
+        print('\n******************')
+        print('Manual Climber Winch: Passed!')
+        print('******************\n')
+
