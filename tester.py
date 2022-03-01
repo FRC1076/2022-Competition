@@ -100,9 +100,10 @@ class Tester():
         self.testTankDrive()
         self.testArcadeDrive()
         self.testArcadeDriveWithAutoRotate()
+        self.testIntake()
+        self.testManualShooter()
 
     def testTankDrive(self):
-        # test tank drive
         self.robot.drive_type = robotconfig.TANK
         self.testDriverXBC.reset()
         self.testOperatorXBC.reset()
@@ -115,7 +116,6 @@ class Tester():
         print('******************\n')
         
     def testArcadeDrive(self):
-        # test arcade drive
         self.testDriverXBC.reset()
         self.testOperatorXBC.reset()
         self.testDriverXBC.responses['RIGHT_X'] = 0.9
@@ -126,10 +126,11 @@ class Tester():
         print('******************\n')
         
     def testArcadeDriveWithAutoRotate(self):
-        # test arcade drive
         self.testDriverXBC.reset()
         self.testOperatorXBC.reset()
+        self.testDriverXBC.responses['LEFT_BUMPER'] = True
         self.testDriverXBC.responses['RIGHT_BUMPER'] = True
+        
         self.testDriverXBC.responses['LEFT_Y'] = 0.9
         self.testDriverXBC.responses['RIGHT_Y'] = 0.9
         self.robot.teleopPeriodic()
@@ -137,5 +138,61 @@ class Tester():
         print('Arcade Drive With Auto Rotate: Passed!')
         print('******************\n')
         
+    def testIntake(self):
+        self.testDriverXBC.reset()
+        self.testOperatorXBC.reset()
 
+        lta = self.testOperatorController.left_trigger_axis
+        self.testOperatorXBC.responses['LEFT_BUMPER'] = True
+        self.robot.teleopPeriodic()
+        print('\n******************')
+        print('Intake Piston Toggle On: Passed!')
+        print('******************\n')
 
+        self.testOperatorXBC.responses['LEFT_BUMPER'] = True
+        self.robot.teleopPeriodic()
+        print('\n******************')
+        print('Intake Piston Toggle Off: Passed!')
+        print('******************\n')
+
+        self.testOperatorXBC.responses['LEFT_BUMPER'] = False
+
+        self.testOperatorXBC.responses['RAW_AXIS'][lta] = 0.99
+        self.robot.teleopPeriodic()
+        print('\n******************')
+        print('Intake Motor Run: Passed!')
+        print('******************\n')
+
+        self.testOperatorXBC.responses['RAW_AXIS'][lta] = 0.5
+        self.robot.teleopPeriodic()
+        print('\n******************')
+        print('Intake Motor Stop: Passed!')
+        print('******************\n')
+
+    def testManualShooter(self):
+        self.testDriverXBC.reset()
+        self.testOperatorXBC.reset()
+
+        rta = self.testOperatorController.right_trigger_axis
+        self.testOperatorXBC.responses['RAW_AXIS'][rta] = 0.99
+        self.testOperatorXBC.responses['X_BUTTON'] = False
+        self.robot.teleopPeriodic()
+        print('\n******************')
+        print('Full Speed Shooter: Passed!')
+        print('******************\n')
+
+        rta = self.testOperatorController.right_trigger_axis
+        self.testOperatorXBC.responses['RAW_AXIS'][rta] = 0.99
+        self.testOperatorXBC.responses['X_BUTTON'] = True
+        self.robot.teleopPeriodic()
+        print('\n******************')
+        print('Reduced Speed Shooter: Passed!')
+        print('******************\n')
+
+        rta = self.testOperatorController.right_trigger_axis
+        self.testOperatorXBC.responses['RAW_AXIS'][rta] = 0.0
+        self.testOperatorXBC.responses['X_BUTTON'] = True
+        self.robot.teleopPeriodic()
+        print('\n******************')
+        print('Reduced Speed Non-Shooter: Passed!')
+        print('******************\n')
