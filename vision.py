@@ -30,6 +30,10 @@ class Vision:
         self.pitch = None
         self.yaw = None
 
+        # lookup table for relationship btw shooter velocity & power
+
+        self.v_p_table = {}
+
     def get_pitch_degrees(self):
         return self.pitch
 
@@ -50,17 +54,28 @@ class Vision:
         except IndexError:
             pass
 
-    def get_dist_ft(self, pitch):  # the pitch is with respect to the ground
+    def get_dist_ft(self):  # the pitch is with respect to the ground
+        pitch = (math.pi / 180) * (self.get_smooth_pitch() + self.camera_pitch)
         dist = (self.target_height - self.camera_height) / math.tan(pitch)
         return dist - self.shooter_offset + self.target_radius
 
-    def calculate_velocity(self, target):  # returns ft/s
-        pitch = (math.pi / 180) * (self.get_smooth_pitch() + self.camera_pitch)
-        x = self.get_dist_ft(pitch)
+    def calculate_velocity(self, angle):  # returns ft/s given shooter angle
+        x = self.get_dist_ft()
         y = self.target_height - self.shooter_height
 
         return math.sqrt(
-            (-16 * x ** 2) / ((y * (math.cos(pitch)) ** 2) - (x * math.sin(pitch) * math.cos(pitch)))
+            (-16 * x ** 2) / ((y * (math.cos(angle)) ** 2) - (x * math.sin(angle) * math.cos(angle)))
+        )
+    
+    def calculate_angle(self, velocity): #returns degrees given shooter velocity
+        v = velocity
+        x = self.get_dist_ft()
+        y = self.target_height - self.shooter_height
+
+        a = 16*(x**2 / v**2) # constant to make it look nicer
+
+        return math.atan(
+            ( x + math.sqrt( x**2 - 4*(y + a)*a) ) / ( 2*a )    
         )
 
     def get_latest_result(self):
