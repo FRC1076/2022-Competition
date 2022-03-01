@@ -150,8 +150,8 @@ class MyRobot(wpilib.TimedRobot):
     def initAimer(self, config):
         ahrs = AHRS.create_spi()
         # navx = navx.AHRS.create_i2c()
-        #aimer = Aimer(ahrs, config['AIMING_ROTATION_SPEED'], config['AIMING_ACCURACY_DEGREES'])
-        aimer = Aimer(ahrs, 0.6, 3)
+        aimer = Aimer(ahrs, config['AIMING_ROTATION_SPEED'], config['AIMING_ACCURACY_DEGREES'])
+        #aimer = Aimer(ahrs, 0.6, 3)
         aimer.reset()
         return aimer
 
@@ -221,7 +221,7 @@ class MyRobot(wpilib.TimedRobot):
 
             
             if (self.phase == PHASE_0): # Manual mode
-                #print("In phase 0")
+                print("In phase 0")
                 if (driver.getRightBumper()): # Automatically aim and shoot
                     # theta = self.aimer.calculateTheta(driver.getLeftX(), driver.getLeftY())
                     self.theta = self.camera.get_smooth_yaw()
@@ -233,7 +233,7 @@ class MyRobot(wpilib.TimedRobot):
                 else: # Stay in manual mode
                     result = (-driver.getRightX(), driver.getRightY())
             elif (self.phase == PHASE_1): # Rotate to target
-                #print("In phase 1")
+                print("In phase 1")
                 if (self.theta == None): # Should never happen
                     self.phase = PHASE_0
                     result = (-driver.getRightX(), driver.getRightY())

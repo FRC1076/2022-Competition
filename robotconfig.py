@@ -97,7 +97,7 @@ practice = {
   },
   'AIMER': {
       'AIMING_ROTATION_SPEED': 0.6,
-      'AIMING_ACCURACY_DEGREES': 1,
+      'AIMING_ACCURACY_DEGREES': 3,
   },
   'VISION': 'enabled',
 }
@@ -161,7 +161,7 @@ visionTest = {
     'VISION': True,
     'AIMER': {
       'AIMING_ROTATION_SPEED': 0.6,
-      'AIMING_ACCURACY_DEGREES': 1,
+      'AIMING_ACCURACY_DEGREES': 3,
     },
     
     'DRIVETRAIN': {
