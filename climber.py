@@ -23,6 +23,7 @@ class Climber:
          self.solenoids.set(kOff) 
 
     def setWinch(self, x):
+        print("setWinch = ", x)
         self.winch.set(x)
 
     def pistonForward(self):

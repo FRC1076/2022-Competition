@@ -83,7 +83,7 @@ first_night = {
             'RIGHT_FOLLOWER_ID': 7,
         },
         'DRIVETYPE': ARCADE
-    }
+    },
 }
 
 practice = {
@@ -164,11 +164,12 @@ climberTest = {
         }
     },
     'CLIMBER': {
-        'WINCH_RIGHT_ID': 15,
-        'WINCH_LEFT_ID': 15,
-        'SOLENOID_RIGHT_FORWARD_ID': 4,
-        'SOLENOID_RIGHT_REVERSE_ID': 5
-    }
+        'WINCH_LEFT_ID': 9,
+        'WINCH_RIGHT_ID': 10,
+        # Pneumatic board IDs
+        'SOLENOID_FORWARD_ID': 1,
+        'SOLENOID_REVERSE_ID': 0,
+    },
 }
 
 visionTest = {

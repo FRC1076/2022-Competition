@@ -135,16 +135,21 @@ class MyRobot(wpilib.TimedRobot):
         left_winch = rev.CANSparkMax(config['WINCH_LEFT_ID'], winch_motor_type)
         winch = wpilib.MotorControllerGroup(right_winch, left_winch)
 
-        right_piston = wpilib.DoubleSolenoid(0, 
-            pneumatics_module_type, 
-            config['SOLENOID_RIGHT_FORWARD_ID'], 
-            config['SOLENOID_RIGHT_REVERSE_ID'])
-        left_piston = wpilib.DoubleSolenoid(0, 
-             pneumatics_module_type, 
-             config['SOLENOID_LEFT_FORWARD_ID'], 
-             config['SOLENOID_LEFT_REVERSE_ID'])
+        #right_piston = wpilib.DoubleSolenoid(0, 
+        #    pneumatics_module_type, 
+        #    config['SOLENOID_RIGHT_FORWARD_ID'], 
+        #    config['SOLENOID_RIGHT_REVERSE_ID'])
+        #left_piston = wpilib.DoubleSolenoid(0, 
+        #     pneumatics_module_type, 
+        #     config['SOLENOID_LEFT_FORWARD_ID'], 
+        #     config['SOLENOID_LEFT_REVERSE_ID'])
 
-        piston = SolenoidGroup([right_piston, left_piston])
+        #piston = SolenoidGroup([right_piston, left_piston])
+
+        piston =  wpilib.DoubleSolenoid(0, 
+            pneumatics_module_type, 
+            config['SOLENOID_FORWARD_ID'], 
+            config['SOLENOID_REVERSE_ID'])
         return Climber(piston, winch)
 
     def initAimer(self, config):
@@ -387,9 +392,9 @@ class MyRobot(wpilib.TimedRobot):
         if not self.climber:
             return
         
-        operator = self.operator.xboxController
-        deadzone = self.operator.deadzone
-
+        driver = self.driver.xboxController
+        deadzone = self.driver.deadzone
+        '''
         # AUTO CLIMBER
         # NOTE: None of this seems quite right... --mwn
         if operator.getAButtonPressed() and operator.getBButtonPressed():
@@ -405,12 +410,12 @@ class MyRobot(wpilib.TimedRobot):
                 self.climber.nextStep()
             else:
                 self.climber.stepAction()
-        
+        '''
         # self.climber.solenoids.get()
-        if operator.getXButtonPressed():
+        if driver.getAButtonPressed():
             self.climber.solenoids.toggle()
 
-        self.climber.setWinch(self.deadzoneCorrection(operator.getLeftY(), 
+        self.climber.setWinch(self.deadzoneCorrection(-driver.getLeftY(), 
                               deadzone))
         
     def autonomousInit(self):
