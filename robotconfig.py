@@ -6,6 +6,7 @@ TANK = 2
 SWERVE = 3
 
 competition = {
+
     'CONTROLLERS': {
         'DRIVER': {
             'ID': 0,
@@ -37,13 +38,13 @@ competition = {
     'SHOOTER': {
         'SHOOTER_ID': 1
     },
-    'INTAKE':
-        {
-            # Update IDs when known
-            'INTAKE_MOTOR_ID': 8,
-            'INTAKE_SOLENOID_FORWARD_ID': 1,
-            'INTAKE_SOLENOID_REVERSE_ID': 2,
-        },
+
+    'INTAKE': {
+        # Update IDs when known
+        'INTAKE_MOTOR_ID': 8,
+        'INTAKE_SOLENOID_FORWARD_ID': 1,
+        'INTAKE_SOLENOID_REVERSE_ID': 2,
+    },
     'CLIMBER': {
         'WINCH_LEFT_ID': 9,
         'WINCH_RIGHT_ID': 10,
