@@ -36,7 +36,7 @@ competition = {
         'DRIVETYPE': ARCADE
     },
     'SHOOTER': {
-        'SHOOTER_ID': 1
+        'SHOOTER_ID': 7
     },
 
     'INTAKE': {
@@ -54,7 +54,18 @@ competition = {
         'SOLENOID_RIGHT_FORWARD_ID': 5,  # 2
         'SOLENOID_RIGHT_REVERSE_ID': 6,  # 3
     },
-    'AIMER': 'enabled',
+    'TILTSHOOTER' : {
+        'TILTSHOOTER_ID': 11,
+        'ROTATIONS_PER_360': 75,
+        'MIN_DEGREES': 0,
+        'MAX_DEGREES': 30,
+        'BUFFER_DEGREES': 2,
+        'SPEED': 0.1,
+    },
+    'AIMER': {
+        'AIMING_ROTATION_SPEED': 0.6,
+        'AIMING_ACCURACY_DEGREES': 3,
+    },
     'VISION': 'enabled',
 }
 
@@ -117,19 +128,19 @@ practice = {
     'SHOOTER': {
         'SHOOTER_ID': 1
     },
-  'TILTSHOOTER' : {
-    'TILTSHOOTER_ID': 7,
-    'ROTATIONS_PER_360': 75,
-    'MIN_DEGREES': 0,
-    'MAX_DEGREES': 30,
-    'BUFFER_DEGREES': 2,
-    'SPEED': 0.1,
-  },
-  'AIMER': {
-      'AIMING_ROTATION_SPEED': 0.6,
-      'AIMING_ACCURACY_DEGREES': 3,
-  },
-  'VISION': 'enabled',
+    'TILTSHOOTER': {
+        'TILTSHOOTER_ID': 7,
+        'ROTATIONS_PER_360': 75,
+        'MIN_DEGREES': 0,
+        'MAX_DEGREES': 30,
+        'BUFFER_DEGREES': 2,
+        'SPEED': 0.1,
+    },
+    'AIMER': {
+        'AIMING_ROTATION_SPEED': 0.6,
+        'AIMING_ACCURACY_DEGREES': 3,
+    },
+    'VISION': 'enabled',
 }
 
 intakeTest = {
@@ -190,10 +201,10 @@ visionTest = {
     },
     'VISION': True,
     'AIMER': {
-      'AIMING_ROTATION_SPEED': 0.6,
-      'AIMING_ACCURACY_DEGREES': 3,
+        'AIMING_ROTATION_SPEED': 0.6,
+        'AIMING_ACCURACY_DEGREES': 3,
     },
-    
+
     'DRIVETRAIN': {
         'LEFT': {
             'LEFT_LEADER_ID': 13,

@@ -7,14 +7,14 @@ import wpilib.drive
 import wpimath.controller
 from wpilib import interfaces
 import rev
-#from navx import AHRS
+from navx import AHRS
 from intake import Intake
 
 
 from robotconfig import robotconfig
 import climber # not needed?
 from climber import Climber, SolenoidGroup
-#from vision import Vision
+from vision import Vision
 from aimer import Aimer
 from shooter import Shooter
 from tiltshooter import TiltShooter
