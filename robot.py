@@ -1,29 +1,34 @@
 import math
 import time
+import sys
 
 import wpilib
 import wpilib.drive
 import wpimath.controller
 from wpilib import interfaces
 import rev
-#from navx import AHRS
+from navx import AHRS
 from intake import Intake
 
 
 from robotconfig import robotconfig
-import climber
+import climber # not needed?
 from climber import Climber, SolenoidGroup
-#from vision import Vision
+from vision import Vision
 from aimer import Aimer
 from shooter import Shooter
 from tiltshooter import TiltShooter
 from controller import Controller
+from tester import Tester
 from networktables import NetworkTables
 
 # Drive Types
 ARCADE = 1
 TANK = 2
 SWERVE = 3
+
+# Test Mode
+TEST_MODE = False
 
 # Shooting phases
 PHASE_0 = 0
@@ -44,8 +49,15 @@ class MyRobot(wpilib.TimedRobot):
         self.climber = None
         self.aimer = None
         self.vision = None
+        self.tester = None
         self.theta = None
-        self.config = robotconfig
+
+        if TEST_MODE:
+            self.tester = Tester(self)         
+            self.config = self.tester.getTestConfig()
+        else:
+            self.config = robotconfig
+
 
         for key, config in self.config.items():
             if key == 'CONTROLLERS':
@@ -66,6 +78,10 @@ class MyRobot(wpilib.TimedRobot):
                 self.aimer = self.initAimer(config)
             if key == 'VISION':
                 self.vision = self.initVision(config)
+
+        if TEST_MODE:
+            self.tester.initTestTeleop()
+            self.tester.testCodePaths()
 
     def initControllers(self, config):
         ctrls = {}
@@ -455,6 +471,12 @@ class MyRobot(wpilib.TimedRobot):
             x = (val - deadzone)/(1-deadzone)
             return x
 
+    def logResult(self, *result):
+        if (TEST_MODE):
+            print(result)
+
 
 if __name__ == "__main__":
+    if sys.argv[1] == 'sim':
+        TEST_MODE = True
     wpilib.run(MyRobot)
