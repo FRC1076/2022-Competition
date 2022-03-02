@@ -6,14 +6,14 @@ import wpilib.drive
 import wpimath.controller
 from wpilib import interfaces
 import rev
-from navx import AHRS
+#from navx import AHRS
 from intake import Intake
 
 
 from robotconfig import robotconfig
 import climber
 from climber import Climber, SolenoidGroup
-from vision import Vision
+#from vision import Vision
 from aimer import Aimer
 from shooter import Shooter
 from tiltshooter import TiltShooter
@@ -139,10 +139,10 @@ class MyRobot(wpilib.TimedRobot):
             pneumatics_module_type, 
             config['SOLENOID_RIGHT_FORWARD_ID'], 
             config['SOLENOID_RIGHT_REVERSE_ID'])
-        # left_piston = wpilib.DoubleSolenoid(0, 
-        #     pneumatics_module_type, 
-        #     config['SOLENOID_LEFT_FORWARD_ID'], 
-        #     config['SOLENOID_LEFT_REVERSE_ID'])
+        left_piston = wpilib.DoubleSolenoid(0, 
+             pneumatics_module_type, 
+             config['SOLENOID_LEFT_FORWARD_ID'], 
+             config['SOLENOID_LEFT_REVERSE_ID'])
 
         piston = SolenoidGroup([right_piston, left_piston])
         return Climber(piston, winch)
@@ -217,15 +217,15 @@ class MyRobot(wpilib.TimedRobot):
             speedratio = 0.8  # ratio of joystick position to motor speed
 
             if driver.getLeftBumper():  # for testing auto-rotate
-                self.aimer.reset()
-
+                if(self.aimer):
+                    self.aimer.reset()
             
             if (self.phase == PHASE_0): # Manual mode
                 print("In phase 0")
-                if (driver.getRightBumper()): # Automatically aim and shoot
+                if (driver.getRightBumper() and (self.vision)): # Automatically aim and shoot
                     # theta = self.aimer.calculateTheta(driver.getLeftX(), driver.getLeftY())
                     self.theta = self.camera.get_smooth_yaw()
-                    if (self.theta != None):
+                    if ((self.theta != None) and (self.aimer)):
                         self.phase = PHASE_1
                         result = self.aimer.calcRotationCoordinates(self.theta)
                     else:
@@ -301,6 +301,9 @@ class MyRobot(wpilib.TimedRobot):
             self.intake.motorOff()
 
     def teleopVision(self):
+        if(not self.vision):
+            return
+
         result = self.camera.get_latest_result()
         # yaw = self.vision_table.getNumber("targetPitch", )
         #print(self.camera.get_yaw_degrees(), self.camera.get_smooth_yaw())

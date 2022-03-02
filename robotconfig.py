@@ -57,6 +57,35 @@ competition = {
     'VISION': 'enabled',
 }
 
+first_night = {
+    'CONTROLLERS': {
+        'DRIVER': {
+            'ID': 0,
+            'DEADZONE': DEADZONE,
+            'LEFT_TRIGGER_AXIS': 2,
+            'RIGHT_TRIGGER_AXIS': 3,
+
+        },
+        'OPERATOR': {
+            'ID': 1,
+            'DEADZONE': DEADZONE,
+            'LEFT_TRIGGER_AXIS': 2,
+            'RIGHT_TRIGGER_AXIS': 3,
+        }
+    },
+    'DRIVETRAIN': {
+        'LEFT': {
+            'LEFT_LEADER_ID': 13,
+            'LEFT_FOLLOWER_ID': 8,
+        },
+        'RIGHT': {
+            'RIGHT_LEADER_ID': 15,
+            'RIGHT_FOLLOWER_ID': 7,
+        },
+        'DRIVETYPE': ARCADE
+    }
+}
+
 practice = {
     'CONTROLLERS': {
         'DRIVER': {
@@ -178,4 +207,4 @@ visionTest = {
     # Robot IP is 10.10.76.2
 }
 
-robotconfig = practice
+robotconfig = first_night
