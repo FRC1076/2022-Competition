@@ -10,4 +10,3 @@ class Shooter:
 
     def get(self):
         return self.motor.get()
-    
