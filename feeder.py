@@ -1,12 +1,10 @@
 import wpilib
 
-class Shooter:
+class Feeder:
     def __init__(self, motor_controller):
         self.motor = motor_controller
         self.motor.setClosedLoopRampRate(1.0)
 
-    def set(self, speed):
+    def setFeeder(self, speed):
         self.motor.set(speed)
-
-    def get(self):
-        return self.motor.get()
+    
