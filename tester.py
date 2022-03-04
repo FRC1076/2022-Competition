@@ -198,6 +198,13 @@ class Tester():
         print('Reduced Speed Non-Shooter: Passed!')
         print('******************\n')
 
+        self.testOperatorXBC.reset()
+        self.testOperatorXBC.responses['RIGHT_BUMPER'] = True
+        self.robot.teleopPeriodic()
+        print('\n******************')
+        print('Feeder Motor Trigger: Passed!')
+        print('******************\n')
+
     def testManualClimber(self):
         self.testDriverXBC.reset()
         self.testOperatorXBC.reset()

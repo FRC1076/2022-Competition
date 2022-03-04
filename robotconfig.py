@@ -54,6 +54,9 @@ competition = {
         'SOLENOID_RIGHT_FORWARD_ID': 5,  # 2
         'SOLENOID_RIGHT_REVERSE_ID': 6,  # 3
     },
+    'FEEDER': {
+      'FEEDER_ID' : 15,
+    },
     'TILTSHOOTER' : {
         'TILTSHOOTER_ID': 11,
         'ROTATIONS_PER_360': 75,
@@ -105,7 +108,6 @@ practice = {
             'DEADZONE': DEADZONE,
             'LEFT_TRIGGER_AXIS': 2,
             'RIGHT_TRIGGER_AXIS': 3,
-
         },
         'OPERATOR': {
             'ID': 1,
