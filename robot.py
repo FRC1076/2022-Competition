@@ -14,7 +14,7 @@ from intake import Intake
 from robotconfig import robotconfig
 import climber # not needed?
 from climber import Climber, SolenoidGroup
-from vision import Vision
+#from vision import Vision
 from aimer import Aimer
 from shooter import Shooter
 from tiltshooter import TiltShooter
@@ -252,7 +252,7 @@ class MyRobot(wpilib.TimedRobot):
                     else:
                         result = (-driver.getRightX(), driver.getRightY())
                 else: # Stay in manual mode
-                    result = (-driver.getRightX(), driver.getRightY())
+                    result = (-driver.getRightX(), driver.getLeftY())
             elif (self.phase == PHASE_1): # Rotate to target
                 print("In phase 1")
                 if (self.theta == None): # Should never happen
