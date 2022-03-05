@@ -55,8 +55,8 @@ competition = {
     'FEEDER': {
       'FEEDER_ID' : 15,
     },
-    'TILTSHOOTER' : {
-        'TILTSHOOTER_ID': 11,
+    'TILTSHOOTER': {
+        'TILTSHOOTER_ID': 7,
         'ROTATIONS_PER_360': 75,
         'MIN_DEGREES': 0,
         'MAX_DEGREES': 25,
@@ -120,21 +120,13 @@ practice = {
             'LEFT_FOLLOWER_ID': 3,
         },
         'RIGHT': {
-            'RIGHT_LEADER_ID': 14,
+            'RIGHT_LEADER_ID': 15,
             'RIGHT_FOLLOWER_ID': 2,
         },
         'DRIVETYPE': ARCADE
     },
     'SHOOTER': {
-        'SHOOTER_ID': 1
-    },
-    'TILTSHOOTER': {
-        'TILTSHOOTER_ID': 7,
-        'ROTATIONS_PER_360': 75,
-        'MIN_DEGREES': 0,
-        'MAX_DEGREES': 25,
-        'BUFFER_DEGREES': 2,
-        'SPEED': 0.1,
+        'SHOOTER_ID': 9
     },
     'AIMER': {
         'AIMING_ROTATION_SPEED': 0.6,
@@ -220,4 +212,4 @@ visionTest = {
     # Robot IP is 10.10.76.2
 }
 
-robotconfig = first_night
+robotconfig = practice

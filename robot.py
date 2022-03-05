@@ -40,6 +40,7 @@ class MyRobot(wpilib.TimedRobot):
         self.operator = None
         self.shooter = None
         self.tiltShooter = None
+        self.feeder = None
         self.intake = None
         self.climber = None
         self.aimer = None
