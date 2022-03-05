@@ -14,7 +14,7 @@ from intake import Intake
 from robotconfig import robotconfig
 import climber # not needed?
 from climber import Climber, SolenoidGroup
-#from vision import Vision
+from vision import Vision
 from aimer import Aimer
 from shooter import Shooter
 from tiltshooter import TiltShooter
@@ -36,6 +36,12 @@ PHASE_0 = 0
 PHASE_1 = 1
 PHASE_2 = 2
 PHASE_3 = 3
+
+# Auton phases
+AUTON_DRIVE = 0
+AUTON_ROTATE = 1
+AUTON_RANGE = 2
+AUTON_SHOOT = 3
 
 class MyRobot(wpilib.TimedRobot):
 
@@ -193,7 +199,8 @@ class MyRobot(wpilib.TimedRobot):
         pass
 
     def teleopInit(self):
-        
+        self.theta = None
+
         if self.drivetrain:
             self.phase = PHASE_0
 
@@ -446,9 +453,14 @@ class MyRobot(wpilib.TimedRobot):
                               deadzone))
         
     def autonomousInit(self):
+        self.autonPhase = AUTON_DRIVE
+        self.theta = None
+
         self.autonTimer = wpilib.Timer()
         self.shooterTimer = wpilib.Timer()
+
         self.autonTimer.start()
+
         if(self.aimer):
             self.aimer.reset()
 
@@ -456,7 +468,8 @@ class MyRobot(wpilib.TimedRobot):
             self.intake.extend()
         
     def autonomousPeriodic(self):
-        self.autonForwardAndBack()
+        # self.autonForwardAndBack()
+        self.comp1Auton()
 
     def autonForwardAndBack(self):
         driver = self.driver.xboxController
@@ -469,6 +482,37 @@ class MyRobot(wpilib.TimedRobot):
                 theta = self.aimer.calculateTheta(driver.getLeftX(), driver.getLeftY())
                 result = self.aimer.calcRotationCoordinates(theta)
                 self.drivetrain.arcadeDrive(result[0], result[1])
+
+    def comp1Auton(self):
+        backupTime = 0.5
+        angleOffset = 1000 # any large integer works
+        rangeOffset = 1000 # ^
+
+        # Phase transitions
+        if self.autonTimer.get() > backupTime and self.autonPhase == AUTON_DRIVE:
+            self.autonPhase = AUTON_ROTATE
+            self.theta = self.camera.get_smooth_yaw()
+            
+        if angleOffset == 0 and self.autonPhase == AUTON_ROTATE:
+            self.autonPhase = AUTON_RANGE
+        
+        if rangeOffset == 0 and self.autonPhase == AUTON_RANGE:
+            self.autonPhase = AUTON_SHOOT
+
+        # Auton logic
+        if self.autonPhase == AUTON_DRIVE:
+            self.drivetrain.arcadeDrive(-0.8, 0)
+        
+        if self.autonPhase == AUTON_ROTATE:
+            if (self.vision and self.aimer):
+                (angleOffset, speed) = self.aimer.calcRotationCoordinates(self.theta)
+                self.drivetrain.arcadeDrive(angleOffset, speed)
+        
+        if self.autonPhase == AUTON_RANGE:
+            pass
+
+        if self.autonPhase == AUTON_SHOOT:
+            pass
 
     def deadzoneCorrection(self, val, deadzone): 
         """
