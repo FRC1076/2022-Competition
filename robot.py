@@ -228,7 +228,6 @@ class MyRobot(wpilib.TimedRobot):
             else:
                 if(self.tiltShooter.getNearTarget()):
                     self.phase = "AS_FIRE_PHASE"
-                    self.teleopShooter()
                 else:
                     self.teleopTiltShooter()
                 self.teleopShooter()
@@ -254,9 +253,6 @@ class MyRobot(wpilib.TimedRobot):
         if(not self.drivetrain):
             return
         
-        if(self.aimer):
-            self.aimer.reset()
-    
         driver = self.driver.xboxController
         deadzone = self.driver.deadzone
 
@@ -292,7 +288,7 @@ class MyRobot(wpilib.TimedRobot):
                     if((self.aimer) and (self.aimer.getTheta() != None)):
                         result = self.aimer.calcRotationCoordinates(self.aimer.getTheta())
                         self.phase = "AS_ROTATE_PHASE"
-            if(self.phase == "AS_ROTATE_PHASE"):
+            elif(self.phase == "AS_ROTATE_PHASE"):
                 if(self.aimer and (self.aimer.getTheta() != None)):
                     result = self.aimer.calcRotationCoordinates(self.aimer.getTheta())
                 else:
@@ -370,6 +366,9 @@ class MyRobot(wpilib.TimedRobot):
         if not self.shooter:
             return
 
+        shooter_mod = 1
+        running = 0
+
         operator = self.operator.xboxController
         rta = self.operator.right_trigger_axis
 
@@ -406,7 +405,7 @@ class MyRobot(wpilib.TimedRobot):
                 self.feeder.setFeeder(0.0)
             else:
                 self.feeder.setFeeder(0.4)
-        else:
+        else: # Manual
             if operator.getRightBumper():
                 self.feeder.setFeeder(0.4)
             else:
