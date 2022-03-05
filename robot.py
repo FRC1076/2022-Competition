@@ -52,6 +52,7 @@ class MyRobot(wpilib.TimedRobot):
         self.operator = None
         self.shooter = None
         self.tiltShooter = None
+        self.feeder = None
         self.intake = None
         self.climber = None
         self.aimer = None
@@ -308,6 +309,7 @@ class MyRobot(wpilib.TimedRobot):
             #rotateSpeed = speedratio * self.deadzoneCorrection(rotateSpeed, deadzone)
             #driveSpeed = speedratio * self.deadzoneCorrection(driveSpeed, deadzone)
 
+            print(rotateSpeed, driveSpeed)
             self.drivetrain.arcadeDrive(rotateSpeed, driveSpeed)
             
         else: # self.drive == SWERVE
@@ -381,12 +383,13 @@ class MyRobot(wpilib.TimedRobot):
                 shooter_mod = 1
 
         # Feeder
-        if operator.getRightBumper():
-            self.feeder.setFeeder(0.4)
-        else:
-            self.feeder.setFeeder(0.0)
+        if self.feeder:
+            if operator.getRightBumper():
+                self.feeder.setFeeder(0.4)
+            else:
+                self.feeder.setFeeder(0.0)
 
-        self.shooter.set(running * shooter_mod)
+            self.shooter.set(running * shooter_mod)
     
     def teleopTiltShooter(self):
         if not self.tiltShooter:
@@ -501,7 +504,7 @@ class MyRobot(wpilib.TimedRobot):
 
         # Auton logic
         if self.autonPhase == AUTON_DRIVE:
-            self.drivetrain.arcadeDrive(-0.8, 0)
+            self.drivetrain.arcadeDrive(0, 0.8)
         
         if self.autonPhase == AUTON_ROTATE:
             if (self.vision and self.aimer):
