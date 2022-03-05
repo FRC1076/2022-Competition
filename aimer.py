@@ -19,6 +19,7 @@ class Aimer:
         self.rotationSpeed = rotationSpeed
         self.accuracyDegrees = accuracyDegrees
         self.turnController = turnController
+        self.theta = None
 
     #    setRotateToAngleRate = 0
 
@@ -28,6 +29,12 @@ class Aimer:
     # def setAim(self, setPoint):
     #    self.setPoint = setPoint
     #    self.turnController.setSetPoint(self.gyro.getAngle() + self.setPoint())
+
+    def getTheta(self):
+        return(self.theta)
+    
+    def setTheta(self, theta):
+        self.theta = theta
 
     def getYaw(self):
         self.yaw = self.gyro.getYaw()
@@ -43,17 +50,27 @@ class Aimer:
     # def pidWrite(self, output):
     #    self.setRotateToAngleRate = output
 
+    def calcDiff(self, theta):
+        angle = self.getYaw()
+        return(abs(angle - theta))
+    
+    def getInRange(self, diff):
+        if(diff > self.accuracyDegrees):
+            return False
+        else:
+            return True
+    
     def calcRotationCoordinates(self, theta):
         angle = self.getYaw()
         # rotationRate = self.turnController.calculate(angle, theta)
         # return(rotationRate, 0)
 
-        diff = abs(angle - theta)
+        diff = calcDiff(theta)
         correctionFactor = (diff / 10.0)
         if correctionFactor > 1.0:
             correctionFactor = 1.0
 
-        if (diff > self.accuracyDegrees):
+        if (getInRange(diff)):
             if theta > 0:
                 return (-self.rotationSpeed * correctionFactor), 0
             else:
