@@ -276,13 +276,12 @@ class MyRobot(wpilib.TimedRobot):
         elif self.drive_type == ARCADE:
             #speedratio = 0.8  # ratio of joystick position to motor speed
 
-            if driver.getLeftBumper():  # for testing auto-rotate
-                if(self.aimer):
-                    self.aimer.reset()
-
             result = (-driver.getRightX(), driver.getLeftY())
 
             if(self.phase == "DRIVE_PHASE"):
+                if driver.getLeftBumper():  # for testing auto-rotate
+                    if(self.aimer):
+                        self.aimer.reset()
                 if(self.vision and driver.getRightBumper()):
                     self.aimer.setTheta(self.camera.get_smooth_yaw())
                     self.tiltShooter.setTargetDegrees(self.camera.calculate_angle(10))
