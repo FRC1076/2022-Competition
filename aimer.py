@@ -60,7 +60,7 @@ class Aimer:
         else:
             return True
     
-    def calcRotationCoordinates(self, theta):
+    def calculateDriveSpeeds(self, theta):
         angle = self.getYaw()
         # rotationRate = self.turnController.calculate(angle, theta)
         # return(rotationRate, 0)
@@ -71,15 +71,14 @@ class Aimer:
             correctionFactor = 1.0
 
         if (getInRange(diff)):
+            print("diff <= ", self.accuracyDegrees)
+            return (0, 0)
+        else:
             if theta > 0:
                 return (-self.rotationSpeed * correctionFactor), 0
             else:
-                return (self.rotationSpeed
-                 * correctionFactor), 0
-        else:
-            print("diff <= ", self.accuracyDegrees)
-            return (0, 0)
-
+                return (self.rotationSpeed * correctionFactor), 0
+            
     def calculateTheta(self, x, y):
         y = -y
         theta = 0.0

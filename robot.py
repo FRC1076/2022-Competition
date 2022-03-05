@@ -14,7 +14,7 @@ from intake import Intake
 from robotconfig import robotconfig
 import climber # not needed?
 from climber import Climber, SolenoidGroup
-#from vision import Vision
+from vision import Vision
 from aimer import Aimer
 from shooter import Shooter
 from tiltshooter import TiltShooter
@@ -240,6 +240,7 @@ class MyRobot(wpilib.TimedRobot):
                 self.teleopFeeder()
                 if(self.feeder.hasFired()):
                     self.phase = "DRIVE_PHASE"
+                    self.feeder.reset()
 
     def teleopVision(self):
         if(not self.vision):
@@ -286,11 +287,11 @@ class MyRobot(wpilib.TimedRobot):
                     self.aimer.setTheta(self.camera.get_smooth_yaw())
                     self.tiltShooter.setTargetDegrees(self.camera.calculate_angle(10))
                     if((self.aimer) and (self.aimer.getTheta() != None)):
-                        result = self.aimer.calcRotationCoordinates(self.aimer.getTheta())
+                        result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
                         self.phase = "AS_ROTATE_PHASE"
             elif(self.phase == "AS_ROTATE_PHASE"):
                 if(self.aimer and (self.aimer.getTheta() != None)):
-                    result = self.aimer.calcRotationCoordinates(self.aimer.getTheta())
+                    result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
                 else:
                     print("should never happen")
                     self.phase = "DRIVE_PHASE"
@@ -399,7 +400,9 @@ class MyRobot(wpilib.TimedRobot):
     def teleopFeeder(self):
         if not self.feeder:
             return
-            
+
+        operator = self.operator.xboxController
+
         if(self.phase == "AS_FIRE_PHASE"):
             if(self.feeder.hasFired()):
                 self.feeder.setFeeder(0.0)

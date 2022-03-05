@@ -48,15 +48,6 @@ class TiltShooter:
     def getBufferDegrees(self):
         return(self.bufferDegrees)
 
-    '''
-    def getManualTiltShooter(self):
-        return(self.manualTiltShooter)
-    
-    def setManualTiltShooter(self, manualTiltShooter):
-        self.manualTiltShooter = manualTiltShooter
-        return(self.manualTiltShooter)
-    '''
-
     def getRotations(self):
         return(self.encoder.getPosition())
     

@@ -49,10 +49,8 @@ competition = {
         'WINCH_LEFT_ID': 9,
         'WINCH_RIGHT_ID': 10,
         # Pneumatic board IDs
-        'SOLENOID_LEFT_FORWARD_ID': 3,
-        'SOLENOID_LEFT_REVERSE_ID': 4,
-        'SOLENOID_RIGHT_FORWARD_ID': 5,  # 2
-        'SOLENOID_RIGHT_REVERSE_ID': 6,  # 3
+        'SOLENOID_FORWARD_ID': 3,
+        'SOLENOID_REVERSE_ID': 4,
     },
     'FEEDER': {
       'FEEDER_ID' : 15,
