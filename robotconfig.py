@@ -103,6 +103,22 @@ first_night = {
         },
         'DRIVETYPE': ARCADE
     },
+        'SHOOTER': {
+        'SHOOTER_ID': 10,
+        'SHOOTER_RPM': 1000,
+    },
+    'AIMER': {
+        'AIMING_ROTATION_SPEED': 0.6,
+        'AIMING_ACCURACY_DEGREES': 3,
+    },
+    'VISION': {
+        'TARGET_HEIGHT': 8.5,
+        'TARGET_RADIUS': 2,
+        'SHOOTER_HEIGHT': 3.5,
+        'SHOOTER_OFFSET': 1,
+        'CAMERA_HEIGHT': 4,
+        'CAMERA_PITCH': 0,
+    },
 }
 
 practice = {
@@ -131,10 +147,7 @@ practice = {
         },
         'DRIVETYPE': ARCADE
     },
-    'SHOOTER': {
-        'SHOOTER_ID': 9,
-        'SHOOTER_RPM': 1000,
-    },
+    
     'AIMER': {
         'AIMING_ROTATION_SPEED': 0.6,
         'AIMING_ACCURACY_DEGREES': 3,
@@ -146,6 +159,10 @@ practice = {
         'SHOOTER_OFFSET': 1,
         'CAMERA_HEIGHT': 4,
         'CAMERA_PITCH': 0,
+    },
+    'SHOOTER': {
+        'SHOOTER_ID': 9,
+        'SHOOTER_RPM': 1000,
     },
 }
 
