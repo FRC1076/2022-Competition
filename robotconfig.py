@@ -35,6 +35,7 @@ competition = {
     },
     'SHOOTER': {
         'SHOOTER_ID': 5,
+        'SHOOTER_RPM': 1000,
     },
 
     'INTAKE': {
@@ -131,7 +132,8 @@ practice = {
         'DRIVETYPE': ARCADE
     },
     'SHOOTER': {
-        'SHOOTER_ID': 9
+        'SHOOTER_ID': 9,
+        'SHOOTER_RPM': 1000,
     },
     'AIMER': {
         'AIMING_ROTATION_SPEED': 0.6,
