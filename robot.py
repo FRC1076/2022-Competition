@@ -179,7 +179,7 @@ class MyRobot(wpilib.TimedRobot):
         return aimer
 
     def initVision(self, config):
-        self.camera = Vision()
+        self.camera = Vision(config['TARGET_HEIGHT'], config['TARGET_RADIUS'], config['SHOOTER_HEIGHT'], config['SHOOTER_OFFSET'], config['CAMERA_HEIGHT'], config['CAMERA_PITCH'])
         # NetworkTables.initialize(server="10.10.76.2")
         # self.vision_table = NetworkTables.getTable("photonvision/mmal_service_16.1")
 
@@ -227,7 +227,7 @@ class MyRobot(wpilib.TimedRobot):
                 self.phase == "DRIVE_PHASE"
                 self.teleopDrivetrain()
             else:
-                if(self.tiltShooter.getNearTarget()):
+                if(self.tiltShooter.isNearTarget()):
                     self.phase = "AS_FIRE_PHASE"
                 else:
                     self.teleopTiltShooter()
@@ -247,9 +247,9 @@ class MyRobot(wpilib.TimedRobot):
         if(not self.vision):
             return
 
-        result = self.camera.get_latest_result()
+        result = self.camera.getLatestResult()
         # yaw = self.vision_table.getNumber("targetPitch", )
-        #print(self.camera.get_yaw_degrees(), self.camera.get_smooth_yaw())
+        #print(self.camera.getYawDegrees(), self.camera.getSmoothYaw())
 
     def teleopDrivetrain(self):
         if(not self.drivetrain):
@@ -284,7 +284,7 @@ class MyRobot(wpilib.TimedRobot):
                     if(self.aimer):
                         self.aimer.reset()
                 if(self.vision and driver.getRightBumper()):
-                    self.aimer.setTheta(self.camera.get_smooth_yaw())
+                    self.aimer.setTheta(self.camera.getSmoothYaw())
                     self.tiltShooter.setTargetDegrees(self.camera.calculate_angle(10))
                     if((self.aimer) and (self.aimer.getTheta() != None)):
                         result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
