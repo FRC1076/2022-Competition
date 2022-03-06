@@ -3,7 +3,7 @@ import math
 
 
 class Vision:
-    def __init__(self):
+    def __init__(self, targetHeight, targetRadius, shooterHeight, shooterOffset, cameraHeight, cameraPitch):
         self.camera = photonvision.PhotonCamera('mmal_service_16.1')
         self.camera.setDriverMode(False)
         self.camera.setPipelineIndex(0)
@@ -12,20 +12,20 @@ class Vision:
         self.pitchlog = []
 
         # everything is in feet
-        self.target_height = 8.5
-        self.target_radius = 2
+        self.targetHeight = targetHeight # 8.5
+        self.targetRadius = targetRadius # 2
 
         # needs to be measured - position of the shooter is the center of mass of the ball as it leaves shooter
-        self.shooter_height = 3.5
-        self.shooter_offset = 1  # horizontal offset of shooter from camera
+        self.shooterHeight = shooterHeight # 3.5
+        self.shooterOffset = shooterOffset # 1  # horizontal offset of shooter from camera
 
         # needs to be measured
-        self.camera_height = 4
+        self.cameraHeight = cameraHeight # 4
 
         # in degrees, subject to change
-        self.shooter_angle = 60
-        self.camera_angle = 0
-        self.camera_pitch = 0
+        #self.shooter_angle = 60
+        #self.camera_angle = 0
+        self.cameraPitch = cameraPitch # 0
 
         self.pitch = None
         self.yaw = None
@@ -34,55 +34,51 @@ class Vision:
 
         self.v_p_table = {}
 
-    def get_pitch_degrees(self):
+    def getPitchDegrees(self):
         return self.pitch
 
-    def get_yaw_degrees(self):
+    def getYawDegrees(self):
         return self.yaw
 
-    def get_smooth_yaw(self):
+    def getSmoothYaw(self):
         sortedlog = sorted(self.yawlog)
         try:
             return sortedlog[1]
         except IndexError:
             pass
 
-    def get_smooth_pitch(self):
+    def getSMoothPitch(self):
         sortedlog = sorted(self.pitchlog)
         try:
             return sortedlog[1]
         except IndexError:
             pass
 
-    def get_dist_ft(self):  # the pitch is with respect to the ground
-        pitch = (math.pi / 180) * (self.get_smooth_pitch() + self.camera_pitch)
-        dist = (self.target_height - self.camera_height) / math.tan(pitch)
-        return dist - self.shooter_offset + self.target_radius
+    def getDistanceFeet(self):  # the pitch is with respect to the ground
+        pitch = (math.pi / 180) * (self.SmoothPitch() + self.cameraPitch)
+        dist = (self.targetHeight - self.cameraHeight) / math.tan(pitch)
+        return dist - self.shooterOffset + self.targetRadius
 
-    def calculate_velocity(self, angle):  # returns ft/s given shooter angle
-        x = self.get_dist_ft()
-        y = self.target_height - self.shooter_height
+    def calculateVelocity(self, angle):  # returns ft/s given shooter angle
+        x = self.getDistanceFeet()
+        y = self.targetHeight - self.shooterHeight
 
         return math.sqrt(
             (-16 * x ** 2) / ((y * (math.cos(angle)) ** 2) - (x * math.sin(angle) * math.cos(angle)))
         )
     
-    def calculate_angle(self, velocity): #returns degrees given shooter velocity
+    def calculateAngle(self, velocity): #returns degrees given shooter velocity
         v = velocity
-        x = self.get_dist_ft()
-        y = self.target_height - self.shooter_height
+        x = self.getDistanceFeet()
+        y = self.targetHeight - self.shooterHeight
 
         a = 16*(x**2 / v**2) # constant to make it look nicer
 
-        angle = math.atan(( x + math.sqrt( x**2 - 4*(y + a)*a) ) / ( 2*a ) )
-        angleComplement = 90 - angle
-        if (angleComplement < self.tiltShooter.minDegrees):
-            angleComplement = self.tiltShooter.minDegrees
-        elif (angleComplement > self.tiltShooter.maxDegrees):
-            angleComplement = self.tiltShooter.maxDegrees
-        return(angleComplement)
+        return math.atan(
+            ( x + math.sqrt( x**2 - 4*(y + a)*a) ) / ( 2*a )    
+        )
 
-    def get_latest_result(self):
+    def getLatestResult(self):
         result = self.camera.getLatestResult()
         targets = result.getTargets()
         #print(result.hasTargets())

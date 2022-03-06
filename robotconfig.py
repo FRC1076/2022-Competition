@@ -25,38 +25,37 @@ competition = {
     'DRIVETRAIN': {
         'LEFT': {
             'LEFT_LEADER_ID': 1,
-            'LEFT_MIDDLE_ID': 2,
-            'LEFT_FOLLOWER_ID': 3,
+            'LEFT_FOLLOWER_ID': 2,
         },
         'RIGHT': {
-            'RIGHT_LEADER_ID': 4,
-            'RIGHT_MIDDLE_ID': 5,
-            'RIGHT_FOLLOWER_ID': 6,
+            'RIGHT_LEADER_ID': 3,
+            'RIGHT_FOLLOWER_ID': 4,
         },
         'DRIVETYPE': ARCADE
     },
     'SHOOTER': {
-        'SHOOTER_ID': 7
+        'SHOOTER_ID': 5,
+        'SHOOTER_RPM': 1000,
     },
 
     'INTAKE': {
         # Update IDs when known
-        'INTAKE_MOTOR_ID': 8,
+        'INTAKE_MOTOR_ID': 6,
         'INTAKE_SOLENOID_FORWARD_ID': 1,
         'INTAKE_SOLENOID_REVERSE_ID': 2,
     },
     'CLIMBER': {
-        'WINCH_LEFT_ID': 9,
-        'WINCH_RIGHT_ID': 10,
+        'WINCH_LEFT_ID': 7,
+        'WINCH_RIGHT_ID': 8,
         # Pneumatic board IDs
         'SOLENOID_FORWARD_ID': 3,
         'SOLENOID_REVERSE_ID': 4,
     },
     'FEEDER': {
-      'FEEDER_ID' : 15,
+      'FEEDER_ID' : 9,
     },
     'TILTSHOOTER': {
-        'TILTSHOOTER_ID': 11,
+        'TILTSHOOTER_ID': 10,
         'ROTATIONS_PER_360': 75,
         'MIN_DEGREES': 0,
         'MAX_DEGREES': 25,
@@ -67,7 +66,14 @@ competition = {
         'AIMING_ROTATION_SPEED': 0.6,
         'AIMING_ACCURACY_DEGREES': 3,
     },
-    'VISION': 'enabled',
+    'VISION': {
+        'TARGET_HEIGHT': 8.5,
+        'TARGET_RADIUS': 2,
+        'SHOOTER_HEIGHT': 3.5,
+        'SHOOTER_OFFSET': 1,
+        'CAMERA_HEIGHT': 4,
+        'CAMERA_PITCH': 0,
+    },
 }
 
 first_night = {
@@ -97,6 +103,22 @@ first_night = {
         },
         'DRIVETYPE': ARCADE
     },
+        'SHOOTER': {
+        'SHOOTER_ID': 10,
+        'SHOOTER_RPM': 1000,
+    },
+    'AIMER': {
+        'AIMING_ROTATION_SPEED': 0.6,
+        'AIMING_ACCURACY_DEGREES': 3,
+    },
+    'VISION': {
+        'TARGET_HEIGHT': 8.5,
+        'TARGET_RADIUS': 2,
+        'SHOOTER_HEIGHT': 3.5,
+        'SHOOTER_OFFSET': 1,
+        'CAMERA_HEIGHT': 4,
+        'CAMERA_PITCH': 0,
+    },
 }
 
 practice = {
@@ -125,14 +147,23 @@ practice = {
         },
         'DRIVETYPE': ARCADE
     },
-    'SHOOTER': {
-        'SHOOTER_ID': 9
-    },
+    
     'AIMER': {
         'AIMING_ROTATION_SPEED': 0.6,
         'AIMING_ACCURACY_DEGREES': 3,
     },
-    'VISION': 'enabled',
+    'VISION': {
+        'TARGET_HEIGHT': 8.5,
+        'TARGET_RADIUS': 2,
+        'SHOOTER_HEIGHT': 3.5,
+        'SHOOTER_OFFSET': 1,
+        'CAMERA_HEIGHT': 4,
+        'CAMERA_PITCH': 0,
+    },
+    'SHOOTER': {
+        'SHOOTER_ID': 9,
+        'SHOOTER_RPM': 1000,
+    },
 }
 
 intakeTest = {
@@ -192,7 +223,14 @@ visionTest = {
             'RIGHT_TRIGGER_AXIS': 3,
         }
     },
-    'VISION': True,
+    'VISION': {
+        'TARGET_HEIGHT': 8.5,
+        'TARGET_RADIUS': 2,
+        'SHOOTER_HEIGHT': 3.5,
+        'SHOOTER_OFFSET': 1,
+        'CAMERA_HEIGHT': 4,
+        'CAMERA_PITCH': 0,
+    },
     'AIMER': {
         'AIMING_ROTATION_SPEED': 0.6,
         'AIMING_ACCURACY_DEGREES': 3,

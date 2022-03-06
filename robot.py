@@ -53,9 +53,8 @@ class MyRobot(wpilib.TimedRobot):
         self.vision = None
         self.tester = None
 
-        if TEST_MODE:
-            self.tester = Tester(self)         
-            self.config = self.tester.getTestConfig()
+        if TEST_MODE:     
+            self.config = Tester.getTestConfig()
         else:
             self.config = robotconfig
 
@@ -83,6 +82,7 @@ class MyRobot(wpilib.TimedRobot):
                 self.vision = self.initVision(config)
 
         if TEST_MODE:
+            self.tester = Tester(self) 
             self.tester.initTestTeleop()
             self.tester.testCodePaths()
 
@@ -122,8 +122,11 @@ class MyRobot(wpilib.TimedRobot):
     def initShooter(self, config):
         # assuming this is a Neo; otherwise it may not be brushless
         motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
-        shooter = rev.CANSparkMax(config['SHOOTER_ID'], motor_type)
-        return Shooter(shooter)
+        shooter_motor = rev.CANSparkMax(config['SHOOTER_ID'], motor_type)
+        shooter = Shooter(shooter_motor, config['SHOOTER_RPM'])
+        shooter.setPIDController()
+        shooter.pidController.setFF(0.000167) # assuming max shooter RPM of 6000
+        return shooter
         
     def initFeeder(self, config):
         # assuming this is a Neo; otherwise it may not be brushless
@@ -185,7 +188,7 @@ class MyRobot(wpilib.TimedRobot):
         return aimer
 
     def initVision(self, config):
-        self.camera = Vision()
+        self.camera = Vision(config['TARGET_HEIGHT'], config['TARGET_RADIUS'], config['SHOOTER_HEIGHT'], config['SHOOTER_OFFSET'], config['CAMERA_HEIGHT'], config['CAMERA_PITCH'])
         # NetworkTables.initialize(server="10.10.76.2")
         # self.vision_table = NetworkTables.getTable("photonvision/mmal_service_16.1")
 
@@ -218,7 +221,7 @@ class MyRobot(wpilib.TimedRobot):
             self.teleopDrivetrain()
             self.teleopIntake()
             self.teleopTiltShooter()
-            self.teleopShooter()
+            self.teleopShooter(shooterRPM = self.shooter.shooterRPM)
             self.teleopFeeder()
             self.teleopClimber()
         elif(self.phase == "AS_ROTATE_PHASE"):
@@ -236,17 +239,17 @@ class MyRobot(wpilib.TimedRobot):
                 self.phase == "DRIVE_PHASE"
                 self.teleopDrivetrain()
             else:
-                if(self.tiltShooter.getNearTarget()):
+                if(self.tiltShooter.isNearTarget()):
                     self.phase = "AS_FIRE_PHASE"
                 else:
                     self.teleopTiltShooter()
-                self.teleopShooter()
+                self.teleopShooter(shooterRPM = self.shooter.shooterRPM)
         elif(self.phase == "AS_FIRE_PHASE"):
             if (driver.getRawAxis(rta) > 0.95):
                 self.phase == "DRIVE_PHASE"
                 self.teleopDrivetrain()
             else:
-                self.teleopShooter()
+                self.teleopShooter(shooterRPM = self.shooter.shooterRPM)
                 self.teleopFeeder()
                 if(self.feeder.hasFired()):
                     self.phase = "DRIVE_PHASE"
@@ -256,9 +259,9 @@ class MyRobot(wpilib.TimedRobot):
         if(not self.vision):
             return
 
-        result = self.camera.get_latest_result()
+        result = self.camera.getLatestResult()
         # yaw = self.vision_table.getNumber("targetPitch", )
-        #print(self.camera.get_yaw_degrees(), self.camera.get_smooth_yaw())
+        #print(self.camera.getYawDegrees(), self.camera.getSmoothYaw())
 
     def teleopDrivetrain(self):
         if(not self.drivetrain):
@@ -293,7 +296,7 @@ class MyRobot(wpilib.TimedRobot):
                     if(self.aimer):
                         self.aimer.reset()
                 if(self.vision and driver.getRightBumper()):
-                    self.aimer.setTheta(self.camera.get_smooth_yaw())
+                    self.aimer.setTheta(self.camera.getSmoothYaw())
                     self.tiltShooter.setTargetDegrees(self.camera.calculate_angle(10))
                     if((self.aimer) and (self.aimer.getTheta() != None)):
                         result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
@@ -366,14 +369,8 @@ class MyRobot(wpilib.TimedRobot):
             else:
                 self.tiltShooter.setSpeed(0.0)
 
-    def teleopShooter(self, shooterVelocity = -1.0):
-        """
-        Makes the shooter motor spin. Right trigger activates the trigger
-        The X Button reduces the speed.
-
-        The right bumper runs the feeder motor.
-        """
-
+    def teleopShooter(self, shooterRPM = None, shooterVelocity = None):
+        
         if not self.shooter:
             return
 
@@ -382,8 +379,18 @@ class MyRobot(wpilib.TimedRobot):
 
         operator = self.operator.xboxController
         rta = self.operator.right_trigger_axis
+        shooter_pid = self.shooter.pidController
 
-        if shooterVelocity != -1.0:
+        if shooterRPM:
+            shooterRPM = -shooterRPM
+
+            if operator.getRawAxis(rta) > 0.95:
+                shooter_pid.setReference(shooterRPM, rev.CANSparkMax.ControlType.kVelocity)
+            else: 
+                shooter_pid.setReference(0, rev.CANSparkMax.ControlType.kVelocity)
+
+        elif shooterVelocity:
+            shooterVelocity = -shooterVelocity
 
             if operator.getRawAxis(rta) > 0.95:
                 shooter_mod = shooterVelocity
@@ -393,6 +400,8 @@ class MyRobot(wpilib.TimedRobot):
             else:
                 running = 0
                 shooter_mod = 1
+            
+            self.shooter.set(running * shooter_mod)
                 
         else:
             if operator.getRawAxis(rta) > 0.95:
@@ -404,8 +413,10 @@ class MyRobot(wpilib.TimedRobot):
                 shooter_mod = 0.4
             else:
                 shooter_mod = 1
+            
+            self.shooter.set(running * shooter_mod)
         
-        self.shooter.set(running * shooter_mod)
+        print("Shooter velocity equals", self.shooter.encoder.getVelocity())
 
     def teleopFeeder(self):
         if not self.feeder:
