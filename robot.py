@@ -13,7 +13,7 @@ from intake import Intake
 
 from robotconfig import robotconfig
 import climber # not needed?
-from climber import Climber, SolenoidGroup
+from climber import Climber, WinchGroup
 from vision import Vision
 from aimer import Aimer
 from shooter import Shooter
@@ -154,7 +154,8 @@ class MyRobot(wpilib.TimedRobot):
 
         right_winch = rev.CANSparkMax(config['WINCH_RIGHT_ID'], winch_motor_type)
         left_winch = rev.CANSparkMax(config['WINCH_LEFT_ID'], winch_motor_type)
-        winch = wpilib.MotorControllerGroup(right_winch, left_winch)
+        # winch = wpilib.MotorControllerGroup(right_winch, left_winch)
+        
 
         #right_piston = wpilib.DoubleSolenoid(0, 
         #    pneumatics_module_type, 
@@ -171,8 +172,14 @@ class MyRobot(wpilib.TimedRobot):
             pneumatics_module_type, 
             config['SOLENOID_FORWARD_ID'], 
             config['SOLENOID_REVERSE_ID'])
-        return Climber(piston, winch)
 
+        right_limit = wpilib.DigitalInput(config['RIGHT_LIMIT_ID'])
+        left_limit = wpilib.DigitalInput(config['LEFT_LIMIT_ID'])
+
+        winch = WinchGroup(right_winch, left_winch, right_limit, left_limit, config['CABLE_WRAPPED'])
+
+        
+        return Climber(piston, winch, config['EXTEND_SPEED'], config['RETRACT_SPEED'])
     def initAimer(self, config):
         ahrs = AHRS.create_spi()
         # navx = navx.AHRS.create_i2c()
@@ -453,8 +460,8 @@ class MyRobot(wpilib.TimedRobot):
         if driver.getAButtonPressed():
             self.climber.solenoids.toggle()
 
-        self.climber.setWinch(self.deadzoneCorrection(-driver.getLeftY(), 
-                              deadzone))
+        self.climber.setWinch(-self.deadzoneCorrection(driver.getLeftY(), 
+                              deadzone)
         
     def autonomousInit(self):
         self.autonTimer = wpilib.Timer()

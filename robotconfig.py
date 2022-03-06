@@ -119,6 +119,23 @@ first_night = {
         'CAMERA_HEIGHT': 4,
         'CAMERA_PITCH': 0,
     },
+    'CLIMBER': {
+        'WINCH_LEFT_ID': 7,
+        'WINCH_RIGHT_ID': 8,
+        # Pneumatic board IDs
+        'SOLENOID_FORWARD_ID': 3,
+        'SOLENOID_REVERSE_ID': 4,
+        # DIO pin numbers
+        'LEFT_LIMIT_ID': 0,
+        'RIGHT_LIMIT_ID': 1,
+
+        'CABLE_WRAPPED': 'UNDER',
+
+        # Both speeds positive. 
+        # Extend speed must be lower than natural extend rate
+        'EXTEND_SPEED': 0.5,
+        'RETRACT_SPEED': 0.7,
+    },
 }
 
 practice = {
@@ -250,4 +267,4 @@ visionTest = {
     # Robot IP is 10.10.76.2
 }
 
-robotconfig = practice
+robotconfig = first_night
