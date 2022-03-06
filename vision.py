@@ -74,9 +74,13 @@ class Vision:
 
         a = 16*(x**2 / v**2) # constant to make it look nicer
 
-        return math.atan(
-            ( x + math.sqrt( x**2 - 4*(y + a)*a) ) / ( 2*a )    
-        )
+        angle = math.atan(( x + math.sqrt( x**2 - 4*(y + a)*a) ) / ( 2*a ) )
+        angleComplement = 90 - angle
+        if (angleComplement < self.tiltShooter.minDegrees):
+            angleComplement = self.tiltShooter.minDegrees
+        elif (angleComplement > self.tiltShooter.maxDegrees):
+            angleComplement = self.tiltShooter.maxDegrees
+        return(angleComplement)
 
     def get_latest_result(self):
         result = self.camera.getLatestResult()

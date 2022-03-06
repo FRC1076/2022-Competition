@@ -49,17 +49,17 @@ competition = {
         'WINCH_LEFT_ID': 9,
         'WINCH_RIGHT_ID': 10,
         # Pneumatic board IDs
-        'SOLENOID_FORWARD_ID': 5,
-        'SOLENOID_REVERSE_ID': 6,
+        'SOLENOID_FORWARD_ID': 3,
+        'SOLENOID_REVERSE_ID': 4,
     },
     'FEEDER': {
       'FEEDER_ID' : 15,
     },
-    'TILTSHOOTER' : {
+    'TILTSHOOTER': {
         'TILTSHOOTER_ID': 11,
         'ROTATIONS_PER_360': 75,
         'MIN_DEGREES': 0,
-        'MAX_DEGREES': 30,
+        'MAX_DEGREES': 25,
         'BUFFER_DEGREES': 2,
         'SPEED': 0.1,
     },
@@ -120,21 +120,13 @@ practice = {
             'LEFT_FOLLOWER_ID': 3,
         },
         'RIGHT': {
-            'RIGHT_LEADER_ID': 14,
+            'RIGHT_LEADER_ID': 15,
             'RIGHT_FOLLOWER_ID': 2,
         },
         'DRIVETYPE': ARCADE
     },
     'SHOOTER': {
-        'SHOOTER_ID': 1
-    },
-    'TILTSHOOTER': {
-        'TILTSHOOTER_ID': 7,
-        'ROTATIONS_PER_360': 75,
-        'MIN_DEGREES': 0,
-        'MAX_DEGREES': 30,
-        'BUFFER_DEGREES': 2,
-        'SPEED': 0.1,
+        'SHOOTER_ID': 9
     },
     'AIMER': {
         'AIMING_ROTATION_SPEED': 0.6,
