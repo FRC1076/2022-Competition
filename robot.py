@@ -47,9 +47,8 @@ class MyRobot(wpilib.TimedRobot):
         self.vision = None
         self.tester = None
 
-        if TEST_MODE:
-            self.tester = Tester(self)         
-            self.config = self.tester.getTestConfig()
+        if TEST_MODE:     
+            self.config = Tester.getTestConfig()
         else:
             self.config = robotconfig
 
@@ -77,6 +76,7 @@ class MyRobot(wpilib.TimedRobot):
                 self.vision = self.initVision(config)
 
         if TEST_MODE:
+            self.tester = Tester(self) 
             self.tester.initTestTeleop()
             self.tester.testCodePaths()
 
@@ -206,6 +206,7 @@ class MyRobot(wpilib.TimedRobot):
 
     def teleopPeriodic(self):
         driver = self.driver.xboxController
+        rta = self.driver.right_trigger_axis
 
         if(self.phase == "DRIVE_PHASE"):
             self.teleopVision()
