@@ -56,7 +56,7 @@ competition = {
       'FEEDER_ID' : 15,
     },
     'TILTSHOOTER': {
-        'TILTSHOOTER_ID': 7,
+        'TILTSHOOTER_ID': 14,
         'ROTATIONS_PER_360': 75,
         'MIN_DEGREES': 0,
         'MAX_DEGREES': 25,

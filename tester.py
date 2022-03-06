@@ -1,7 +1,9 @@
-from pickle import TRUE
+from email.policy import default
 import robotconfig
+from aimer import Aimer
 
 defaultResponses = {
+    # CONTROLLER VALUES
     'LEFT_Y': 0.0,
     'LEFT_X': 0.0,
     'RIGHT_Y': 0.0,
@@ -16,7 +18,23 @@ defaultResponses = {
     'Y_BUTTON': False,
     'A_BUTTON': False,
     'B_BUTTON': False,
+    # AIMER VALUES
+    'THETA': 0.0,
+    'IN_RANGE': False,
 }
+
+
+class TestAimer(Aimer):
+    def __init__(self, aimer):
+        super().__init__(aimer.gyro, aimer.rotationSpeed, aimer.accuracyDegrees)
+        self.resetResponses()
+
+    def resetResponses(self):
+        self.responses = defaultResponses
+
+    def getTheta(self):
+        return self.responses['THETA']
+
 
 class TestController():
     def __init__(self):
@@ -24,6 +42,7 @@ class TestController():
         self.deadzone = 0.2
         self.left_trigger_axis = 2
         self.right_trigger_axis = 3
+
 
 class TestXBC():
     def __init__(self):
@@ -34,25 +53,25 @@ class TestXBC():
 
     def getLeftY(self):
         return self.responses['LEFT_Y']
-    
+
     def getLeftX(self):
         return self.responses['LEFT_X']
-    
+
     def getRightY(self):
         return self.responses['RIGHT_Y']
-    
+
     def getRightX(self):
         return self.responses['RIGHT_X']
 
     def getLeftBumper(self):
         return self.responses['LEFT_BUMPER']
-    
+
     def getRightBumper(self):
         return self.responses['RIGHT_BUMPER']
 
     def getRawAxis(self, axis_id):
         return self.responses['RAW_AXIS'][axis_id]
-    
+
     def getXButton(self):
         return self.responses['X_BUTTON']
 
@@ -64,7 +83,7 @@ class TestXBC():
 
     def getYButtonPressed(self):
         return self.responses['Y_BUTTON']
-    
+
     def getAButton(self):
         return self.responses['A_BUTTON']
 
@@ -77,11 +96,15 @@ class TestXBC():
     def getBButtonPressed(self):
         return self.responses['B_BUTTON']
 
+
 class Tester():
     def __init__(self, robot):
         self.robot = robot
+        self.aimer = TestAimer(robot.aimer)
+        robot.aimer = self.aimer
 
-    def getTestConfig(self):
+    @staticmethod
+    def getTestConfig():
         return robotconfig.competition
 
     def initTestTeleop(self):
@@ -103,6 +126,7 @@ class Tester():
         self.testIntake()
         self.testManualShooter()
         self.testManualClimber()
+        self.testRotatePhase()
 
     def testTankDrive(self):
         self.robot.drive_type = robotconfig.TANK
@@ -115,7 +139,7 @@ class Tester():
         print('\n******************')
         print('Tank Drive: Passed!')
         print('******************\n')
-        
+
     def testArcadeDrive(self):
         self.testDriverXBC.reset()
         self.testOperatorXBC.reset()
@@ -125,20 +149,20 @@ class Tester():
         print('\n******************')
         print('Arcade Drive: Passed!')
         print('******************\n')
-        
+
     def testArcadeDriveWithAutoRotate(self):
         self.testDriverXBC.reset()
         self.testOperatorXBC.reset()
         self.testDriverXBC.responses['LEFT_BUMPER'] = True
         self.testDriverXBC.responses['RIGHT_BUMPER'] = True
-        
+
         self.testDriverXBC.responses['LEFT_Y'] = 0.9
         self.testDriverXBC.responses['RIGHT_Y'] = 0.9
         self.robot.teleopPeriodic()
         print('\n******************')
         print('Arcade Drive With Auto Rotate: Passed!')
         print('******************\n')
-        
+
     def testIntake(self):
         self.testDriverXBC.reset()
         self.testOperatorXBC.reset()
@@ -224,3 +248,25 @@ class Tester():
         print('Manual Climber Winch: Passed!')
         print('******************\n')
 
+    def testRotatePhase(self):
+        self.robot.phase = 'AS_ROTATE_PHASE'
+        self.aimer.responses['THETA'] = 15.0
+        self.robot.teleopPeriodic()
+        print('\n******************')
+        print('AS Rotate Phase 1: Passed!')
+        print('******************\n')
+
+        self.robot.phase = 'AS_ROTATE_PHASE'
+        self.aimer.responses['THETA'] = 0.0
+        self.robot.teleopPeriodic()
+        print('\n******************')
+        print('AS Rotate Phase 2: Passed!')
+        print('******************\n')
+
+        self.robot.phase = 'AS_ROTATE_PHASE'
+        rta = self.testOperatorController.right_trigger_axis
+        self.testDriverXBC.responses['RAW_AXIS'][rta] = 1.0
+        self.robot.teleopPeriodic()
+        print('\n******************')
+        print('AS Rotate Phase Switched to AS Drive Phase: Passed!')
+        print('******************\n')

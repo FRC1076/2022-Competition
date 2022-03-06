@@ -65,12 +65,12 @@ class Aimer:
         # rotationRate = self.turnController.calculate(angle, theta)
         # return(rotationRate, 0)
 
-        diff = calcDiff(theta)
+        diff = self.calcDiff(theta)
         correctionFactor = (diff / 10.0)
         if correctionFactor > 1.0:
             correctionFactor = 1.0
 
-        if (getInRange(diff)):
+        if (self.getInRange(diff)):
             print("diff <= ", self.accuracyDegrees)
             return (0, 0)
         else:
