@@ -10,7 +10,6 @@ import rev
 from navx import AHRS
 from intake import Intake
 
-
 from robotconfig import robotconfig
 import climber # not needed?
 from climber import Climber, SolenoidGroup
@@ -52,7 +51,6 @@ class MyRobot(wpilib.TimedRobot):
         else:
             self.config = robotconfig
 
-
         for key, config in self.config.items():
             if key == 'CONTROLLERS':
                 controllers = self.initControllers(config)
@@ -74,7 +72,9 @@ class MyRobot(wpilib.TimedRobot):
                 self.aimer = self.initAimer(config)
             if key == 'VISION':
                 self.vision = self.initVision(config)
-                print("wtf")
+
+        self.dashboard = NetworkTables.getTable('SmartDashboard')
+        self.periods = 0
 
         if TEST_MODE:
             self.tester = Tester(self) 
@@ -189,7 +189,8 @@ class MyRobot(wpilib.TimedRobot):
         return vision
 
     def robotPeriodic(self):
-        pass
+        self.dashboard.putNumber('periods', self.periods)
+        self.periods += 1
 
     def teleopInit(self):
         # Even if no drivetrain, defaults to drive phase
@@ -292,7 +293,7 @@ class MyRobot(wpilib.TimedRobot):
                         self.aimer.reset()
                 if(self.vision and driver.getRightBumper()):
                     self.aimer.setTheta(self.vision.getSmoothYaw())
-                    self.tiltShooter.setTargetDegrees(self.vision.calculate_angle(10))
+                    self.tiltShooter.setTargetDegrees(self.vision.calculateAngle(10))
                     if((self.aimer) and (self.aimer.getTheta() != None)):
                         result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
                         self.phase = "AS_ROTATE_PHASE"

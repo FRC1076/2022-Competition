@@ -13,7 +13,6 @@ competition = {
             'DEADZONE': DEADZONE,
             'LEFT_TRIGGER_AXIS': 2,
             'RIGHT_TRIGGER_AXIS': 3,
-
         },
         'OPERATOR': {
             'ID': 1,
@@ -52,7 +51,8 @@ competition = {
         'SOLENOID_REVERSE_ID': 4,
     },
     'FEEDER': {
-      'FEEDER_ID' : 9,
+        'FEEDER_ID' : 9,
+        'FEEDER_SPEED': 0.8,
     },
     'TILTSHOOTER': {
         'TILTSHOOTER_ID': 10,

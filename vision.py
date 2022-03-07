@@ -64,9 +64,12 @@ class Vision:
             pass
 
     def getDistanceFeet(self):  # the pitch is with respect to the ground
-        pitch = (math.pi / 180) * (self.getSmoothPitch() + self.cameraPitch)
-        dist = (self.targetHeight - self.cameraHeight) / math.tan(pitch)
-        return dist - self.shooterOffset + self.targetRadius
+        if self.getSmoothPitch():
+            pitch = (math.pi / 180) * (self.getSmoothPitch() + self.cameraPitch)
+            dist = (self.targetHeight - self.cameraHeight) / math.tan(pitch)
+            return dist - self.shooterOffset + self.targetRadius
+        else:
+            return 1000 # arbitrary big number
 
     def calculateVelocity(self, angle):  # returns ft/s given shooter angle
         x = self.getDistanceFeet()
@@ -77,6 +80,9 @@ class Vision:
         )
     
     def calculateAngle(self, velocity): #returns degrees given shooter velocity
+        if self.getDistanceFeet() > 100:
+            return 180
+            
         v = velocity
         x = self.getDistanceFeet()
         y = self.targetHeight - self.shooterHeight
@@ -93,16 +99,17 @@ class Vision:
         print("hasTargets = ", result.hasTargets())
         self.camera.takeOutputSnapshot()
 
-        self.pitch = sum([t.getPitch() * t.getArea() for t in targets]) / sum([t.getArea() for t in targets])
-        self.yaw = sum([t.getYaw() * t.getArea() for t in targets]) / sum([t.getArea() for t in targets])
+        if result.hasTargets():
+            self.pitch = sum([t.getPitch() * t.getArea() for t in targets]) / sum([t.getArea() for t in targets])
+            self.yaw = sum([t.getYaw() * t.getArea() for t in targets]) / sum([t.getArea() for t in targets])
 
-        self.pitchlog.append(self.pitch)
-        if len(self.pitchlog) > 3:
-            self.pitchlog.pop(0)
+            self.pitchlog.append(self.pitch)
+            if len(self.pitchlog) > 3:
+                self.pitchlog.pop(0)
 
-        self.yawlog.append(self.yaw)
-        if len(self.yawlog) > 3:
-            self.yawlog.pop(0)
+            self.yawlog.append(self.yaw)
+            if len(self.yawlog) > 3:
+                self.yawlog.pop(0)
             
         #distance = self.camera.getDistanceFeet()
         print("yaw = ", self.yaw, " pitch = ", self.pitch, " distance = ", self.getDistanceFeet())
