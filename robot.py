@@ -75,6 +75,7 @@ class MyRobot(wpilib.TimedRobot):
                 self.aimer = self.initAimer(config)
             if key == 'VISION':
                 self.vision = self.initVision(config)
+                print("wtf")
 
         if TEST_MODE:
             self.tester.initTestTeleop()
@@ -126,7 +127,7 @@ class MyRobot(wpilib.TimedRobot):
         # assuming this is a Neo; otherwise it may not be brushless
         motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
         feeder = rev.CANSparkMax(config['FEEDER_ID'], motor_type)
-        return Feeder(feeder)
+        return Feeder(feeder, config['FEEDER_SPEED'])
 
     def initTiltShooter(self, config):
         motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
@@ -182,9 +183,10 @@ class MyRobot(wpilib.TimedRobot):
         return aimer
 
     def initVision(self, config):
-        self.camera = Vision(config['TARGET_HEIGHT'], config['TARGET_RADIUS'], config['SHOOTER_HEIGHT'], config['SHOOTER_OFFSET'], config['CAMERA_HEIGHT'], config['CAMERA_PITCH'])
+        vision = Vision(config['TARGET_HEIGHT'], config['TARGET_RADIUS'], config['SHOOTER_HEIGHT'], config['SHOOTER_OFFSET'], config['CAMERA_HEIGHT'], config['CAMERA_PITCH'])
         # NetworkTables.initialize(server="10.10.76.2")
         # self.vision_table = NetworkTables.getTable("photonvision/mmal_service_16.1")
+        return vision
 
     def robotPeriodic(self):
         pass
@@ -212,6 +214,7 @@ class MyRobot(wpilib.TimedRobot):
             self.teleopDrivetrain()
             self.teleopIntake()
             self.teleopTiltShooter()
+            #self.teleopShooter()
             self.teleopShooter(shooterRPM = self.shooter.shooterRPM)
             self.teleopFeeder()
             self.teleopClimber()
@@ -250,9 +253,9 @@ class MyRobot(wpilib.TimedRobot):
         if(not self.vision):
             return
 
-        result = self.camera.getLatestResult()
+        result = self.vision.getLatestResult()
         # yaw = self.vision_table.getNumber("targetPitch", )
-        #print(self.camera.getYawDegrees(), self.camera.getSmoothYaw())
+        print(self.vision.getYawDegrees(), self.vision.getSmoothYaw(), self.vision.getDistanceFeet())
 
     def teleopDrivetrain(self):
         if(not self.drivetrain):
@@ -287,8 +290,8 @@ class MyRobot(wpilib.TimedRobot):
                     if(self.aimer):
                         self.aimer.reset()
                 if(self.vision and driver.getRightBumper()):
-                    self.aimer.setTheta(self.camera.getSmoothYaw())
-                    self.tiltShooter.setTargetDegrees(self.camera.calculate_angle(10))
+                    self.aimer.setTheta(self.vision.getSmoothYaw())
+                    self.tiltShooter.setTargetDegrees(self.vision.calculate_angle(10))
                     if((self.aimer) and (self.aimer.getTheta() != None)):
                         result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
                         self.phase = "AS_ROTATE_PHASE"
@@ -352,12 +355,17 @@ class MyRobot(wpilib.TimedRobot):
             else:
                 self.tiltShooter.setSpeed(0.0)
         else: # Adjusting tiltShooter mannual
+            
+            if(operator.getXButton()):
+                self.tiltShooter.resetPosition()
             if(operator.getRightY() > 0.95) and (self.tiltShooter.getDegrees() < self.tiltShooter.getMaxDegrees()):
                 self.tiltShooter.setSpeed(speed)
             elif(operator.getRightY() < -0.95) and (self.tiltShooter.getDegrees() > self.tiltShooter.getMinDegrees()):
                 self.tiltShooter.setSpeed(-speed)
             else:
                 self.tiltShooter.setSpeed(0.0)
+        
+        print("Int tilt shooter: degrees:", self.tiltShooter.getDegrees(), " speed: ", self.tiltShooter.getSpeed())
 
     def teleopShooter(self, shooterRPM = None, shooterVelocity = None):
         
@@ -418,10 +426,10 @@ class MyRobot(wpilib.TimedRobot):
             if(self.feeder.hasFired()):
                 self.feeder.setFeeder(0.0)
             else:
-                self.feeder.setFeeder(0.4)
+                self.feeder.setFeeder(self.feeder.feederSpeed)
         else: # Manual
             if operator.getRightBumper():
-                self.feeder.setFeeder(0.4)
+                self.feeder.setFeeder(self.feeder.feederSpeed)
             else:
                 self.feeder.setFeeder(0.0)
     
