@@ -211,6 +211,9 @@ class MyRobot(wpilib.TimedRobot):
         driver = self.driver.xboxController
         rta = self.driver.right_trigger_axis
 
+        if (self.vision is None or self.aimer is None or self.tiltShooter is None):
+            self.phase = "DRIVE_PHASE"
+
         if(self.phase == "DRIVE_PHASE"):
             self.teleopVision()
             self.teleopDrivetrain()
@@ -229,7 +232,7 @@ class MyRobot(wpilib.TimedRobot):
                     self.phase = "AS_TILT_PHASE"
                     self.teleopTiltShooter()
                 else:
-                    self.teleopDrivetrain()   
+                    self.teleopDrivetrain()
         elif(self.phase == "AS_TILT_PHASE"):
             if (driver.getRawAxis(rta) > 0.95):
                 self.phase == "DRIVE_PHASE"
@@ -287,22 +290,22 @@ class MyRobot(wpilib.TimedRobot):
 
             result = (-driver.getRightX(), driver.getLeftY())
 
-            if(self.phase == "DRIVE_PHASE"):
-                if driver.getLeftBumper():  # for testing auto-rotate
-                    if(self.aimer):
+            if(self.vision and self.aimer and self.tiltShooter):
+                if(self.phase == "DRIVE_PHASE"):
+                    if driver.getLeftBumper():  # for testing auto-rotate
                         self.aimer.reset()
-                if(self.vision and driver.getRightBumper()):
-                    self.aimer.setTheta(self.vision.getSmoothYaw())
-                    self.tiltShooter.setTargetDegrees(self.vision.calculateAngle(10))
-                    if((self.aimer) and (self.aimer.getTheta() != None)):
+                    if(driver.getRightBumper()):
+                        self.aimer.setTheta(self.vision.getSmoothYaw())
+                        self.tiltShooter.setTargetDegrees(self.vision.calculateAngle(10))
+                        if(self.aimer.getTheta() != None):
+                            result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
+                            self.phase = "AS_ROTATE_PHASE"
+                elif(self.phase == "AS_ROTATE_PHASE"):
+                    if(self.aimer.getTheta() != None):
                         result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
-                        self.phase = "AS_ROTATE_PHASE"
-            elif(self.phase == "AS_ROTATE_PHASE"):
-                if(self.aimer and (self.aimer.getTheta() != None)):
-                    result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
-                else:
-                    print("should never happen")
-                    self.phase = "DRIVE_PHASE"
+                    else:
+                        print("should never happen")
+                        self.phase = "DRIVE_PHASE"
 
             #print(result)
             rotateSpeed = result[0]
