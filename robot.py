@@ -278,7 +278,7 @@ class MyRobot(wpilib.TimedRobot):
 
         targets = self.vision.getLatestResult()
         # yaw = self.vision_table.getNumber("targetPitch", )
-        print(self.vision.getYawDegrees(), self.vision.getSmoothYaw(), self.vision.getDistanceFeet())
+        #print(self.vision.getYawDegrees(), self.vision.getSmoothYaw(), self.vision.getDistanceFeet())
 
     def teleopDrivetrain(self):
         if(not self.drivetrain):
@@ -323,7 +323,7 @@ class MyRobot(wpilib.TimedRobot):
                 if(self.aimer and (self.aimer.getTheta() != None)):
                     result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
                 else:
-                    print("should never happen")
+                    print("In AS_AIMER_PHASE: should never happen")
                     self.phase = "DRIVE_PHASE"  
             else:
                 print("Not in drive or rotate; should never happen")
@@ -334,8 +334,8 @@ class MyRobot(wpilib.TimedRobot):
             driveSpeed = result[1]
 
             #print(rotateSpeed, driveSpeed)
-            #rotateSpeed = speedratio * self.deadzoneCorrection(rotateSpeed, deadzone)
-            #driveSpeed = speedratio * self.deadzoneCorrection(driveSpeed, deadzone)
+            rotateSpeed = speedratio * self.deadzoneCorrection(rotateSpeed, deadzone)
+            driveSpeed = speedratio * self.deadzoneCorrection(driveSpeed, deadzone)
 
             self.drivetrain.arcadeDrive(rotateSpeed, driveSpeed)
             
@@ -381,7 +381,7 @@ class MyRobot(wpilib.TimedRobot):
                 self.tiltShooter.setSpeed(-speed)
             else:
                 self.tiltShooter.setSpeed(0.0)
-        else: # Adjusting tiltShooter mannual
+        else: # Adjusting tiltShooter mannually
             
             if(operator.getXButton()):
                 self.tiltShooter.resetPosition()
@@ -392,7 +392,7 @@ class MyRobot(wpilib.TimedRobot):
             else:
                 self.tiltShooter.setSpeed(0.0)
         
-        print("Int tilt shooter: degrees:", self.tiltShooter.getDegrees(), " speed: ", self.tiltShooter.getSpeed())
+        #print("Int tilt shooter: degrees:", self.tiltShooter.getDegrees(), " speed: ", self.tiltShooter.getSpeed())
 
     def teleopShooter(self, shooterRPM = None, shooterVelocity = None):
         
@@ -441,7 +441,7 @@ class MyRobot(wpilib.TimedRobot):
             
             self.shooter.set(running * shooter_mod)
         
-        print("Shooter velocity equals", self.shooter.encoder.getVelocity())
+        #print("Shooter velocity equals", self.shooter.encoder.getVelocity())
 
     def teleopFeeder(self):
         if not self.feeder:
