@@ -103,6 +103,18 @@ first_night = {
         },
         'DRIVETYPE': ARCADE
     },
+    'AIMER': {
+        'AIMING_ROTATION_SPEED': 0.6,
+        'AIMING_ACCURACY_DEGREES': 3,
+    },
+    'VISION': {
+        'TARGET_HEIGHT': 8.5,
+        'TARGET_RADIUS': 2,
+        'SHOOTER_HEIGHT': 3.5,
+        'SHOOTER_OFFSET': 1,
+        'CAMERA_HEIGHT': 4,
+        'CAMERA_PITCH': 0,
+    },
     'TILTSHOOTER': {
         'TILTSHOOTER_ID': 1,
         'ROTATIONS_PER_360': 75,
@@ -118,10 +130,6 @@ first_night = {
     'FEEDER': {
       'FEEDER_ID' : 9,
       'FEEDER_SPEED': 0.8,
-    },
-    'AIMER': {
-        'AIMING_ROTATION_SPEED': 0.6,
-        'AIMING_ACCURACY_DEGREES': 3,
     },
 }
 

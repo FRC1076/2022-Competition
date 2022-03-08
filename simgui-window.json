@@ -6,15 +6,15 @@
       "style": "0",
       "userScale": "2",
       "width": "1600",
-      "xpos": "197",
-      "ypos": "95"
+      "xpos": "23",
+      "ypos": "50"
     }
   },
   "Window": {
     "###FMS": {
       "Collapsed": "0",
       "Pos": "6,675",
-      "Size": "281,190"
+      "Size": "336,164"
     },
     "###Joysticks": {
       "Collapsed": "0",
@@ -29,7 +29,7 @@
     "###Other Devices": {
       "Collapsed": "0",
       "Pos": "1281,25",
-      "Size": "312,868"
+      "Size": "32,1004"
     },
     "###System Joysticks": {
       "Collapsed": "0",
@@ -39,7 +39,7 @@
     "###Timing": {
       "Collapsed": "0",
       "Pos": "6,187",
-      "Size": "162,168"
+      "Size": "162,194"
     },
     "Debug##Default": {
       "Collapsed": "0",

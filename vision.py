@@ -7,6 +7,7 @@ class Vision:
         self.camera = photonvision.PhotonCamera('mmal_service_16.1')
         self.camera.setDriverMode(False)
         self.camera.setPipelineIndex(0)
+        self.latestResult = None
 
         self.yawlog = []
         self.pitchlog = []
@@ -93,8 +94,21 @@ class Vision:
             ( x + math.sqrt( x**2 - 4*(y + a)*a) ) / ( 2*a )    
         )
 
+    def getNumTargets(self):
+        if (self.latestResult):
+            return(len(result.getTargets()))
+        else:
+            return 0
+
+    def hasTargets(self):
+        if (self.latestResult):
+            return(result.hasTargets())
+        else:
+            return(False)
+
     def getLatestResult(self):
         result = self.camera.getLatestResult()
+        self.latestResult = result
         targets = result.getTargets()
         print("hasTargets = ", result.hasTargets())
         self.camera.takeOutputSnapshot()

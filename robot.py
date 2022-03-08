@@ -46,6 +46,9 @@ class MyRobot(wpilib.TimedRobot):
         self.vision = None
         self.tester = None
 
+        # Even if no drivetrain, defaults to drive phase
+        self.phase = "DRIVE_PHASE"
+
         if TEST_MODE:     
             self.config = Tester.getTestConfig()
         else:
@@ -189,13 +192,33 @@ class MyRobot(wpilib.TimedRobot):
         return vision
 
     def robotPeriodic(self):
-        self.dashboard.putNumber('periods', self.periods)
+        if (not self.vision):
+            print("No vision")
+        self.dashboard.putNumber('Periods', self.periods)
         self.periods += 1
+        self.dashboard.putString('Phase ', '' + self.phase)
+        if(self.vision):
+            self.dashboard.putBoolean('Vision Has Target', self.vision.hasTargets())
+            if(self.vision.hasTargets()):
+                self.dashboard.putNumber('Vision Pitch', self.vision.getSmoothYaw())
+                self.dashboard.putNumber('Vision Yaw', self.vision.getSmoothPitch())
+                self.dashboard.putNumber('Vision Distance', self.vision.getDistanceFeet())
+                self.dashboard.putNumber('Vision # Targets', self.vision.getNumTargets())
+        if(self.aimer):
+            #self.dashboard.putNumber('Aimer In Range (T/F)', self.aimer.getInRange())
+            self.dashboard.putNumber('Aimer Yaw (Degrees)', self.aimer.getYaw())
+            if (self.aimer.getTheta() is not None):
+                self.dashboard.putNumber('Aimer Target (Degrees)', self.aimer.getTheta())
+        if(self.tiltShooter):
+            self.dashboard.putNumber('Tilt (Degrees)', self.tiltShooter.getDegrees())
+            self.dashboard.putNumber('Tilt Target (Degrees)', self.tiltShooter.getTargetDegrees())
+        if(self.shooter):
+            self.dashboard.putNumber('Shooter Speed (RPM)', self.shooter.encoder.getVelocity())
+        if(self.feeder):
+            self.dashboard.putBoolean('Feeder Has Fired', self.feeder.hasFired())
 
     def teleopInit(self):
-        # Even if no drivetrain, defaults to drive phase
-        self.phase = "DRIVE_PHASE"
-
+        
         if self.climber: # false if no climber initialized
             # Climber presets
             self.climbRunning = False

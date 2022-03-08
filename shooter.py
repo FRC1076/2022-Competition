@@ -13,6 +13,9 @@ class Shooter:
 
     def get(self):
         return self.controller.get()
+
+    def getShooterRPM(self):
+        return self.get()
         
     def setPIDController(self):
         kP = 0.00001
