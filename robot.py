@@ -317,15 +317,19 @@ class MyRobot(wpilib.TimedRobot):
                 if(self.vision and driver.getRightBumper()):
                     self.aimer.setTheta(self.vision.getSmoothYaw())
                     self.tiltShooter.setTargetDegrees(self.vision.calculateAngle(10))
-                    if((self.aimer) and (self.aimer.getTheta() != None)):
-                        result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
-                        self.phase = "AS_ROTATE_PHASE"
+                    if(self.vision.hasTargets()):
+                        if((self.aimer) and (self.aimer.getTheta() != None)):
+                            result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
+                            self.phase = "AS_ROTATE_PHASE"
             elif(self.phase == "AS_ROTATE_PHASE"):
                 if(self.aimer and (self.aimer.getTheta() != None)):
                     result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
                 else:
                     print("should never happen")
                     self.phase = "DRIVE_PHASE"  
+            else:
+                print("Not in drive or rotate; should never happen")
+                self.phase = "DRIVE_PHASE"  
 
             #print(result)
             rotateSpeed = result[0]
