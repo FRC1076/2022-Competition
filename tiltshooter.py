@@ -11,10 +11,12 @@ class TiltShooter:
         self.minDegrees = minDegrees # Lower bound for tilt shooter
         self.maxDegrees = maxDegrees # Upper bound for tilt shooter
         self.targetDegrees = self.minDegrees # Starting position
-        self.manualTiltShooter = True
         self.bufferDegrees = bufferDegrees
         self.targetSpeed = targetSpeed
 
+    def resetPosition(self):
+        self.encoder.setPosition(0)
+        
     def setSpeed(self, speed):
         self.motor.set(speed)
 
@@ -24,13 +26,13 @@ class TiltShooter:
     def getTargetSpeed(self):
         return(self.targetSpeed)
 
-    def resetPosition(self):
-        self.encoder.setPosition(0)
-
     def getTargetDegrees(self):
         return(self.targetDegrees)
 
     def setTargetDegrees(self, targetDegrees):
+        if targetDegrees is None:
+            return -1
+        
         if (targetDegrees < self.minDegrees):
             self.targetDegrees = self.minDegrees
         elif (targetDegrees > self.maxDegrees):
@@ -48,20 +50,13 @@ class TiltShooter:
     def getBufferDegrees(self):
         return(self.bufferDegrees)
 
-    def getManualTiltShooter(self):
-        return(self.manualTiltShooter)
-    
-    def setManualTiltShooter(self, manualTiltShooter):
-        self.manualTiltShooter = manualTiltShooter
-        return(self.manualTiltShooter)
-
     def getRotations(self):
         return(self.encoder.getPosition())
     
     def getDegrees(self):
         return(self.rotationsToDegrees(self.getRotations()))
 
-    def getNearTarget(self):
+    def isNearTarget(self):
         if((self.getDegrees() > (self.getTargetDegrees() - self.bufferDegrees)) and (self.getDegrees() > (self.getTargetDegrees() - self.bufferDegrees))):
             return True
         else:

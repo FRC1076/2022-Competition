@@ -10,11 +10,10 @@ import rev
 from navx import AHRS
 from intake import Intake
 
-
 from robotconfig import robotconfig
 import climber # not needed?
 from climber import Climber, SolenoidGroup
-#from vision import Vision
+from vision import Vision
 from aimer import Aimer
 from shooter import Shooter
 from tiltshooter import TiltShooter
@@ -31,12 +30,6 @@ SWERVE = 3
 # Test Mode
 TEST_MODE = False
 
-# Shooting phases
-PHASE_0 = 0
-PHASE_1 = 1
-PHASE_2 = 2
-PHASE_3 = 3
-
 class MyRobot(wpilib.TimedRobot):
 
     def robotInit(self):
@@ -46,19 +39,20 @@ class MyRobot(wpilib.TimedRobot):
         self.operator = None
         self.shooter = None
         self.tiltShooter = None
+        self.feeder = None
         self.intake = None
         self.climber = None
         self.aimer = None
         self.vision = None
         self.tester = None
-        self.theta = None
 
-        if TEST_MODE:
-            self.tester = Tester(self)         
-            self.config = self.tester.getTestConfig()
+        # Even if no drivetrain, defaults to drive phase
+        self.phase = "DRIVE_PHASE"
+
+        if TEST_MODE:     
+            self.config = Tester.getTestConfig()
         else:
             self.config = robotconfig
-
 
         for key, config in self.config.items():
             if key == 'CONTROLLERS':
@@ -82,7 +76,11 @@ class MyRobot(wpilib.TimedRobot):
             if key == 'VISION':
                 self.vision = self.initVision(config)
 
+        self.dashboard = NetworkTables.getTable('SmartDashboard')
+        self.periods = 0
+
         if TEST_MODE:
+            self.tester = Tester(self) 
             self.tester.initTestTeleop()
             self.tester.testCodePaths()
 
@@ -122,14 +120,17 @@ class MyRobot(wpilib.TimedRobot):
     def initShooter(self, config):
         # assuming this is a Neo; otherwise it may not be brushless
         motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
-        shooter = rev.CANSparkMax(config['SHOOTER_ID'], motor_type)
-        return Shooter(shooter)
+        shooter_motor = rev.CANSparkMax(config['SHOOTER_ID'], motor_type)
+        shooter = Shooter(shooter_motor, config['SHOOTER_RPM'])
+        shooter.setPIDController()
+        shooter.pidController.setFF(0.000167) # assuming max shooter RPM of 6000
+        return shooter
         
     def initFeeder(self, config):
         # assuming this is a Neo; otherwise it may not be brushless
         motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
         feeder = rev.CANSparkMax(config['FEEDER_ID'], motor_type)
-        return Feeder(feeder)
+        return Feeder(feeder, config['FEEDER_SPEED'])
 
     def initTiltShooter(self, config):
         motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
@@ -185,18 +186,37 @@ class MyRobot(wpilib.TimedRobot):
         return aimer
 
     def initVision(self, config):
-        self.camera = Vision()
+        vision = Vision(config['TARGET_HEIGHT'], config['TARGET_RADIUS'], config['SHOOTER_HEIGHT'], config['SHOOTER_OFFSET'], config['CAMERA_HEIGHT'], config['CAMERA_PITCH'])
         # NetworkTables.initialize(server="10.10.76.2")
         # self.vision_table = NetworkTables.getTable("photonvision/mmal_service_16.1")
+        return vision
 
     def robotPeriodic(self):
-        pass
+        self.dashboard.putNumber('Periods', self.periods)
+        self.periods += 1
+        self.dashboard.putString('Phase ', '' + self.phase)
+        if(self.vision):
+            self.dashboard.putBoolean('Vision Has Target', self.vision.hasTargets())
+            if(self.vision.hasTargets()):
+                self.dashboard.putNumber('Vision Pitch', self.vision.getSmoothYaw())
+                self.dashboard.putNumber('Vision Yaw', self.vision.getSmoothPitch())
+                self.dashboard.putNumber('Vision Distance', self.vision.getDistanceFeet())
+                self.dashboard.putNumber('Vision # Targets', self.vision.getNumTargets())
+        if(self.aimer):
+            #self.dashboard.putNumber('Aimer In Range (T/F)', self.aimer.getInRange())
+            self.dashboard.putNumber('Aimer Yaw (Degrees)', self.aimer.getYaw())
+            if (self.aimer.getTheta() is not None):
+                self.dashboard.putNumber('Aimer Target (Degrees)', self.aimer.getTheta())
+        if(self.tiltShooter):
+            self.dashboard.putNumber('Tilt (Degrees)', self.tiltShooter.getDegrees())
+            self.dashboard.putNumber('Tilt Target (Degrees)', self.tiltShooter.getTargetDegrees())
+        if(self.shooter):
+            self.dashboard.putNumber('Shooter Speed (RPM)', self.shooter.encoder.getVelocity())
+        if(self.feeder):
+            self.dashboard.putBoolean('Feeder Has Fired', self.feeder.hasFired())
 
     def teleopInit(self):
         
-        if self.drivetrain:
-            self.phase = PHASE_0
-
         if self.climber: # false if no climber initialized
             # Climber presets
             self.climbRunning = False
@@ -207,22 +227,63 @@ class MyRobot(wpilib.TimedRobot):
 
             self.climber.solenoids.set(climber.kReverse)
 
-        if self.tiltShooter:
-            self.tiltShooter.setTargetDegrees(10)
-            self.tiltShooter.setManualTiltShooter(False)
 
     def teleopPeriodic(self):
-        self.teleopVision()
-        self.teleopDrivetrain()
-        self.teleopIntake()
-        self.teleopShooter()
-        self.teleopTiltShooter()
-        self.teleopClimber()
+        driver = self.driver.xboxController
+        rta = self.driver.right_trigger_axis
+
+        if(self.phase == "DRIVE_PHASE"):
+            self.teleopVision()
+            self.teleopDrivetrain()
+            self.teleopIntake()
+            self.teleopTiltShooter()
+            #self.teleopShooter()
+            self.teleopShooter(shooterRPM = self.shooter.shooterRPM)
+            self.teleopFeeder()
+            self.teleopClimber()
+        elif(self.phase == "AS_ROTATE_PHASE"):
+            if (driver.getRawAxis(rta) > 0.95):
+                self.phase == "DRIVE_PHASE"
+                self.teleopDrivetrain()
+            else:
+                if(self.aimer.getInRange(self.aimer.getTheta())):
+                    self.phase = "AS_TILT_PHASE"
+                    self.teleopTiltShooter()
+                else:
+                    self.teleopDrivetrain()   
+        elif(self.phase == "AS_TILT_PHASE"):
+            if (driver.getRawAxis(rta) > 0.95):
+                self.phase == "DRIVE_PHASE"
+                self.teleopDrivetrain()
+            else:
+                if(self.tiltShooter.isNearTarget()):
+                    self.phase = "AS_FIRE_PHASE"
+                else:
+                    self.teleopTiltShooter()
+                self.teleopShooter(shooterRPM = self.shooter.shooterRPM)
+        elif(self.phase == "AS_FIRE_PHASE"):
+            if (driver.getRawAxis(rta) > 0.95):
+                self.phase == "DRIVE_PHASE"
+                self.teleopDrivetrain()
+            else:
+                self.teleopShooter(shooterRPM = self.shooter.shooterRPM)
+                self.teleopFeeder()
+                if(self.feeder.hasFired()):
+                    self.phase = "DRIVE_PHASE"
+                    self.feeder.reset()
+
+    def teleopVision(self):
+        if(not self.vision):
+            return
+
+        targets = self.vision.getLatestResult()
+        # yaw = self.vision_table.getNumber("targetPitch", )
+        print(self.vision.getYawDegrees(), self.vision.getSmoothYaw(), self.vision.getDistanceFeet())
 
     def teleopDrivetrain(self):
         if(not self.drivetrain):
             return
-    
+        
         driver = self.driver.xboxController
         deadzone = self.driver.deadzone
 
@@ -243,56 +304,31 @@ class MyRobot(wpilib.TimedRobot):
 
         #ARCADE DRIVE
         elif self.drive_type == ARCADE:
-            speedratio = 0.8  # ratio of joystick position to motor speed
+            #speedratio = 0.8  # ratio of joystick position to motor speed
 
-            if driver.getLeftBumper():  # for testing auto-rotate
-                if(self.aimer):
-                    self.aimer.reset()
-            
-            if (self.phase == PHASE_0): # Manual mode
-                print("In phase 0")
-                if (driver.getRightBumper() and (self.vision)): # Automatically aim and shoot
-                    # theta = self.aimer.calculateTheta(driver.getLeftX(), driver.getLeftY())
-                    self.theta = self.camera.get_smooth_yaw()
-                    if ((self.theta != None) and (self.aimer)):
-                        self.phase = PHASE_1
-                        result = self.aimer.calcRotationCoordinates(self.theta)
-                    else:
-                        result = (-driver.getRightX(), driver.getRightY())
-                else: # Stay in manual mode
-                    result = (-driver.getRightX(), driver.getLeftY())
-            elif (self.phase == PHASE_1): # Rotate to target
-                print("In phase 1")
-                if (self.theta == None): # Should never happen
-                    self.phase = PHASE_0
-                    result = (-driver.getRightX(), driver.getRightY())
-                    # CONSIDER STARTING FLYWHEEL
-                else: # Rotate towards target
-                    result = self.aimer.calcRotationCoordinates(self.theta)
-                    #print(self.theta, " ", result)
-                    if(result[0] == 0.0): # Target aquired FIX WITH A BETTER TEST
-                        if (not(self.tiltShooter)): # No tilt-shooter. Skip step.
-                            self.phase = PHASE_3
-                            result = (0, 0)
-                        else: # Set target for shooting
-                            self.phase = PHASE_2
-                            self.tiltShooter.setTargetDegrees(10) # ASK VISION REAL NUMBER
-                            self.tiltShooter.setManualTiltShooter(False)
-                            result = (0, 0)
-            elif (self.phase == PHASE_2): # Tilt tilt-shooter
-                print("In phase 2")
-                if (not(self.tiltShooter)): # Should never happen
-                    self.phase = PHASE_3
-                else: # There IS a tilt-shooter
-                    if(self.tiltShooter.getNearTarget()): # Tilter stopped moving
-                        self.phase = PHASE_3
-                result = (0, 0)
-            elif (self.phase == PHASE_3): # Fire missiles
-                print("In phase 3")
-                print("Fire Missiles")
-                self.phase = PHASE_0
-                result = (0, 0)
-            
+            result = (-driver.getRightX(), driver.getLeftY())
+
+            if(self.phase == "DRIVE_PHASE"):
+                if driver.getLeftBumper():  # for testing auto-rotate
+                    if(self.aimer):
+                        self.aimer.reset()
+                if(self.vision and driver.getRightBumper()):
+                    self.aimer.setTheta(self.vision.getSmoothYaw())
+                    self.tiltShooter.setTargetDegrees(self.vision.calculateAngle(10))
+                    if(self.vision.hasTargets()):
+                        if((self.aimer) and (self.aimer.getTheta() != None)):
+                            result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
+                            self.phase = "AS_ROTATE_PHASE"
+            elif(self.phase == "AS_ROTATE_PHASE"):
+                if(self.aimer and (self.aimer.getTheta() != None)):
+                    result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
+                else:
+                    print("should never happen")
+                    self.phase = "DRIVE_PHASE"  
+            else:
+                print("Not in drive or rotate; should never happen")
+                self.phase = "DRIVE_PHASE"  
+
             #print(result)
             rotateSpeed = result[0]
             driveSpeed = result[1]
@@ -329,29 +365,57 @@ class MyRobot(wpilib.TimedRobot):
         else:
             self.intake.motorOff()
 
-    def teleopVision(self):
-        if(not self.vision):
+    def teleopTiltShooter(self):
+        if not self.tiltShooter:
             return
 
-        result = self.camera.get_latest_result()
-        # yaw = self.vision_table.getNumber("targetPitch", )
-        #print(self.camera.get_yaw_degrees(), self.camera.get_smooth_yaw())
+        speed = self.tiltShooter.getTargetSpeed()
+        buffer = self.tiltShooter.getBufferDegrees()
+        lta = self.operator.left_trigger_axis
+        operator = self.operator.xboxController
+        
+        if(self.phase == "AS_TILT_PHASE"): # Adjusting tiltShooter automatically with targetDegrees
+            if (self.tiltShooter.getDegrees() < (self.tiltShooter.getTargetDegrees() - buffer)):
+                self.tiltShooter.setSpeed(speed)
+            elif (self.tiltShooter.getDegrees() > (self.tiltShooter.getTargetDegrees() + buffer)):
+                self.tiltShooter.setSpeed(-speed)
+            else:
+                self.tiltShooter.setSpeed(0.0)
+        else: # Adjusting tiltShooter mannual
+            
+            if(operator.getXButton()):
+                self.tiltShooter.resetPosition()
+            if(operator.getRightY() > 0.95) and (self.tiltShooter.getDegrees() < self.tiltShooter.getMaxDegrees()):
+                self.tiltShooter.setSpeed(speed)
+            elif(operator.getRightY() < -0.95) and (self.tiltShooter.getDegrees() > self.tiltShooter.getMinDegrees()):
+                self.tiltShooter.setSpeed(-speed)
+            else:
+                self.tiltShooter.setSpeed(0.0)
+        
+        print("Int tilt shooter: degrees:", self.tiltShooter.getDegrees(), " speed: ", self.tiltShooter.getSpeed())
 
-    def teleopShooter(self, shooterVelocity = -1.0):
-        """
-        Makes the shooter motor spin. Right trigger activates the trigger
-        The X Button reduces the speed.
-
-        The right bumper runs the feeder motor.
-        """
-
+    def teleopShooter(self, shooterRPM = None, shooterVelocity = None):
+        
         if not self.shooter:
             return
 
+        shooter_mod = 1
+        running = 0
+
         operator = self.operator.xboxController
         rta = self.operator.right_trigger_axis
+        shooter_pid = self.shooter.pidController
 
-        if shooterVelocity != -1.0:
+        if shooterRPM:
+            shooterRPM = -shooterRPM
+
+            if operator.getRawAxis(rta) > 0.95:
+                shooter_pid.setReference(shooterRPM, rev.CANSparkMax.ControlType.kVelocity)
+            else: 
+                shooter_pid.setReference(0, rev.CANSparkMax.ControlType.kVelocity)
+
+        elif shooterVelocity:
+            shooterVelocity = -shooterVelocity
 
             if operator.getRawAxis(rta) > 0.95:
                 shooter_mod = shooterVelocity
@@ -361,6 +425,8 @@ class MyRobot(wpilib.TimedRobot):
             else:
                 running = 0
                 shooter_mod = 1
+            
+            self.shooter.set(running * shooter_mod)
                 
         else:
             if operator.getRawAxis(rta) > 0.95:
@@ -372,48 +438,28 @@ class MyRobot(wpilib.TimedRobot):
                 shooter_mod = 0.4
             else:
                 shooter_mod = 1
+            
+            self.shooter.set(running * shooter_mod)
+        
+        print("Shooter velocity equals", self.shooter.encoder.getVelocity())
 
-        # Feeder
-        if operator.getRightBumper():
-            self.feeder.setFeeder(0.4)
-        else:
-            self.feeder.setFeeder(0.0)
-
-        self.shooter.set(running * shooter_mod)
-    
-    def teleopTiltShooter(self):
-        if not self.tiltShooter:
+    def teleopFeeder(self):
+        if not self.feeder:
             return
 
-        speed = self.tiltShooter.getTargetSpeed()
-        buffer = self.tiltShooter.getBufferDegrees()
-        lta = self.operator.left_trigger_axis
         operator = self.operator.xboxController
-        
-        if(self.tiltShooter.manualTiltShooter): # Adjusting tiltShooter mannual
-            if(operator.getRightY() > 0.95) and (self.tiltShooter.getDegrees() < self.tiltShooter.getMaxDegrees()):
-                self.tiltShooter.setSpeed(speed)
-            elif(operator.getRightY() < -0.95) and (self.tiltShooter.getDegrees() > self.tiltShooter.getMinDegrees()):
-                if((self.tiltShooter.getSpeed() != 0) and (self.tiltShooter.getVelocity() == 0)): # Hit the limit switch
-                    self.tiltShooter.resetPosition() # Reset base position
-                    self.tiltShooter.setSpeed(0.0)
-                else:
-                    self.tiltShooter.setSpeed(-speed)
-            else:
-                self.tiltShooter.setSpeed(0.0)
-        else: # Adjusting tiltShooter automatically with targetDegrees
-            if (self.tiltShooter.getDegrees() < (self.tiltShooter.getTargetDegrees() - buffer)):
-                self.tiltShooter.setSpeed(speed)
-            elif (self.tiltShooter.getDegrees() > (self.tiltShooter.getTargetDegrees() + buffer)):
-                if((self.tiltShooter.getSpeed() != 0) and (self.tiltShooter.getVelocity() == 0)): # Hit the limit switch
-                    self.tiltShooter.resetPosition() # Reset base position
-                    self.tiltShooter.setSpeed(0.0)
-                else:
-                    self.tiltShooter.setSpeed(-speed)
-            else:
-                self.tiltShooter.setSpeed(0.0)
-                self.tiltShooter.setManualTiltShooter(True)
 
+        if(self.phase == "AS_FIRE_PHASE"):
+            if(self.feeder.hasFired()):
+                self.feeder.setFeeder(0.0)
+            else:
+                self.feeder.setFeeder(self.feeder.feederSpeed)
+        else: # Manual
+            if operator.getRightBumper():
+                self.feeder.setFeeder(self.feeder.feederSpeed)
+            else:
+                self.feeder.setFeeder(0.0)
+    
     def teleopClimber(self):
 
         if not self.climber:
