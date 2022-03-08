@@ -192,8 +192,6 @@ class MyRobot(wpilib.TimedRobot):
         return vision
 
     def robotPeriodic(self):
-        if (not self.vision):
-            print("No vision")
         self.dashboard.putNumber('Periods', self.periods)
         self.periods += 1
         self.dashboard.putString('Phase ', '' + self.phase)
