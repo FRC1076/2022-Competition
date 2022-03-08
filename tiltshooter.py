@@ -30,6 +30,9 @@ class TiltShooter:
         return(self.targetDegrees)
 
     def setTargetDegrees(self, targetDegrees):
+        if targetDegrees is None:
+            return -1
+        
         if (targetDegrees < self.minDegrees):
             self.targetDegrees = self.minDegrees
         elif (targetDegrees > self.maxDegrees):

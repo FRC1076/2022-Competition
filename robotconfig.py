@@ -117,7 +117,7 @@ first_night = {
     },
     'TILTSHOOTER': {
         'TILTSHOOTER_ID': 1,
-        'ROTATIONS_PER_360': 75,
+        'ROTATIONS_PER_360': 12,
         'MIN_DEGREES': 5,
         'MAX_DEGREES': 25,
         'BUFFER_DEGREES': 2,
