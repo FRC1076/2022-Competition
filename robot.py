@@ -74,7 +74,7 @@ class MyRobot(wpilib.TimedRobot):
                 self.aimer = self.initAimer(config)
             if key == 'VISION':
                 self.vision = self.initVision(config)
-                print("wtf")
+
 
         if TEST_MODE:
             self.tester = Tester(self) 
@@ -254,7 +254,7 @@ class MyRobot(wpilib.TimedRobot):
         if(not self.vision):
             return
 
-        result = self.vision.getLatestResult()
+        targets = self.vision.getLatestResult()
         # yaw = self.vision_table.getNumber("targetPitch", )
         print(self.vision.getYawDegrees(), self.vision.getSmoothYaw(), self.vision.getDistanceFeet())
 
@@ -301,7 +301,7 @@ class MyRobot(wpilib.TimedRobot):
                     result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
                 else:
                     print("should never happen")
-                    self.phase = "DRIVE_PHASE"
+                    self.phase = "DRIVE_PHASE"  
 
             #print(result)
             rotateSpeed = result[0]
