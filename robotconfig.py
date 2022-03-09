@@ -119,13 +119,13 @@ first_night = {
         'TILTSHOOTER_ID': 1,
         'ROTATIONS_PER_360': 75,
         'MIN_DEGREES': 5,
-        'MAX_DEGREES': 35,
+        'MAX_DEGREES': 25,
         'BUFFER_DEGREES': 2,
         'SPEED': 0.1,
     },
     'SHOOTER': {
         'SHOOTER_ID': 10,
-        'SHOOTER_RPM': 6000,
+        'SHOOTER_RPM': 3500,
     },
     'FEEDER': {
       'FEEDER_ID' : 9,
@@ -294,4 +294,4 @@ autonTest = {
     'VISION': 'enabled',
 }
 
-robotconfig = autonTest
+robotconfig = first_night
