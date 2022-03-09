@@ -69,7 +69,7 @@ competition = {
         'SPINUP_TIME': 0.5,
         'FIRING_TIME': 0.25,
         'BACKUP_TIME': 1,
-
+    },
     'CLIMBER': {
         'WINCH_LEFT_ID': 7,
         'WINCH_RIGHT_ID': 8,
