@@ -29,7 +29,8 @@ competition = {
             'RIGHT_LEADER_ID': 3,
             'RIGHT_FOLLOWER_ID': 4,
         },
-        'DRIVETYPE': ARCADE
+        'DRIVETYPE': ARCADE,
+        'ROTATION_CORRECTION': 0.0,
     },
     'SHOOTER': {
         'SHOOTER_ID': 5,
@@ -111,7 +112,8 @@ gull_lake = {
             'RIGHT_LEADER_ID': 15,
             'RIGHT_FOLLOWER_ID': 7,
         },
-        'DRIVETYPE': ARCADE
+        'DRIVETYPE': ARCADE,
+        'ROTATION_CORRECTION': 0.0,
     },
     'AIMER': {
         'AIMING_ROTATION_SPEED': 0.6,
@@ -182,7 +184,8 @@ practice = {
             'RIGHT_LEADER_ID': 15,
             'RIGHT_FOLLOWER_ID': 7,
         },
-        'DRIVETYPE': ARCADE
+        'DRIVETYPE': ARCADE,
+        'ROTATION_CORRECTION': 0.0,
     },
     'AIMER': {
         'AIMING_ROTATION_SPEED': 0.6,
@@ -279,7 +282,8 @@ visionTest = {
             'RIGHT_LEADER_ID': 14,
             'RIGHT_FOLLOWER_ID': 2,
         },
-        'DRIVETYPE': ARCADE
+        'DRIVETYPE': ARCADE,
+        'ROTATION_CORRECTION': 0.0,
     }
     # Robot IP is 10.10.76.2
 }
@@ -308,12 +312,12 @@ autonTest = {
             'RIGHT_LEADER_ID': 15,
             'RIGHT_FOLLOWER_ID': 2,
         },
-        'DRIVETYPE': ARCADE
+        'DRIVETYPE': ARCADE,
+        'ROTATION_CORRECTION': 0.0,
     },
     'SHOOTER': {
         'SHOOTER_ID': 9
     },
-    'VISION': 'enabled',
     'AUTON': {
         'SPINUP_TIME': 0.5,
         'FIRING_TIME': 0.25,

@@ -125,6 +125,8 @@ class MyRobot(wpilib.TimedRobot):
 
         self.drive_type = config['DRIVETYPE'] # side effect!
 
+        self.rotationCorrection = config['ROTATION_CORRECTION']
+
         # Create Controller Groups
         left_side = wpilib.MotorControllerGroup(*left_motors)
         right_side = wpilib.MotorControllerGroup(*right_motors)
@@ -364,7 +366,7 @@ class MyRobot(wpilib.TimedRobot):
             driveSpeed = result[1]
 
             #print(rotateSpeed, driveSpeed)
-            rotateSpeed = speedratio * self.deadzoneCorrection(rotateSpeed, deadzone)
+            rotateSpeed = speedratio * self.deadzoneCorrection(rotateSpeed + self.rotationCorrection, deadzone)
             driveSpeed = speedratio * self.deadzoneCorrection(driveSpeed, deadzone)
 
             print(rotateSpeed, driveSpeed)
