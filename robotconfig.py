@@ -74,6 +74,11 @@ competition = {
         'CAMERA_HEIGHT': 4,
         'CAMERA_PITCH': 0,
     },
+    'AUTON': {
+        'SPINUP_TIME': 0.5,
+        'FIRING_TIME': 0.25,
+        'BACKUP_TIME': 1,
+    },
 }
 
 first_night = {
@@ -292,6 +297,11 @@ autonTest = {
         'SHOOTER_ID': 9
     },
     'VISION': 'enabled',
+    'AUTON': {
+        'SPINUP_TIME': 0.5,
+        'FIRING_TIME': 0.25,
+        'BACKUP_TIME': 1,
+    },
 }
 
 robotconfig = autonTest

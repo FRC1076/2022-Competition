@@ -51,6 +51,7 @@ class MyRobot(wpilib.TimedRobot):
         self.aimer = None
         self.vision = None
         self.tester = None
+        self.auton = None
 
         # Even if no drivetrain, defaults to drive phase
         self.phase = "DRIVE_PHASE"
@@ -81,6 +82,8 @@ class MyRobot(wpilib.TimedRobot):
                 self.aimer = self.initAimer(config)
             if key == 'VISION':
                 self.vision = self.initVision(config)
+            if key == 'AUTON':
+                self.auton = self.initAuton(config)
 
         self.dashboard = NetworkTables.getTable('SmartDashboard')
         self.periods = 0
@@ -102,6 +105,12 @@ class MyRobot(wpilib.TimedRobot):
             rta = ctrlConfig['RIGHT_TRIGGER_AXIS']
             ctrls[id] = Controller(ctrl, dz, lta, rta)
         return ctrls
+
+    def initAuton(self, config):
+        self.autonSpinUpTime = config['SPINUP_TIME']
+        self.autonFiringTime = config['FIRING_TIME']
+        self.autonBackupTime = config['BACKUP_TIME']
+        return True
 
     def initDrivetrain(self, config):
         left_motors = []
@@ -519,11 +528,9 @@ class MyRobot(wpilib.TimedRobot):
                               deadzone))
         
     def autonomousInit(self):
-        self.autonPhase = "AUTON_SPIN_UP"
+        self.autonPhase = "AUTON_SPINUP"
         self.theta = None
         self.rotationSpeed = 1000
-        # RPM OF THE SHOOTER DURING AUTON
-        self.autonShooterRPM = 3000
 
         self.autonTimer = wpilib.Timer()
         self.shooterTimer = wpilib.Timer()
@@ -554,33 +561,33 @@ class MyRobot(wpilib.TimedRobot):
                 self.drivetrain.arcadeDrive(result[0], result[1])
 
     def comp1AutonSimple(self):
-        spinUpTime = 0.5
-        firingTime = 0.75
-        backupTime = 1.75
+
+        timer = self.autonTimer.get()
 
         print(self.autonPhase)
+        print(timer)
 
         # Phase transitions
-        if self.autonTimer.get() > spinUpTime and self.autonPhase == "AUTON_SPIN_UP":
+        if timer > self.autonSpinUpTime and self.autonPhase == "AUTON_SPINUP":
             self.autonPhase = "AUTON_FIRING"
         
-        if self.autonTimer.get() > firingTime and self.autonPhase == "AUTON_FIRING":
+        if timer > self.autonFiringTime + self.autonSpinUpTime and self.autonPhase == "AUTON_FIRING":
             self.autonPhase = "AUTON_DRIVE"
         
-        if self.autonTimer.get() > backupTime and self.autonPhase == "AUTON_DRIVE":
+        if timer > self.autonBackupTime + self.autonFiringTime + self.autonSpinUpTime and self.autonPhase == "AUTON_DRIVE":
             self.autonPhase = None
 
         # Auton Logic
         # Spin up the shooter motor
-        if self.autonPhase == "AUTON_SPIN_UP":
-            self.shooter.pidController.setReference(self.autonShooterRPM, rev.CANSparkMax.ControlType.kVelocity)
+        if self.autonPhase == "AUTONSPIN_UP":
+            self.shooter.pidController.setReference(self.shooter.shooterRPM, rev.CANSparkMax.ControlType.kVelocity)
         
         # Activate the feeder/trigger motor
-        if self.autonPhase == "AUTON_FIRING":
+        elif self.autonPhase == "AUTON_FIRING":
             self.feeder.setFeeder(self.feeder.feederSpeed)
 
         # Turn off the shooter and feeder/trigger motors, and drive backwards
-        if self.autonPhase == "AUTON_DRIVE":
+        elif self.autonPhase == "AUTON_DRIVE":
             self.shooter.pidController.setReference(0.0, rev.CANSparkMax.ControlType.kVelocity)
             self.feeder.setFeeder(0.0)
             
