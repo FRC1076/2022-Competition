@@ -302,7 +302,7 @@ class MyRobot(wpilib.TimedRobot):
 
         #TANK DRIVE
         if (self.drive_type == TANK):
-            speedratio = 0.8 # ratio of joystick position to motor speed
+            speedratio = 1.0 # ratio of joystick position to motor speed
 
             #Get left and right joystick values.
             leftspeed = driver.getLeftY()
@@ -317,7 +317,7 @@ class MyRobot(wpilib.TimedRobot):
 
         #ARCADE DRIVE
         elif self.drive_type == ARCADE:
-            #speedratio = 0.8  # ratio of joystick position to motor speed
+            speedratio = 1.0  # ratio of joystick position to motor speed
 
             result = (-driver.getRightX(), driver.getLeftY())
 
