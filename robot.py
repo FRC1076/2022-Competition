@@ -308,6 +308,7 @@ class MyRobot(wpilib.TimedRobot):
         #ARCADE DRIVE
         elif self.drive_type == ARCADE:
             #speedratio = 0.8  # ratio of joystick position to motor speed
+            speedratio = 1.0
 
             result = (-driver.getRightX(), driver.getLeftY())
 
@@ -385,7 +386,6 @@ class MyRobot(wpilib.TimedRobot):
             else:
                 self.tiltShooter.setSpeed(0.0)
         else: # Adjusting tiltShooter mannually
-            
             if(operator.getXButton()):
                 self.tiltShooter.resetPosition()
             if(operator.getRightY() > 0.95) and (self.tiltShooter.getDegrees() < self.tiltShooter.getMaxDegrees()):
@@ -394,6 +394,7 @@ class MyRobot(wpilib.TimedRobot):
                 self.tiltShooter.setSpeed(-speed)
             else:
                 self.tiltShooter.setSpeed(0.0)
+            print("manually tilt: ", self.tiltShooter.getSpeed())
         
         #print("Int tilt shooter: degrees:", self.tiltShooter.getDegrees(), " speed: ", self.tiltShooter.getSpeed())
 
@@ -461,7 +462,7 @@ class MyRobot(wpilib.TimedRobot):
             if operator.getRightBumper():
                 self.feeder.setFeeder(self.feeder.feederSpeed)
             else:
-                self.feeder.setFeeder(0.0)
+                self.feeder.setFeeder(0.0) 
     
     def teleopClimber(self):
 
