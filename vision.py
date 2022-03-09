@@ -26,8 +26,8 @@ class Vision:
         self.cameraHeight = cameraHeight  # 4
 
         # in degrees, subject to change
-        #self.shooter_angle = 60
-        #self.camera_angle = 0
+        # self.shooter_angle = 60
+        # self.camera_angle = 0
         self.cameraPitch = cameraPitch  # 0
 
         self.pitch = None
@@ -45,9 +45,9 @@ class Vision:
 
     def getSmoothYaw(self):
         if self.result.hasTargets():
-                
+
             sortedlog = sorted(self.yawlog)
-            
+
             try:
                 if len(sortedlog) == 1:
                     return sortedlog[0]
@@ -55,14 +55,14 @@ class Vision:
                     return sortedlog[1]
             except IndexError:
                 pass
-        else: 
+        else:
             return None
 
     def getSmoothPitch(self):
         if self.result.hasTargets():
-                
+
             sortedlog = sorted(self.pitchlog)
-            
+
             try:
                 if len(sortedlog) == 1:
                     return sortedlog[0]
@@ -70,7 +70,7 @@ class Vision:
                     return sortedlog[1]
             except IndexError:
                 pass
-        else: 
+        else:
             return None
 
     def getDistanceFeet(self):  # the pitch is with respect to the ground
@@ -79,7 +79,7 @@ class Vision:
             dist = (self.targetHeight - self.cameraHeight) / math.tan(pitch)
             return dist - self.shooterOffset + self.targetRadius
         else:
-            return None 
+            return None
 
     def calculateVelocity(self, angle):  # returns ft/s given shooter angle
         if self.result.hasTargets:
@@ -89,12 +89,12 @@ class Vision:
                 return math.sqrt(
                     (-16 * x ** 2) / ((y * (math.cos(angle)) ** 2) - (x * math.sin(angle) * math.cos(angle)))
                 )
-            
+
             except ValueError:
                 return None
         else:
             return None
-    
+
     def calculateAngle(self, velocity):  # returns degrees given shooter velocity
         if self.result.hasTargets():
 
@@ -104,10 +104,10 @@ class Vision:
                 return None
             y = self.targetHeight - self.shooterHeight
 
-            a = 16*(x**2 / v**2)  # constant to make it look nicer
+            a = 16 * (x ** 2 / v ** 2)  # constant to make it look nicer
             try:
                 return math.atan(
-                    ( x + math.sqrt( x**2 - 4*(y + a)*a) ) / ( 2*a )    
+                    (x + math.sqrt(x ** 2 - 4 * (y + a) * a)) / (2 * a)
                 )
             except ValueError:
                 return None
@@ -115,16 +115,16 @@ class Vision:
             return None
 
     def getNumTargets(self):
-        if (self.latestResult):
-            return(len(result.getTargets()))
+        if self.latestResult:
+            return len(self.result.getTargets())
         else:
             return 0
 
     def hasTargets(self):
-        if (self.latestResult):
-            return(self.latestResult.hasTargets())
+        if self.latestResult:
+            return self.latestResult.hasTargets()
         else:
-            return(False)
+            return False
 
     def getLatestResult(self):
         self.result = self.camera.getLatestResult()
@@ -144,7 +144,7 @@ class Vision:
             self.yawlog.append(self.yaw)
             if len(self.yawlog) > 3:
                 self.yawlog.pop(0)
-            
-        #distance = self.camera.getDistanceFeet()
+
+        # distance = self.camera.getDistanceFeet()
         print("yaw = ", self.yaw, " pitch = ", self.pitch, " distance = ", self.getDistanceFeet())
         return targets
