@@ -47,6 +47,14 @@ competition = {
         # Pneumatic board IDs
         'SOLENOID_FORWARD_ID': 3,
         'SOLENOID_REVERSE_ID': 4,
+        # DIO pin numbers
+        'LEFT_LIMIT_ID': 0,
+        'RIGHT_LIMIT_ID': 1,
+        'CABLE_WRAPPED': 'UNDER',
+        # Both speeds positive.
+        # Extend speed must be lower than natural extend rate
+        'EXTEND_SPEED': 0.5,
+        'RETRACT_SPEED': 0.7,
     },
     'FEEDER': {
         'FEEDER_ID' : 9,
@@ -74,7 +82,7 @@ competition = {
     },
 }
 
-first_night = {
+gull_lake = {
     'CONTROLLERS': {
         'DRIVER': {
             'ID': 0,
@@ -303,4 +311,4 @@ autonTest = {
     'VISION': 'enabled',
 }
 
-robotconfig = first_night
+robotconfig = gull_lake

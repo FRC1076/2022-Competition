@@ -15,8 +15,8 @@ class Climber:
         self.winch = winch
         self.climbstep = 0
         # Actions to Climb
-        self.climbActions = [[self.winchForward, 0.5], [self.pistonForward, 0.5], [self.winchForward, 2.5],
-                             [self.pistonReverse, 0.5], [self.winchReverse, 3.0], [self.winchOff, 0.1]]
+        self.climbActions = [[self.winchExtend, 0.5], [self.pistonForward, 0.5], [self.winchExtend, 2.5],
+                             [self.pistonReverse, 0.5], [self.winchRetract, 3.0], [self.winchOff, 0.1]]
         self.extendSpeed = extendSpeed
         self.retractSpeed = retractSpeed
 
@@ -74,8 +74,9 @@ class SolenoidGroup:
         for s in self.solenoids:
             s.toggle()
 
+
 class WinchGroup:
-    def __init__(self, right_winch, left_winch, right_limit, left_limit, cable_wrapped)
+    def __init__(self, right_winch, left_winch, right_limit, left_limit, cable_wrapped):
         self.right_winch = right_winch
         self.left_winch = left_winch
 
@@ -97,7 +98,7 @@ class WinchGroup:
         # makes right winch spin in negative (clockwise)
         # which draws the cable down
 
-    def set(speed):
+    def set(self, speed):
         speed = speed*self.winch_mod
 
         # meaning right motor not allowed to spin clockwise (negative) more
