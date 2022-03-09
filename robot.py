@@ -402,10 +402,12 @@ class MyRobot(wpilib.TimedRobot):
         else: # Adjusting tiltShooter mannual
             if(operator.getXButton()):
                 self.tiltShooter.resetPosition()
-            if(operator.getRightY() > 0.95) and (self.tiltShooter.getDegrees() < self.tiltShooter.getMaxDegrees()):
-                self.tiltShooter.setSpeed(speed)
+            elif(operator.getYButton() and (operator.getRightY() < -0.95)):
+                self.tiltShooter.setSpeed(-speed)
             elif(operator.getRightY() < -0.95) and (self.tiltShooter.getDegrees() > self.tiltShooter.getMinDegrees()):
                 self.tiltShooter.setSpeed(-speed)
+            elif(operator.getRightY() > 0.95) and (self.tiltShooter.getDegrees() < self.tiltShooter.getMaxDegrees()):
+                self.tiltShooter.setSpeed(speed)
             else:
                 self.tiltShooter.setSpeed(0.0)
             print("manually tilt: ", self.tiltShooter.getSpeed())
@@ -522,8 +524,7 @@ class MyRobot(wpilib.TimedRobot):
         if driver.getAButtonPressed():
             self.climber.solenoids.toggle()
 
-        self.climber.setWinch(-self.deadzoneCorrection(driver.getLeftY(), 
-                              deadzone)
+        self.climber.setWinch(-self.deadzoneCorrection(driver.getLeftY(),deadzone))
         
     def autonomousInit(self):
         self.autonPhase = AUTON_DRIVE

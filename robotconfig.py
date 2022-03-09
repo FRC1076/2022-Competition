@@ -36,19 +36,11 @@ competition = {
         'SHOOTER_ID': 5,
         'SHOOTER_RPM': 1000,
     },
-
     'INTAKE': {
         # Update IDs when known
         'INTAKE_MOTOR_ID': 6,
         'INTAKE_SOLENOID_FORWARD_ID': 1,
         'INTAKE_SOLENOID_REVERSE_ID': 2,
-    },
-    'CLIMBER': {
-        'WINCH_LEFT_ID': 7,
-        'WINCH_RIGHT_ID': 8,
-        # Pneumatic board IDs
-        'SOLENOID_FORWARD_ID': 3,
-        'SOLENOID_REVERSE_ID': 4,
     },
     'FEEDER': {
         'FEEDER_ID' : 9,
@@ -131,7 +123,7 @@ first_night = {
     'FEEDER': {
       'FEEDER_ID' : 9,
       'FEEDER_SPEED': 0.4,
-
+    },
     'CLIMBER': {
         'WINCH_LEFT_ID': 7,
         'WINCH_RIGHT_ID': 8,
