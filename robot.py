@@ -182,7 +182,7 @@ class MyRobot(wpilib.TimedRobot):
             pneumatics_module_type, 
             config['SOLENOID_FORWARD_ID'], 
             config['SOLENOID_REVERSE_ID'])
-
+        print(config)
         right_limit = wpilib.DigitalInput(config['RIGHT_LIMIT_ID'])
         left_limit = wpilib.DigitalInput(config['LEFT_LIMIT_ID'])
 
@@ -524,7 +524,7 @@ class MyRobot(wpilib.TimedRobot):
         if driver.getAButtonPressed():
             self.climber.solenoids.toggle()
 
-        self.climber.setWinch(-self.deadzoneCorrection(driver.getLeftY(),deadzone))
+        self.climber.setWinch(-self.deadzoneCorrection(driver.getLeftY(), deadzone))
         
     def autonomousInit(self):
         self.autonPhase = AUTON_DRIVE
