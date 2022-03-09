@@ -13,7 +13,6 @@ competition = {
             'DEADZONE': DEADZONE,
             'LEFT_TRIGGER_AXIS': 2,
             'RIGHT_TRIGGER_AXIS': 3,
-
         },
         'OPERATOR': {
             'ID': 1,
@@ -52,7 +51,8 @@ competition = {
         'SOLENOID_REVERSE_ID': 4,
     },
     'FEEDER': {
-      'FEEDER_ID' : 9,
+        'FEEDER_ID' : 9,
+        'FEEDER_SPEED': 0.8,
     },
     'TILTSHOOTER': {
         'TILTSHOOTER_ID': 10,
@@ -103,21 +103,25 @@ first_night = {
         },
         'DRIVETYPE': ARCADE
     },
-        'SHOOTER': {
+    'TILTSHOOTER': {
+        'TILTSHOOTER_ID': 1,
+        'ROTATIONS_PER_360': 75,
+        'MIN_DEGREES': 5,
+        'MAX_DEGREES': 25,
+        'BUFFER_DEGREES': 2,
+        'SPEED': 0.1,
+    },
+    'SHOOTER': {
         'SHOOTER_ID': 10,
-        'SHOOTER_RPM': 1000,
+        'SHOOTER_RPM': 6000,
+    },
+    'FEEDER': {
+      'FEEDER_ID' : 9,
+      'FEEDER_SPEED': 0.8,
     },
     'AIMER': {
         'AIMING_ROTATION_SPEED': 0.6,
         'AIMING_ACCURACY_DEGREES': 3,
-    },
-    'VISION': {
-        'TARGET_HEIGHT': 8.5,
-        'TARGET_RADIUS': 2,
-        'SHOOTER_HEIGHT': 3.5,
-        'SHOOTER_OFFSET': 1,
-        'CAMERA_HEIGHT': 4,
-        'CAMERA_PITCH': 0,
     },
 }
 
@@ -143,7 +147,7 @@ practice = {
         },
         'RIGHT': {
             'RIGHT_LEADER_ID': 15,
-            'RIGHT_FOLLOWER_ID': 2,
+            'RIGHT_FOLLOWER_ID': 7,
         },
         'DRIVETYPE': ARCADE
     },

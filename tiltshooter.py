@@ -11,7 +11,6 @@ class TiltShooter:
         self.minDegrees = minDegrees # Lower bound for tilt shooter
         self.maxDegrees = maxDegrees # Upper bound for tilt shooter
         self.targetDegrees = self.minDegrees # Starting position
-        #self.manualTiltShooter = True
         self.bufferDegrees = bufferDegrees
         self.targetSpeed = targetSpeed
 

@@ -42,22 +42,34 @@ class Vision:
 
     def getSmoothYaw(self):
         sortedlog = sorted(self.yawlog)
+        
         try:
-            return sortedlog[1]
+            if len(sortedlog) == 1:
+                return sortedlog[0]
+            else:
+                return sortedlog[1]
         except IndexError:
             pass
 
-    def getSMoothPitch(self):
+    def getSmoothPitch(self):
         sortedlog = sorted(self.pitchlog)
         try:
-            return sortedlog[1]
+            if len(sortedlog) == 1:
+                return sortedlog[0]
+            else:
+                return sortedlog[1]
         except IndexError:
+            print("IndexError in SmoothPitch")
+            print(sortedlog)
             pass
 
     def getDistanceFeet(self):  # the pitch is with respect to the ground
-        pitch = (math.pi / 180) * (self.SmoothPitch() + self.cameraPitch)
-        dist = (self.targetHeight - self.cameraHeight) / math.tan(pitch)
-        return dist - self.shooterOffset + self.targetRadius
+        if self.getSmoothPitch():
+            pitch = (math.pi / 180) * (self.getSmoothPitch() + self.cameraPitch)
+            dist = (self.targetHeight - self.cameraHeight) / math.tan(pitch)
+            return dist - self.shooterOffset + self.targetRadius
+        else:
+            return 1000 # arbitrary big number
 
     def calculateVelocity(self, angle):  # returns ft/s given shooter angle
         x = self.getDistanceFeet()
@@ -68,6 +80,9 @@ class Vision:
         )
     
     def calculateAngle(self, velocity): #returns degrees given shooter velocity
+        if self.getDistanceFeet() > 100:
+            return 180
+            
         v = velocity
         x = self.getDistanceFeet()
         y = self.targetHeight - self.shooterHeight
@@ -81,10 +96,10 @@ class Vision:
     def getLatestResult(self):
         result = self.camera.getLatestResult()
         targets = result.getTargets()
-        #print(result.hasTargets())
+        print("hasTargets = ", result.hasTargets())
         self.camera.takeOutputSnapshot()
 
-        if len(result.getTargets()) > 3:
+        if result.hasTargets():
             self.pitch = sum([t.getPitch() * t.getArea() for t in targets]) / sum([t.getArea() for t in targets])
             self.yaw = sum([t.getYaw() * t.getArea() for t in targets]) / sum([t.getArea() for t in targets])
 
@@ -95,5 +110,7 @@ class Vision:
             self.yawlog.append(self.yaw)
             if len(self.yawlog) > 3:
                 self.yawlog.pop(0)
-
-            return targets
+            
+        #distance = self.camera.getDistanceFeet()
+        print("yaw = ", self.yaw, " pitch = ", self.pitch, " distance = ", self.getDistanceFeet())
+        return targets
