@@ -42,7 +42,7 @@ class Aimer:
 
         # def getAngle(self):
         ##    self.ag = abs(self.gyro.getAngle()) % 360
-        return self.ag
+        #return self.ag
 
     def calculate(self, m):
         return (self.turnController.calculate(m))
@@ -51,6 +51,8 @@ class Aimer:
     #    self.setRotateToAngleRate = output
 
     def calcDiff(self, theta):
+        if(not theta):
+            return None
         angle = self.getYaw()
         return(abs(angle - theta))
     
@@ -65,12 +67,12 @@ class Aimer:
         # rotationRate = self.turnController.calculate(angle, theta)
         # return(rotationRate, 0)
 
-        diff = calcDiff(theta)
+        diff = self.calcDiff(theta)
         correctionFactor = (diff / 10.0)
         if correctionFactor > 1.0:
             correctionFactor = 1.0
 
-        if (getInRange(diff)):
+        if (self.getInRange(diff)):
             print("diff <= ", self.accuracyDegrees)
             return (0, 0)
         else:

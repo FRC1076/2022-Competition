@@ -4,9 +4,12 @@ import math
 
 class Vision:
     def __init__(self, targetHeight, targetRadius, shooterHeight, shooterOffset, cameraHeight, cameraPitch):
+        self.result = None
+
         self.camera = photonvision.PhotonCamera('mmal_service_16.1')
         self.camera.setDriverMode(False)
         self.camera.setPipelineIndex(0)
+        self.latestResult = None
 
         self.yawlog = []
         self.pitchlog = []
@@ -41,50 +44,96 @@ class Vision:
         return self.yaw
 
     def getSmoothYaw(self):
-        sortedlog = sorted(self.yawlog)
-        try:
-            return sortedlog[1]
-        except IndexError:
-            pass
+        if self.result.hasTargets():
+                
+            sortedlog = sorted(self.yawlog)
+            
+            try:
+                if len(sortedlog) == 1:
+                    return sortedlog[0]
+                else:
+                    return sortedlog[1]
+            except IndexError:
+                pass
+        else: 
+            return None
 
-    def getSMoothPitch(self):
-        sortedlog = sorted(self.pitchlog)
-        try:
-            return sortedlog[1]
-        except IndexError:
-            pass
+    def getSmoothPitch(self):
+        if self.result.hasTargets():
+                
+            sortedlog = sorted(self.pitchlog)
+            
+            try:
+                if len(sortedlog) == 1:
+                    return sortedlog[0]
+                else:
+                    return sortedlog[1]
+            except IndexError:
+                pass
+        else: 
+            return None
 
     def getDistanceFeet(self):  # the pitch is with respect to the ground
-        pitch = (math.pi / 180) * (self.SmoothPitch() + self.cameraPitch)
-        dist = (self.targetHeight - self.cameraHeight) / math.tan(pitch)
-        return dist - self.shooterOffset + self.targetRadius
+        if self.result.hasTargets():
+            pitch = (math.pi / 180) * (self.getSmoothPitch() + self.cameraPitch)
+            dist = (self.targetHeight - self.cameraHeight) / math.tan(pitch)
+            return dist - self.shooterOffset + self.targetRadius
+        else:
+            return None 
 
     def calculateVelocity(self, angle):  # returns ft/s given shooter angle
-        x = self.getDistanceFeet()
-        y = self.targetHeight - self.shooterHeight
-
-        return math.sqrt(
-            (-16 * x ** 2) / ((y * (math.cos(angle)) ** 2) - (x * math.sin(angle) * math.cos(angle)))
-        )
+        if self.result.hasTargets:
+            x = self.getDistanceFeet()
+            y = self.targetHeight - self.shooterHeight
+            try:
+                return math.sqrt(
+                    (-16 * x ** 2) / ((y * (math.cos(angle)) ** 2) - (x * math.sin(angle) * math.cos(angle)))
+                )
+            
+            except ValueError:
+                return None
+        else:
+            return None
     
     def calculateAngle(self, velocity): #returns degrees given shooter velocity
-        v = velocity
-        x = self.getDistanceFeet()
-        y = self.targetHeight - self.shooterHeight
+        if self.result.hasTargets():
 
-        a = 16*(x**2 / v**2) # constant to make it look nicer
+            v = velocity
+            x = self.getDistanceFeet()
+            if x is None:
+                return None
+            y = self.targetHeight - self.shooterHeight
 
-        return math.atan(
-            ( x + math.sqrt( x**2 - 4*(y + a)*a) ) / ( 2*a )    
-        )
+            a = 16*(x**2 / v**2) # constant to make it look nicer
+            try:
+                return math.atan(
+                    ( x + math.sqrt( x**2 - 4*(y + a)*a) ) / ( 2*a )    
+                )
+            except ValueError:
+                return None
+        else:
+            return None
+
+    def getNumTargets(self):
+        if (self.latestResult):
+            return(len(result.getTargets()))
+        else:
+            return 0
+
+    def hasTargets(self):
+        if (self.latestResult):
+            return(self.latestResult.hasTargets())
+        else:
+            return(False)
 
     def getLatestResult(self):
-        result = self.camera.getLatestResult()
-        targets = result.getTargets()
-        #print(result.hasTargets())
+        self.result = self.camera.getLatestResult()
+        self.latestResult = self.result
+        targets = self.result.getTargets()
+        print("hasTargets = ", self.result.hasTargets())
         self.camera.takeOutputSnapshot()
 
-        if len(result.getTargets()) > 3:
+        if self.result.hasTargets():
             self.pitch = sum([t.getPitch() * t.getArea() for t in targets]) / sum([t.getArea() for t in targets])
             self.yaw = sum([t.getYaw() * t.getArea() for t in targets]) / sum([t.getArea() for t in targets])
 
@@ -96,4 +145,7 @@ class Vision:
             if len(self.yawlog) > 3:
                 self.yawlog.pop(0)
 
-            return targets
+            
+        #distance = self.camera.getDistanceFeet()
+        print("yaw = ", self.yaw, " pitch = ", self.pitch, " distance = ", self.getDistanceFeet())
+        return targets

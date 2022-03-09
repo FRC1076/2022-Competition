@@ -13,7 +13,6 @@ competition = {
             'DEADZONE': DEADZONE,
             'LEFT_TRIGGER_AXIS': 2,
             'RIGHT_TRIGGER_AXIS': 3,
-
         },
         'OPERATOR': {
             'ID': 1,
@@ -52,7 +51,8 @@ competition = {
         'SOLENOID_REVERSE_ID': 4,
     },
     'FEEDER': {
-      'FEEDER_ID' : 9,
+        'FEEDER_ID' : 9,
+        'FEEDER_SPEED': 0.8,
     },
     'TILTSHOOTER': {
         'TILTSHOOTER_ID': 10,
@@ -103,10 +103,6 @@ first_night = {
         },
         'DRIVETYPE': ARCADE
     },
-        'SHOOTER': {
-        'SHOOTER_ID': 10,
-        'SHOOTER_RPM': 1000,
-    },
     'AIMER': {
         'AIMING_ROTATION_SPEED': 0.6,
         'AIMING_ACCURACY_DEGREES': 3,
@@ -119,6 +115,23 @@ first_night = {
         'CAMERA_HEIGHT': 4,
         'CAMERA_PITCH': 0,
     },
+
+    'TILTSHOOTER': {
+        'TILTSHOOTER_ID': 1,
+        'ROTATIONS_PER_360': 75,
+        'MIN_DEGREES': 5,
+        'MAX_DEGREES': 35,
+        'BUFFER_DEGREES': 2,
+        'SPEED': 0.1,
+    },
+    'SHOOTER': {
+        'SHOOTER_ID': 10,
+        'SHOOTER_RPM': 6000,
+    },
+    'FEEDER': {
+      'FEEDER_ID' : 9,
+      'FEEDER_SPEED': 0.4,
+
     'CLIMBER': {
         'WINCH_LEFT_ID': 7,
         'WINCH_RIGHT_ID': 8,
@@ -135,6 +148,7 @@ first_night = {
         # Extend speed must be lower than natural extend rate
         'EXTEND_SPEED': 0.5,
         'RETRACT_SPEED': 0.7,
+
     },
 }
 
@@ -160,7 +174,7 @@ practice = {
         },
         'RIGHT': {
             'RIGHT_LEADER_ID': 15,
-            'RIGHT_FOLLOWER_ID': 2,
+            'RIGHT_FOLLOWER_ID': 7,
         },
         'DRIVETYPE': ARCADE
     },
@@ -267,4 +281,38 @@ visionTest = {
     # Robot IP is 10.10.76.2
 }
 
+autonTest = {
+    'CONTROLLERS': {
+        'DRIVER': {
+            'ID': 0,
+            'DEADZONE': DEADZONE,
+            'LEFT_TRIGGER_AXIS': 2,
+            'RIGHT_TRIGGER_AXIS': 3,
+        },
+        'OPERATOR': {
+            'ID': 1,
+            'DEADZONE': DEADZONE,
+            'LEFT_TRIGGER_AXIS': 2,
+            'RIGHT_TRIGGER_AXIS': 3,
+        }
+    },
+    'DRIVETRAIN': {
+        'LEFT': {
+            'LEFT_LEADER_ID': 13,
+            'LEFT_FOLLOWER_ID': 3,
+        },
+        'RIGHT': {
+            'RIGHT_LEADER_ID': 15,
+            'RIGHT_FOLLOWER_ID': 2,
+        },
+        'DRIVETYPE': ARCADE
+    },
+    'SHOOTER': {
+        'SHOOTER_ID': 9
+    },
+    'VISION': 'enabled',
+}
+
+
 robotconfig = first_night
+
