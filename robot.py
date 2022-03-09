@@ -519,10 +519,11 @@ class MyRobot(wpilib.TimedRobot):
                               deadzone))
         
     def autonomousInit(self):
-        self.autonPhase = AUTON_DRIVE
+        self.autonPhase = "AUTON_SPIN_UP"
         self.theta = None
         self.rotationSpeed = 1000
-        self.autonShooterRPM = 1000
+        # RPM OF THE SHOOTER DURING AUTON
+        self.autonShooterRPM = 3000
 
         self.autonTimer = wpilib.Timer()
         self.shooterTimer = wpilib.Timer()
@@ -537,7 +538,8 @@ class MyRobot(wpilib.TimedRobot):
         
     def autonomousPeriodic(self):
         # self.autonForwardAndBack()
-        self.comp1Auton()
+        #self.comp1Auton()
+        self.comp1AutonSimple()
 
     def autonForwardAndBack(self):
         driver = self.driver.xboxController
@@ -550,6 +552,40 @@ class MyRobot(wpilib.TimedRobot):
                 theta = self.aimer.calculateTheta(driver.getLeftX(), driver.getLeftY())
                 result = self.aimer.calcRotationCoordinates(theta)
                 self.drivetrain.arcadeDrive(result[0], result[1])
+
+    def comp1AutonSimple(self):
+        spinUpTime = 0.5
+        firingTime = 0.75
+        backupTime = 1.75
+
+        print(self.autonPhase)
+
+        # Phase transitions
+        if self.autonTimer.get() > spinUpTime and self.autonPhase == "AUTON_SPIN_UP":
+            self.autonPhase = "AUTON_FIRING"
+        
+        if self.autonTimer.get() > firingTime and self.autonPhase == "AUTON_FIRING":
+            self.autonPhase = "AUTON_DRIVE"
+        
+        if self.autonTimer.get() > backupTime and self.autonPhase == "AUTON_DRIVE":
+            self.autonPhase = None
+
+        # Auton Logic
+        # Spin up the shooter motor
+        if self.autonPhase == "AUTON_SPIN_UP":
+            self.shooter.pidController.setReference(self.autonShooterRPM, rev.CANSparkMax.ControlType.kVelocity)
+        
+        # Activate the feeder/trigger motor
+        if self.autonPhase == "AUTON_FIRING":
+            self.feeder.setFeeder(self.feeder.feederSpeed)
+
+        # Turn off the shooter and feeder/trigger motors, and drive backwards
+        if self.autonPhase == "AUTON_DRIVE":
+            self.shooter.pidController.setReference(0.0, rev.CANSparkMax.ControlType.kVelocity)
+            self.feeder.setFeeder(0.0)
+            
+            self.drivetrain.arcadeDrive(0, 0.8)
+        
 
     def comp1Auton(self):
 
