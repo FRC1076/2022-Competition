@@ -126,7 +126,7 @@ class Tester():
         self.testIntake()
         self.testManualShooter()
         self.testManualClimber()
-        self.testRotatePhase()
+        #self.testRotatePhase()
 
     def testTankDrive(self):
         self.robot.drive_type = robotconfig.TANK

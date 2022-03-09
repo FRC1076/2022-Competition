@@ -262,4 +262,36 @@ visionTest = {
     # Robot IP is 10.10.76.2
 }
 
-robotconfig = first_night
+autonTest = {
+    'CONTROLLERS': {
+        'DRIVER': {
+            'ID': 0,
+            'DEADZONE': DEADZONE,
+            'LEFT_TRIGGER_AXIS': 2,
+            'RIGHT_TRIGGER_AXIS': 3,
+        },
+        'OPERATOR': {
+            'ID': 1,
+            'DEADZONE': DEADZONE,
+            'LEFT_TRIGGER_AXIS': 2,
+            'RIGHT_TRIGGER_AXIS': 3,
+        }
+    },
+    'DRIVETRAIN': {
+        'LEFT': {
+            'LEFT_LEADER_ID': 13,
+            'LEFT_FOLLOWER_ID': 3,
+        },
+        'RIGHT': {
+            'RIGHT_LEADER_ID': 15,
+            'RIGHT_FOLLOWER_ID': 2,
+        },
+        'DRIVETYPE': ARCADE
+    },
+    'SHOOTER': {
+        'SHOOTER_ID': 9
+    },
+    'VISION': 'enabled',
+}
+
+robotconfig = autonTest
