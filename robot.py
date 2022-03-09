@@ -531,10 +531,13 @@ class MyRobot(wpilib.TimedRobot):
                 self.climber.stepAction()
         '''
         # self.climber.solenoids.get()
-        if driver.getAButtonPressed():
+        if driver.getXButtonPressed():
             self.climber.solenoids.toggle()
 
-        self.climber.setWinch(-self.deadzoneCorrection(driver.getLeftY(), deadzone))
+        if driver.getYButton():
+            self.climber.setWinch(0.4)
+        elif driver.getAButton():
+            self.climber.setWinch(-0.4)
 
     def autonomousInit(self):
         self.autonPhase = "AUTON_SPINUP"
