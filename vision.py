@@ -15,20 +15,20 @@ class Vision:
         self.pitchlog = []
 
         # everything is in feet
-        self.targetHeight = targetHeight # 8.5
-        self.targetRadius = targetRadius # 2
+        self.targetHeight = targetHeight  # 8.5
+        self.targetRadius = targetRadius  # 2
 
         # needs to be measured - position of the shooter is the center of mass of the ball as it leaves shooter
-        self.shooterHeight = shooterHeight # 3.5
-        self.shooterOffset = shooterOffset # 1  # horizontal offset of shooter from camera
+        self.shooterHeight = shooterHeight  # 3.5
+        self.shooterOffset = shooterOffset  # 1  # horizontal offset of shooter from camera
 
         # needs to be measured
-        self.cameraHeight = cameraHeight # 4
+        self.cameraHeight = cameraHeight  # 4
 
         # in degrees, subject to change
         #self.shooter_angle = 60
         #self.camera_angle = 0
-        self.cameraPitch = cameraPitch # 0
+        self.cameraPitch = cameraPitch  # 0
 
         self.pitch = None
         self.yaw = None
@@ -95,7 +95,7 @@ class Vision:
         else:
             return None
     
-    def calculateAngle(self, velocity): #returns degrees given shooter velocity
+    def calculateAngle(self, velocity):  # returns degrees given shooter velocity
         if self.result.hasTargets():
 
             v = velocity
@@ -104,7 +104,7 @@ class Vision:
                 return None
             y = self.targetHeight - self.shooterHeight
 
-            a = 16*(x**2 / v**2) # constant to make it look nicer
+            a = 16*(x**2 / v**2)  # constant to make it look nicer
             try:
                 return math.atan(
                     ( x + math.sqrt( x**2 - 4*(y + a)*a) ) / ( 2*a )    
@@ -144,7 +144,6 @@ class Vision:
             self.yawlog.append(self.yaw)
             if len(self.yawlog) > 3:
                 self.yawlog.pop(0)
-
             
         #distance = self.camera.getDistanceFeet()
         print("yaw = ", self.yaw, " pitch = ", self.pitch, " distance = ", self.getDistanceFeet())

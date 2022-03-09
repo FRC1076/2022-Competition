@@ -6,7 +6,6 @@ TANK = 2
 SWERVE = 3
 
 competition = {
-
     'CONTROLLERS': {
         'DRIVER': {
             'ID': 0,
@@ -36,19 +35,11 @@ competition = {
         'SHOOTER_ID': 5,
         'SHOOTER_RPM': 1000,
     },
-
     'INTAKE': {
         # Update IDs when known
         'INTAKE_MOTOR_ID': 6,
         'INTAKE_SOLENOID_FORWARD_ID': 1,
         'INTAKE_SOLENOID_REVERSE_ID': 2,
-    },
-    'CLIMBER': {
-        'WINCH_LEFT_ID': 7,
-        'WINCH_RIGHT_ID': 8,
-        # Pneumatic board IDs
-        'SOLENOID_FORWARD_ID': 3,
-        'SOLENOID_REVERSE_ID': 4,
     },
     'FEEDER': {
         'FEEDER_ID' : 9,
@@ -78,17 +69,31 @@ competition = {
         'SPINUP_TIME': 0.5,
         'FIRING_TIME': 0.25,
         'BACKUP_TIME': 1,
+
+    'CLIMBER': {
+        'WINCH_LEFT_ID': 7,
+        'WINCH_RIGHT_ID': 8,
+        # Pneumatic board IDs
+        'SOLENOID_FORWARD_ID': 3,
+        'SOLENOID_REVERSE_ID': 4,
+        # DIO pin numbers
+        'LEFT_LIMIT_ID': 0,
+        'RIGHT_LIMIT_ID': 1,
+        'CABLE_WRAPPED': 'UNDER',
+        # Both speeds positive.
+        # Extend speed must be lower than natural extend rate
+        'EXTEND_SPEED': 0.5,
+        'RETRACT_SPEED': 0.7,
     },
 }
 
-first_night = {
+gull_lake = {
     'CONTROLLERS': {
         'DRIVER': {
             'ID': 0,
             'DEADZONE': DEADZONE,
             'LEFT_TRIGGER_AXIS': 2,
             'RIGHT_TRIGGER_AXIS': 3,
-
         },
         'OPERATOR': {
             'ID': 1,
@@ -124,17 +129,32 @@ first_night = {
         'TILTSHOOTER_ID': 1,
         'ROTATIONS_PER_360': 75,
         'MIN_DEGREES': 5,
-        'MAX_DEGREES': 35,
+        'MAX_DEGREES': 25,
         'BUFFER_DEGREES': 2,
         'SPEED': 0.1,
     },
     'SHOOTER': {
         'SHOOTER_ID': 10,
-        'SHOOTER_RPM': 6000,
+        'SHOOTER_RPM': 3500,
     },
     'FEEDER': {
       'FEEDER_ID' : 9,
       'FEEDER_SPEED': 0.4,
+    },
+    'CLIMBER': {
+        'WINCH_LEFT_ID': 7,
+        'WINCH_RIGHT_ID': 8,
+        # Pneumatic board IDs
+        'SOLENOID_FORWARD_ID': 3,
+        'SOLENOID_REVERSE_ID': 4,
+        # DIO pin numbers
+        'LEFT_LIMIT_ID': 0,
+        'RIGHT_LIMIT_ID': 1,
+        'CABLE_WRAPPED': 'UNDER',
+        # Both speeds positive.
+        # Extend speed must be lower than natural extend rate
+        'EXTEND_SPEED': 0.5,
+        'RETRACT_SPEED': 0.7,
     },
 }
 
@@ -164,7 +184,6 @@ practice = {
         },
         'DRIVETYPE': ARCADE
     },
-    
     'AIMER': {
         'AIMING_ROTATION_SPEED': 0.6,
         'AIMING_ACCURACY_DEGREES': 3,
@@ -190,7 +209,6 @@ intakeTest = {
             'DEADZONE': DEADZONE,
             'LEFT_TRIGGER_AXIS': 2,
             'RIGHT_TRIGGER_AXIS': 3,
-
         },
         'OPERATOR': {
             'ID': 1,
@@ -231,7 +249,6 @@ visionTest = {
             'DEADZONE': DEADZONE,
             'LEFT_TRIGGER_AXIS': 2,
             'RIGHT_TRIGGER_AXIS': 3,
-
         },
         'OPERATOR': {
             'ID': 1,
@@ -304,4 +321,4 @@ autonTest = {
     },
 }
 
-robotconfig = autonTest
+robotconfig = gull_lake
