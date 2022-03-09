@@ -21,6 +21,7 @@ from tiltshooter import TiltShooter
 from feeder import Feeder
 from controller import Controller
 from tester import Tester
+from mock import mockSolenoid
 from networktables import NetworkTables
 
 # Drive Types
@@ -139,6 +140,7 @@ class MyRobot(wpilib.TimedRobot):
         motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
         pneumatics_module_type = wpilib.PneumaticsModuleType.CTREPCM
         motor = rev.CANSparkMax(config['INTAKE_MOTOR_ID'], motor_type)
+        
         solenoid = wpilib.DoubleSolenoid(0, 
             pneumatics_module_type, 
             config['INTAKE_SOLENOID_FORWARD_ID'], 
@@ -168,10 +170,12 @@ class MyRobot(wpilib.TimedRobot):
 
         #piston = SolenoidGroup([right_piston, left_piston])
 
-        piston =  wpilib.DoubleSolenoid(0, 
+        '''piston =  wpilib.DoubleSolenoid(0, 
             pneumatics_module_type, 
             config['SOLENOID_FORWARD_ID'], 
             config['SOLENOID_REVERSE_ID'])
+        '''
+        piston = mockSolenoid()
 
         right_limit = wpilib.DigitalInput(config['RIGHT_LIMIT_ID'])
         left_limit = wpilib.DigitalInput(config['LEFT_LIMIT_ID'])
@@ -180,6 +184,7 @@ class MyRobot(wpilib.TimedRobot):
 
         
         return Climber(piston, winch, config['EXTEND_SPEED'], config['RETRACT_SPEED'])
+
     def initAimer(self, config):
         ahrs = AHRS.create_spi()
         # navx = navx.AHRS.create_i2c()
@@ -219,7 +224,7 @@ class MyRobot(wpilib.TimedRobot):
             self.teleopDrivetrain()
             self.teleopIntake()
             self.teleopTiltShooter()
-            self.teleopShooter(shooterRPM = self.shooter.shooterRPM)
+            #self.teleopShooter(shooterRPM = self.shooter.shooterRPM)
             self.teleopFeeder()
             self.teleopClimber()
         elif(self.phase == "AS_ROTATE_PHASE"):
@@ -461,7 +466,7 @@ class MyRobot(wpilib.TimedRobot):
             self.climber.solenoids.toggle()
 
         self.climber.setWinch(-self.deadzoneCorrection(driver.getLeftY(), 
-                              deadzone)
+                              deadzone))
         
     def autonomousInit(self):
         self.autonTimer = wpilib.Timer()
@@ -494,13 +499,13 @@ class MyRobot(wpilib.TimedRobot):
         values between -x and x, and scales the remaining values from
         -1 to 1, to (-1 + x) to (1 - x)
         """
-        if abs(val) < deadzone:
+        if abs(val) < deadzone or deadzone == 1:
             return 0
         elif val < 0:
-            x = (abs(val) - deadzone)/(1-deadzone)
-            return -x
+            x = (1/(1-deadzone)**2)*((val+deadzone)**3) - 0.2
+            return x
         else:
-            x = (val - deadzone)/(1-deadzone)
+            x = (1/(1-deadzone)**2)*((val-deadzone)**3) + 0.2
             return x
 
     def logResult(self, *result):

@@ -208,19 +208,33 @@ intakeTest = {
 
 climberTest = {
     'CONTROLLERS': {
-        'OPERATOR': {
+        'DRIVER': {
             'ID': 0,
             'DEADZONE': DEADZONE,
             'LEFT_TRIGGER_AXIS': 2,
             'RIGHT_TRIGGER_AXIS': 3,
-        }
+
+        },
+        'OPERATOR': {
+            'ID': 1,
+            'DEADZONE': DEADZONE,
+            'LEFT_TRIGGER_AXIS': 2,
+            'RIGHT_TRIGGER_AXIS': 3,
+        },
     },
     'CLIMBER': {
-        'WINCH_LEFT_ID': 9,
-        'WINCH_RIGHT_ID': 10,
+        'WINCH_LEFT_ID': 3,
+        'WINCH_RIGHT_ID': 13,
         # Pneumatic board IDs
         'SOLENOID_FORWARD_ID': 1,
         'SOLENOID_REVERSE_ID': 0,
+
+        'RIGHT_LIMIT_ID' : 1,
+        'LEFT_LIMIT_ID': 0,
+        'CABLE_WRAPPED': 'UNDER',
+
+        'EXTEND_SPEED': 0.5,
+        'RETRACT_SPEED': 0.7,
     },
 }
 
@@ -267,4 +281,4 @@ visionTest = {
     # Robot IP is 10.10.76.2
 }
 
-robotconfig = first_night
+robotconfig = climberTest
