@@ -30,6 +30,12 @@ SWERVE = 3
 # Test Mode
 TEST_MODE = False
 
+# Auton phases
+AUTON_DRIVE = 0
+AUTON_ROTATE = 1
+AUTON_TILT = 2
+AUTON_SHOOT = 3
+
 class MyRobot(wpilib.TimedRobot):
 
     def robotInit(self):
@@ -216,7 +222,11 @@ class MyRobot(wpilib.TimedRobot):
             self.dashboard.putBoolean('Feeder Has Fired', self.feeder.hasFired())
 
     def teleopInit(self):
-        
+        self.theta = None
+
+        # Even if no drivetrain, defaults to drive phase
+        self.phase = "DRIVE_PHASE"
+
         if self.climber: # false if no climber initialized
             # Climber presets
             self.climbRunning = False
@@ -232,7 +242,7 @@ class MyRobot(wpilib.TimedRobot):
         driver = self.driver.xboxController
         rta = self.driver.right_trigger_axis
 
-        if self.vision is None or self.aimer is None or self.tiltShooter is None:
+        if (self.vision is None or self.aimer is None or self.tiltShooter is None):
             self.phase = "DRIVE_PHASE"
 
         if(self.phase == "DRIVE_PHASE"):
@@ -253,7 +263,7 @@ class MyRobot(wpilib.TimedRobot):
                     self.phase = "AS_TILT_PHASE"
                     self.teleopTiltShooter()
                 else:
-                    self.teleopDrivetrain()   
+                    self.teleopDrivetrain()
         elif(self.phase == "AS_TILT_PHASE"):
             if (driver.getRawAxis(rta) > 0.95):
                 self.phase == "DRIVE_PHASE"
@@ -311,7 +321,7 @@ class MyRobot(wpilib.TimedRobot):
 
             result = (-driver.getRightX(), driver.getLeftY())
 
-            if self.vision and self.aimer and self.tiltShooter:
+            if(self.vision and self.aimer and self.tiltShooter):
                 if(self.phase == "DRIVE_PHASE"):
                     if driver.getLeftBumper():  # for testing auto-rotate
                         self.aimer.reset()
@@ -340,6 +350,7 @@ class MyRobot(wpilib.TimedRobot):
             rotateSpeed = speedratio * self.deadzoneCorrection(rotateSpeed, deadzone)
             driveSpeed = speedratio * self.deadzoneCorrection(driveSpeed, deadzone)
 
+            print(rotateSpeed, driveSpeed)
             self.drivetrain.arcadeDrive(rotateSpeed, driveSpeed)
             
         else: # self.drive == SWERVE
@@ -378,14 +389,9 @@ class MyRobot(wpilib.TimedRobot):
         operator = self.operator.xboxController
         
         if(self.phase == "AS_TILT_PHASE"): # Adjusting tiltShooter automatically with targetDegrees
-            if (self.tiltShooter.getDegrees() < (self.tiltShooter.getTargetDegrees() - buffer)):
-                self.tiltShooter.setSpeed(speed)
-            elif (self.tiltShooter.getDegrees() > (self.tiltShooter.getTargetDegrees() + buffer)):
-                self.tiltShooter.setSpeed(-speed)
-            else:
-                self.tiltShooter.setSpeed(0.0)
-        else: # Adjusting tiltShooter mannually
+            self.tiltShooterPeriodic()
             
+        else: # Adjusting tiltShooter mannual
             if(operator.getXButton()):
                 self.tiltShooter.resetPosition()
             if(operator.getRightY() > 0.95) and (self.tiltShooter.getDegrees() < self.tiltShooter.getMaxDegrees()):
@@ -396,6 +402,20 @@ class MyRobot(wpilib.TimedRobot):
                 self.tiltShooter.setSpeed(0.0)
         
         #print("Int tilt shooter: degrees:", self.tiltShooter.getDegrees(), " speed: ", self.tiltShooter.getSpeed())
+
+    def tiltShooterPeriodic(self):
+        if not self.tiltShooter:
+            return
+
+        speed = self.tiltShooter.getTargetSpeed()
+        buffer = self.tiltShooter.getBufferDegrees()
+
+        if (self.tiltShooter.getDegrees() < (self.tiltShooter.getTargetDegrees() - buffer)):
+            self.tiltShooter.setSpeed(speed)
+        elif (self.tiltShooter.getDegrees() > (self.tiltShooter.getTargetDegrees() + buffer)):
+            self.tiltShooter.setSpeed(-speed)
+        else:
+            self.tiltShooter.setSpeed(0.0)
 
     def teleopShooter(self, shooterRPM = None, shooterVelocity = None):
         
@@ -411,11 +431,13 @@ class MyRobot(wpilib.TimedRobot):
 
         if shooterRPM:
             shooterRPM = -shooterRPM
-
-            if operator.getRawAxis(rta) > 0.95:
+            if self.phase == "DRIVE_PHASE":
+                if operator.getRawAxis(rta) > 0.95:
+                    shooter_pid.setReference(shooterRPM, rev.CANSparkMax.ControlType.kVelocity)
+                else: 
+                    shooter_pid.setReference(0, rev.CANSparkMax.ControlType.kVelocity)
+            elif self.phase == "AS_TILT_PHASE" or self.phase == "AS_FIRE_PHASE":
                 shooter_pid.setReference(shooterRPM, rev.CANSparkMax.ControlType.kVelocity)
-            else: 
-                shooter_pid.setReference(0, rev.CANSparkMax.ControlType.kVelocity)
 
         elif shooterVelocity:
             shooterVelocity = -shooterVelocity
@@ -495,9 +517,16 @@ class MyRobot(wpilib.TimedRobot):
                               deadzone))
         
     def autonomousInit(self):
+        self.autonPhase = AUTON_DRIVE
+        self.theta = None
+        self.rotationSpeed = 1000
+        self.autonShooterRPM = 1000
+
         self.autonTimer = wpilib.Timer()
         self.shooterTimer = wpilib.Timer()
+
         self.autonTimer.start()
+
         if(self.aimer):
             self.aimer.reset()
 
@@ -505,7 +534,8 @@ class MyRobot(wpilib.TimedRobot):
             self.intake.extend()
         
     def autonomousPeriodic(self):
-        self.autonForwardAndBack()
+        # self.autonForwardAndBack()
+        self.comp1Auton()
 
     def autonForwardAndBack(self):
         driver = self.driver.xboxController
@@ -518,6 +548,42 @@ class MyRobot(wpilib.TimedRobot):
                 theta = self.aimer.calculateTheta(driver.getLeftX(), driver.getLeftY())
                 result = self.aimer.calcRotationCoordinates(theta)
                 self.drivetrain.arcadeDrive(result[0], result[1])
+
+    def comp1Auton(self):
+
+        backupTime = 0.5
+
+        print(self.autonPhase)
+        # Phase transitions
+        if self.autonTimer.get() > backupTime and self.autonPhase == AUTON_DRIVE:
+            self.autonPhase = AUTON_ROTATE
+            self.theta = self.vision.getSmoothYaw()
+            
+        if self.rotationSpeed == 0 and self.autonPhase == AUTON_ROTATE:
+            self.autonPhase = AUTON_TILT
+        
+        if self.tiltShooter.isNearTarget() and self.autonPhase == AUTON_TILT:
+            self.autonPhase = AUTON_SHOOT
+
+        # Auton logic
+        if self.autonPhase == AUTON_DRIVE:
+            self.drivetrain.arcadeDrive(0, 0.8)
+        
+        if self.autonPhase == AUTON_ROTATE:
+            if (self.vision and self.aimer and self.theta):
+                (self.rotationSpeed, speed) = self.aimer.calculateDriveSpeeds(self.theta)
+                self.drivetrain.arcadeDrive(self.rotationSpeed, speed)
+        
+        if self.autonPhase == AUTON_TILT:
+            self.tiltShooterPeriodic()
+            self.shooter.pidController.setReference(self.autonShooterRPM, rev.CANSparkMax.ControlType.kVelocity)
+
+        if self.autonPhase == AUTON_SHOOT:
+            if(self.feeder.hasFired()):
+                self.feeder.setFeeder(0.0)
+                self.shooter.pidController.setReference(0, rev.CANSparkMax.ControlType.kVelocity)
+            else:
+                self.feeder.setFeeder(0.4)
 
     def deadzoneCorrection(self, val, deadzone): 
         """
