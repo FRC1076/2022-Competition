@@ -119,7 +119,7 @@ first_night = {
         'TILTSHOOTER_ID': 1,
         'ROTATIONS_PER_360': 75,
         'MIN_DEGREES': 5,
-        'MAX_DEGREES': 25,
+        'MAX_DEGREES': 35,
         'BUFFER_DEGREES': 2,
         'SPEED': 0.1,
     },
@@ -129,7 +129,7 @@ first_night = {
     },
     'FEEDER': {
       'FEEDER_ID' : 9,
-      'FEEDER_SPEED': 0.8,
+      'FEEDER_SPEED': 0.4,
     },
 }
 

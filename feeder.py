@@ -9,6 +9,7 @@ class Feeder:
         self.encoder.setPosition(0) # Reset position of motor to zero
 
     def setFeeder(self, speed):
+        print("Setting feeder speed: ", speed)
         self.motor.set(speed)
 
     def setPosition(self, position):
