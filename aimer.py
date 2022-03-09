@@ -42,7 +42,7 @@ class Aimer:
 
         # def getAngle(self):
         ##    self.ag = abs(self.gyro.getAngle()) % 360
-        return self.ag
+        #return self.ag
 
     def calculate(self, m):
         return (self.turnController.calculate(m))
@@ -51,6 +51,8 @@ class Aimer:
     #    self.setRotateToAngleRate = output
 
     def calcDiff(self, theta):
+        if(not theta):
+            return None
         angle = self.getYaw()
         return(abs(angle - theta))
     

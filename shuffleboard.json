@@ -13,16 +13,129 @@
         "tiles": {
           "0,0": {
             "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/phase",
+              "_title": "phase"
+            }
+          },
+          "2,0": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Gyro",
+              "_title": "Gyro",
+              "Visuals/Major tick spacing": 45.0,
+              "Visuals/Starting angle": 180.0,
+              "Visuals/Show tick mark ring": true,
+              "Visuals/Counter clockwise": false
+            }
+          },
+          "0,1": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_title": "Sim: 127.0.0.1; Comp: 10.10.76.2"
+            }
+          },
+          "4,0": {
+            "size": [
               1,
               1
             ],
             "content": {
-              "_type": "Simple Dial",
-              "_source0": "network_table:///SmartDashboard/periods",
-              "_title": "periods",
-              "Range/Min": 0.0,
-              "Range/Max": 10000.0,
-              "Visuals/Show value": true
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Periods",
+              "_title": "Periods"
+            }
+          },
+          "5,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Phase ",
+              "_title": "Phase "
+            }
+          },
+          "6,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Vision Has Target",
+              "_title": "Vision Has Target",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "4,1": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Aimer Yaw (Degrees)",
+              "_title": "Aimer Yaw (Degrees)"
+            }
+          },
+          "7,1": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Tilt Target (Degrees)",
+              "_title": "Tilt Target (Degrees)"
+            }
+          },
+          "6,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Tilt (Degrees)",
+              "_title": "Tilt (Degrees)"
+            }
+          },
+          "6,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Feeder Has Fired",
+              "_title": "Feeder Has Fired",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "4,2": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Shooter Speed (RPM)",
+              "_title": "Shooter Speed (RPM)"
             }
           }
         }
@@ -82,12 +195,25 @@
           }
         }
       }
+    },
+    {
+      "title": "Tab 3",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "",
+      "widgetPane": {
+        "gridSize": 128.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "titleType": 0,
+        "tiles": {}
+      }
     }
   ],
   "windowGeometry": {
     "x": 0.0,
     "y": 0.0,
-    "width": 1536.0,
-    "height": 864.0
+    "width": 1540.0,
+    "height": 625.5999755859375
   }
 }
