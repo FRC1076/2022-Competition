@@ -190,7 +190,7 @@ class MyRobot(wpilib.TimedRobot):
         right_limit = wpilib.DigitalInput(config['RIGHT_LIMIT_ID'])
         left_limit = wpilib.DigitalInput(config['LEFT_LIMIT_ID'])
 
-        winch = WinchGroup(right_winch, left_winch, right_limit, left_limit, config['CABLE_WRAPPED'])
+        winch = WinchGroup(right_winch, left_winch, right_limit, left_limit, config['CABLE_WRAPPED'], config['RIGHT_WINCH_FUDGE'], config['LEFT_WINCH_FUDGE'])
 
         return Climber(piston, winch, config['EXTEND_SPEED'], config['RETRACT_SPEED'])
 

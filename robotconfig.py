@@ -85,6 +85,9 @@ competition = {
         # Extend speed must be lower than natural extend rate
         'EXTEND_SPEED': 0.5,
         'RETRACT_SPEED': 0.7,
+        # Magnify one speed more than other to account for variability in climbers. Default is 1.0
+        'RIGHT_WINCH_FUDGE': 1.0,
+        'LEFT_WINCH_FUDGE': 1.0,
     },
 }
 
@@ -160,9 +163,11 @@ gull_lake = {
         'CABLE_WRAPPED': 'UNDER',
         # Both speeds positive.
         # Extend speed must be lower than natural extend rate
-        'EXTEND_SPEED': 0.2
-        ,
+        'EXTEND_SPEED': 0.2,
         'RETRACT_SPEED': 0.5,
+        # Magnify one speed more than other to account for variability in climbers. Default is 1.0
+        'RIGHT_WINCH_FUDGE': 0.5,
+        'LEFT_WINCH_FUDGE': 1.0,
     },
 }
 

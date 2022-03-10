@@ -31,10 +31,10 @@ class Climber:
         #print("in setWinch, x = ", x)
 
         if x >= 0: 
-            self.winch.set(self.extendSpeed * x)
+            self.winch.set(self.extendSpeed * x, True)
             #print("extending! speed = ", self.extendSpeed * x)
         else:
-            self.winch.set(self.retractSpeed * x)
+            self.winch.set(self.retractSpeed * x, False)
             #print("retract speed", -self.retractSpeed * x)
 
 
@@ -82,9 +82,11 @@ class SolenoidGroup:
             s.toggle()
 
 class WinchGroup:
-    def __init__(self, right_winch, left_winch, right_limit, left_limit, cable_wrapped):
+    def __init__(self, right_winch, left_winch, right_limit, left_limit, cable_wrapped, right_winch_fudge_factor, left_winch_fudge_factor):
         self.right_winch = right_winch
         self.left_winch = left_winch
+        self.rightWinchFudgeFactor = right_winch_fudge_factor
+        self.leftWinchFudgeFactor = left_winch_fudge_factor
 
         self.right_limit = right_limit
         self.left_limit = left_limit
@@ -107,7 +109,7 @@ class WinchGroup:
     def get(self):
         return (self.right_winch.get(), self.left_winch.get())
     
-    def set(self, speed):
+    def set(self, speed, shouldFudge):
         speed = speed*self.winch_mod
 
         # meaning right motor not allowed to spin clockwise (negative) more
@@ -118,9 +120,13 @@ class WinchGroup:
         if self.atRightLimit() or self.atLeftLimit():
             if speed < 0:
                 speed = 0
-
-        self.right_winch.set(speed)
-        self.left_winch.set(-speed)
+        
+        if (shouldFudge):
+            self.right_winch.set(speed * self.rightWinchFudgeFactor)
+            self.left_winch.set(-speed * self.leftWinchFudgeFactor)
+        else:
+            self.right_winch.set(speed)
+            self.left_winch.set(-speed)
 
     def atRightLimit(self):
         return not(self.right_limit.get())
