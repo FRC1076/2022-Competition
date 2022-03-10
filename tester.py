@@ -126,7 +126,8 @@ class Tester():
         self.testIntake()
         self.testManualShooter()
         self.testManualClimber()
-        #self.testRotatePhase()
+        self.testRotatePhase()
+        self.testTiltShooter()
 
     def testTankDrive(self):
         self.robot.drive_type = robotconfig.TANK
@@ -269,4 +270,11 @@ class Tester():
         self.robot.teleopPeriodic()
         print('\n******************')
         print('AS Rotate Phase Switched to AS Drive Phase: Passed!')
+        print('******************\n')
+
+    def testTiltShooter(self):
+        self.robot.phase = 'AS_TILT_PHASE'
+        self.robot.teleopPeriodic()
+        print('\n******************')
+        print('AS_TILT_PHASE Teleop: Passed!')
         print('******************\n')
