@@ -369,7 +369,7 @@ class MyRobot(wpilib.TimedRobot):
             rotateSpeed = speedratio * self.deadzoneCorrection(rotateSpeed + self.rotationCorrection, deadzone)
             driveSpeed = speedratio * self.deadzoneCorrection(driveSpeed, deadzone)
 
-            print(rotateSpeed, driveSpeed)
+            #print(rotateSpeed, driveSpeed)
             self.drivetrain.arcadeDrive(rotateSpeed, driveSpeed)
 
         else:  # self.drive == SWERVE
@@ -420,7 +420,7 @@ class MyRobot(wpilib.TimedRobot):
                 self.tiltShooter.setSpeed(speed)
             else:
                 self.tiltShooter.setSpeed(0.0)
-            print("manually tilt: ", self.tiltShooter.getSpeed())
+            #print("manually tilt: ", self.tiltShooter.getSpeed())
 
         # print("Int tilt shooter: degrees:", self.tiltShooter.getDegrees(), " speed: ", self.tiltShooter.getSpeed())
 
@@ -538,6 +538,10 @@ class MyRobot(wpilib.TimedRobot):
         self.climber.setWinch(operator.getLeftY())
 
     def autonomousInit(self):
+        print("In autonomousInit")
+
+        #self.auton = self.initAuton(config)
+
         self.autonPhase = "AUTON_SPINUP"
         self.theta = None
         self.rotationSpeed = 1000
@@ -556,6 +560,8 @@ class MyRobot(wpilib.TimedRobot):
     def autonomousPeriodic(self):
         # self.autonForwardAndBack()
         #self.comp1Auton()
+
+        print("In autonomousPeriodic")
         self.comp1AutonSimple()
 
     def autonForwardAndBack(self):
@@ -574,8 +580,8 @@ class MyRobot(wpilib.TimedRobot):
 
         timer = self.autonTimer.get()
 
-        print(self.autonPhase)
-        print(timer)
+        print("Auton Phase: ", self.autonPhase)
+        print("Auton Timer: ", timer)
 
         # Phase transitions
         if timer > self.autonSpinUpTime and self.autonPhase == "AUTON_SPINUP":
@@ -585,7 +591,7 @@ class MyRobot(wpilib.TimedRobot):
             self.autonPhase = "AUTON_DRIVE"
         
         if timer > self.autonBackupTime + self.autonFiringTime + self.autonSpinUpTime and self.autonPhase == "AUTON_DRIVE":
-            self.autonPhase = None
+            self.autonPhase = "AUTON_DONE"
 
         # Auton Logic
         # Spin up the shooter motor

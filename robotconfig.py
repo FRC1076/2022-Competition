@@ -75,8 +75,8 @@ competition = {
         'WINCH_LEFT_ID': 7,
         'WINCH_RIGHT_ID': 8,
         # Pneumatic board IDs
-        'SOLENOID_FORWARD_ID': 3,
-        'SOLENOID_REVERSE_ID': 4,
+        'SOLENOID_FORWARD_ID': 6,
+        'SOLENOID_REVERSE_ID': 0,
         # DIO pin numbers
         'LEFT_LIMIT_ID': 0,
         'RIGHT_LIMIT_ID': 1,
@@ -143,19 +143,25 @@ gull_lake = {
       'FEEDER_ID' : 9,
       'FEEDER_SPEED': 0.4,
     },
+    'AUTON': {
+        'SPINUP_TIME': 0.5,
+        'FIRING_TIME': 0.25,
+        'BACKUP_TIME': 1,
+    },
     'CLIMBER': {
         'WINCH_LEFT_ID': 6,
         'WINCH_RIGHT_ID': 14,
         # Pneumatic board IDs
-        'SOLENOID_FORWARD_ID': 3,
-        'SOLENOID_REVERSE_ID': 4,
+        'SOLENOID_FORWARD_ID': 6,
+        'SOLENOID_REVERSE_ID': 0,
         # DIO pin numbers
         'LEFT_LIMIT_ID': 0,
         'RIGHT_LIMIT_ID': 1,
         'CABLE_WRAPPED': 'UNDER',
         # Both speeds positive.
         # Extend speed must be lower than natural extend rate
-        'EXTEND_SPEED': 0.7,
+        'EXTEND_SPEED': 0.2
+        ,
         'RETRACT_SPEED': 0.5,
     },
 }
