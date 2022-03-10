@@ -24,12 +24,19 @@ class Climber:
          self.winch.set(0.0)  
          self.solenoids.set(kOff) 
 
+    def getWinch(self):
+        return(self.winch.get())
+    
     def setWinch(self, x): # positive corresponds to extend, negative corresponds to retract
-        print("setWinch = ", x)
+        print("in setWinch, x = ", x)
+
         if x >= 0: 
-            self.winch.set(self.extendSpeed*x)
+            self.winch.set(self.extendSpeed * x)
+            print("extending! speed = ", self.extendSpeed * x)
         else:
-            self.winch.set(self.retractSpeed*x)
+            self.winch.set(self.retractSpeed * x)
+            print("retract speed", -self.retractSpeed * x)
+
 
     def pistonForward(self):
         self.solenoids.set(kForward)
@@ -98,12 +105,18 @@ class WinchGroup:
         # makes right winch spin in negative (clockwise)
         # which draws the cable down
 
+    def get(self):
+        return (self.right_winch.get(), self.left_winch.get())
+    
+
     def set(self, speed):
         speed = speed*self.winch_mod
 
         # meaning right motor not allowed to spin clockwise (negative) more
         # assuming cable wrapped under
         
+        
+        print("limits: ", self.atRightLimit(), self.atLeftLimit())
         if self.atRightLimit() or self.atLeftLimit():
             if speed < 0:
                 speed = 0
@@ -112,7 +125,7 @@ class WinchGroup:
         self.left_winch.set(-speed)
 
     def atRightLimit(self):
-        return self.right_limit.get()
+        return not(self.right_limit.get())
     
     def atLeftLimit(self):
-        return self.left_limit.get()
+        return not(self.left_limit.get())

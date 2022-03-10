@@ -144,8 +144,8 @@ gull_lake = {
       'FEEDER_SPEED': 0.4,
     },
     'CLIMBER': {
-        'WINCH_LEFT_ID': 7,
-        'WINCH_RIGHT_ID': 8,
+        'WINCH_LEFT_ID': 6,
+        'WINCH_RIGHT_ID': 14,
         # Pneumatic board IDs
         'SOLENOID_FORWARD_ID': 3,
         'SOLENOID_REVERSE_ID': 4,
@@ -155,8 +155,8 @@ gull_lake = {
         'CABLE_WRAPPED': 'UNDER',
         # Both speeds positive.
         # Extend speed must be lower than natural extend rate
-        'EXTEND_SPEED': 0.5,
-        'RETRACT_SPEED': 0.7,
+        'EXTEND_SPEED': 0.7,
+        'RETRACT_SPEED': 0.5,
     },
 }
 

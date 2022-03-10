@@ -511,8 +511,8 @@ class MyRobot(wpilib.TimedRobot):
         if not self.climber:
             return
 
-        driver = self.driver.xboxController
-        deadzone = self.driver.deadzone
+        operator = self.operator.xboxController
+        deadzone = self.operator.deadzone
         '''
         # AUTO CLIMBER
         # NOTE: None of this seems quite right... --mwn
@@ -531,10 +531,11 @@ class MyRobot(wpilib.TimedRobot):
                 self.climber.stepAction()
         '''
         # self.climber.solenoids.get()
-        if driver.getAButtonPressed():
+        if operator.getAButtonPressed():
             self.climber.solenoids.toggle()
 
-        self.climber.setWinch(-self.deadzoneCorrection(driver.getLeftY(), deadzone))
+        #self.climber.setWinch(self.deadzoneCorrection(operator.getLeftY(), deadzone))
+        self.climber.setWinch(operator.getLeftY())
 
     def autonomousInit(self):
         self.autonPhase = "AUTON_SPINUP"
@@ -588,7 +589,7 @@ class MyRobot(wpilib.TimedRobot):
 
         # Auton Logic
         # Spin up the shooter motor
-        if self.autonPhase == "AUTONSPIN_UP":
+        if self.autonPhase == "AUTON_SPINUP":
             self.shooter.pidController.setReference(self.shooter.shooterRPM, rev.CANSparkMax.ControlType.kVelocity)
         
         # Activate the feeder/trigger motor
