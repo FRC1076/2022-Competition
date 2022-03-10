@@ -30,13 +30,6 @@ SWERVE = 3
 # Test Mode
 TEST_MODE = False
 
-# Auton phases
-AUTON_DRIVE = 0
-AUTON_ROTATE = 1
-AUTON_TILT = 2
-AUTON_SHOOT = 3
-
-
 class MyRobot(wpilib.TimedRobot):
 
     def robotInit(self):
@@ -538,7 +531,11 @@ class MyRobot(wpilib.TimedRobot):
         self.climber.setWinch(operator.getLeftY())
 
     def autonomousInit(self):
-        print("In autonomousInit")
+
+        if not self.auton:
+            return
+
+        #print("In autonomousInit")
 
         #self.auton = self.initAuton(config)
 
@@ -558,6 +555,10 @@ class MyRobot(wpilib.TimedRobot):
             self.intake.extend()
 
     def autonomousPeriodic(self):
+
+        if not self.auton:
+            return
+
         # self.autonForwardAndBack()
         #self.comp1Auton()
 
@@ -616,30 +617,30 @@ class MyRobot(wpilib.TimedRobot):
 
         print(self.autonPhase)
         # Phase transitions
-        if self.autonTimer.get() > backupTime and self.autonPhase == AUTON_DRIVE:
-            self.autonPhase = AUTON_ROTATE
+        if self.autonTimer.get() > backupTime and self.autonPhase == "AUTON_DRIVE":
+            self.autonPhase = "AUTON_ROTATE"
             self.theta = self.vision.getSmoothYaw()
 
-        if self.rotationSpeed == 0 and self.autonPhase == AUTON_ROTATE:
-            self.autonPhase = AUTON_TILT
+        if self.rotationSpeed == 0 and self.autonPhase == "AUTON_ROTATE":
+            self.autonPhase = "AUTON_TILT"
 
         if self.tiltShooter.isNearTarget() and self.autonPhase == AUTON_TILT:
-            self.autonPhase = AUTON_SHOOT
+            self.autonPhase = "AUTON_SHOOT"
 
         # Auton logic
-        if self.autonPhase == AUTON_DRIVE:
+        if self.autonPhase == "AUTON_DRIVE":
             self.drivetrain.arcadeDrive(0, 0.8)
 
-        if self.autonPhase == AUTON_ROTATE:
+        if self.autonPhase == "AUTON_ROTATE":
             if (self.vision and self.aimer and self.theta):
                 (self.rotationSpeed, speed) = self.aimer.calculateDriveSpeeds(self.theta)
                 self.drivetrain.arcadeDrive(self.rotationSpeed, speed)
 
-        if self.autonPhase == AUTON_TILT:
+        if self.autonPhase == "AUTON_TILT":
             self.tiltShooterPeriodic()
             self.shooter.pidController.setReference(self.autonShooterRPM, rev.CANSparkMax.ControlType.kVelocity)
 
-        if self.autonPhase == AUTON_SHOOT:
+        if self.autonPhase == "AUTON_SHOOT":
             if (self.feeder.hasFired()):
                 self.feeder.setFeeder(0.0)
                 self.shooter.pidController.setReference(0, rev.CANSparkMax.ControlType.kVelocity)
