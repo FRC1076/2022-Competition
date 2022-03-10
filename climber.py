@@ -28,14 +28,14 @@ class Climber:
         return(self.winch.get())
     
     def setWinch(self, x): # positive corresponds to extend, negative corresponds to retract
-        print("in setWinch, x = ", x)
+        #print("in setWinch, x = ", x)
 
         if x >= 0: 
             self.winch.set(self.extendSpeed * x)
-            print("extending! speed = ", self.extendSpeed * x)
+            #print("extending! speed = ", self.extendSpeed * x)
         else:
             self.winch.set(self.retractSpeed * x)
-            print("retract speed", -self.retractSpeed * x)
+            #print("retract speed", -self.retractSpeed * x)
 
 
     def pistonForward(self):
@@ -81,7 +81,6 @@ class SolenoidGroup:
         for s in self.solenoids:
             s.toggle()
 
-
 class WinchGroup:
     def __init__(self, right_winch, left_winch, right_limit, left_limit, cable_wrapped):
         self.right_winch = right_winch
@@ -108,7 +107,6 @@ class WinchGroup:
     def get(self):
         return (self.right_winch.get(), self.left_winch.get())
     
-
     def set(self, speed):
         speed = speed*self.winch_mod
 
@@ -116,7 +114,7 @@ class WinchGroup:
         # assuming cable wrapped under
         
         
-        print("limits: ", self.atRightLimit(), self.atLeftLimit())
+        #print("limits: ", self.atRightLimit(), self.atLeftLimit())
         if self.atRightLimit() or self.atLeftLimit():
             if speed < 0:
                 speed = 0
