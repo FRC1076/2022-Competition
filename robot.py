@@ -528,7 +528,7 @@ class MyRobot(wpilib.TimedRobot):
             self.climber.solenoids.toggle()
 
         #self.climber.setWinch(self.deadzoneCorrection(operator.getLeftY(), deadzone))
-        self.climber.setWinch(operator.getLeftY())
+        self.climber.setWinch(operator.getLeftY(), operator.getRightY())
 
     def autonomousInit(self):
 

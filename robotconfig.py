@@ -160,8 +160,7 @@ gull_lake = {
         'CABLE_WRAPPED': 'UNDER',
         # Both speeds positive.
         # Extend speed must be lower than natural extend rate
-        'EXTEND_SPEED': 0.2
-        ,
+        'EXTEND_SPEED': 0.2,
         'RETRACT_SPEED': 0.5,
     },
 }
