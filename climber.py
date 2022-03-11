@@ -114,19 +114,23 @@ class WinchGroup:
 
         # meaning right motor not allowed to spin clockwise (negative) more
         # assuming cable wrapped under
-        
+        rightSpeed = speed
+        leftSpeed = speed
         
         #print("limits: ", self.atRightLimit(), self.atLeftLimit())
-        if self.atRightLimit() or self.atLeftLimit():
-            if speed < 0:
-                speed = 0
+        if self.atRightLimit():
+            if rightSpeed > 0:
+                rightSpeed = 0
+        if self.atLeftLimit():
+            if leftSpeed > 0:
+                leftSpeed = 0
         
         if (shouldFudge):
-            self.right_winch.set(speed * self.rightWinchFudgeFactor)
-            self.left_winch.set(-speed * self.leftWinchFudgeFactor)
+            self.right_winch.set(rightSpeed * self.rightWinchFudgeFactor)
+            self.left_winch.set(-leftSpeed * self.leftWinchFudgeFactor)
         else:
-            self.right_winch.set(speed)
-            self.left_winch.set(-speed)
+            self.right_winch.set(rightSpeed)
+            self.left_winch.set(-leftSpeed)
 
     def atRightLimit(self):
         return not(self.right_limit.get())
