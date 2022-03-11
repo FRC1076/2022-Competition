@@ -405,18 +405,31 @@ class MyRobot(wpilib.TimedRobot):
         else:  # Adjusting tiltShooter mannual
             if (operator.getXButton()):
                 self.tiltShooter.resetPosition()
-            elif(operator.getYButton() and (operator.getRightY() < -0.95)):
+            elif (operator.getYButton) and (getPOVrange(operator.getPOV()) == 180):
+                 self.tiltShooter.setSpeed(-speed)
+            elif (getPOVrange(operator.getPOV()) == 180) and (self.tiltShooter.getDegrees() > self.tiltShooter.getMinDegrees()):
                 self.tiltShooter.setSpeed(-speed)
-            elif(operator.getRightY() < -0.95) and (self.tiltShooter.getDegrees() > self.tiltShooter.getMinDegrees()):
-                self.tiltShooter.setSpeed(-speed)
-            elif(operator.getRightY() > 0.95) and (self.tiltShooter.getDegrees() < self.tiltShooter.getMaxDegrees()):
+            elif (getPOVrange(operator.getPOV()) == 0) and (self.tiltShooter.getDegrees() < self.tiltShooter.getMaxDegrees()):
                 self.tiltShooter.setSpeed(speed)
+            #elif(operator.getYButton() and (operator.getRightY() < -0.95)):
+            #    self.tiltShooter.setSpeed(-speed)
+            #elif(operator.getRightY() < -0.95) and (self.tiltShooter.getDegrees() > self.tiltShooter.getMinDegrees()):
+            #    self.tiltShooter.setSpeed(-speed)
+            #elif(operator.getRightY() > 0.95) and (self.tiltShooter.getDegrees() < self.tiltShooter.getMaxDegrees()):
+            #    self.tiltShooter.setSpeed(speed)
             else:
                 self.tiltShooter.setSpeed(0.0)
             #print("manually tilt: ", self.tiltShooter.getSpeed())
 
         # print("Int tilt shooter: degrees:", self.tiltShooter.getDegrees(), " speed: ", self.tiltShooter.getSpeed())
 
+    def getPOVRange(self, value)
+        if (value >=0 and value < 45) or (value > 315 and value <= 360):
+            return 0
+        elif (value > 135) and (value < 225):
+            return 180
+        else:
+            return -1
     def tiltShooterPeriodic(self):
         if not self.tiltShooter:
             return
