@@ -105,7 +105,7 @@ class Tester():
 
     @staticmethod
     def getTestConfig():
-        return robotconfig.competition
+        return robotconfig.testbot
 
     def initTestTeleop(self):
         self.testDriverController = TestController()
