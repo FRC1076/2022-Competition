@@ -39,7 +39,7 @@ drivetrainConfig = {
 shooterConfig = {
     'SHOOTER_ID': 10,
     'SHOOTER_RPM': 3500,
-},
+}
 
 intakeConfig = {
     # Update IDs when known
@@ -133,7 +133,8 @@ showbot = {
     'VISION': visionConfig,
     'SHOOTER': shooterConfig,
 }
-showbot['SHOOTER']['ID'] = 10 # how to override just one thing
+print(showbot)
+showbot['SHOOTER']['SHOOTER_ID'] = 10 # how to override just one thing
 
 ##########################
 ###  CONFIG TO DEPLOY  ###
