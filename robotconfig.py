@@ -72,6 +72,7 @@ competition = {
         'FIRING_TIME': 3,
         'BACKUP_TIME': 1.5,
         'TILT_TARGET_DEGREES': 20,
+        'SHOOT_SPEED': 0.5,
     },
     'CLIMBER': {
         'WINCH_LEFT_ID': 7,
@@ -151,6 +152,7 @@ gull_lake = {
         'FIRING_TIME': 3,
         'BACKUP_TIME': 1.5,
         'TILT_TARGET_DEGREES': 20,
+        'SHOOT_SPEED': 0.5,
     },
     'CLIMBER': {
         'WINCH_LEFT_ID': 6,

@@ -106,6 +106,7 @@ class MyRobot(wpilib.TimedRobot):
         self.autonFiringTime = config['FIRING_TIME']
         self.autonBackupTime = config['BACKUP_TIME']
         self.autonTiltTargetDegrees = config['TILT_TARGET_DEGREES']
+        self.autonShootSpeed = config['SHOOT_SPEED']
         return True
 
     def initDrivetrain(self, config):
@@ -559,8 +560,9 @@ class MyRobot(wpilib.TimedRobot):
         self.theta = None
         self.rotationSpeed = 1000
 
-        self.tiltShooter.resetPosition()
-        self.tiltShooter.setTargetDegrees(self.autonTiltTargetDegrees)
+        if (self.tiltShooter):
+            self.tiltShooter.resetPosition()
+            self.tiltShooter.setTargetDegrees(self.autonTiltTargetDegrees)
 
         self.autonTimer = wpilib.Timer()
         self.shooterTimer = wpilib.Timer()
@@ -624,13 +626,13 @@ class MyRobot(wpilib.TimedRobot):
 
         if self.autonPhase == "AUTON_SPINUP":
             # self.shooter.pidController.setReference(self.shooter.shooterRPM, rev.CANSparkMax.ControlType.kVelocity)
-            self.shooter.set(-0.5)
+            self.shooter.set(-self.autonShootSpeed)
 
         # Activate the feeder/trigger motor
         elif self.autonPhase == "AUTON_FIRING":
             # self.shooter.pidController.setReference(self.shooter.shooterRPM, rev.CANSparkMax.ControlType.kVelocity)
             self.feeder.setFeeder(self.feeder.feederSpeed)
-            self.shooter.set(-0.5)
+            self.shooter.set(-self.autonShootSpeed)
 
         # Turn off the shooter and feeder/trigger motors, and drive backwards
         elif self.autonPhase == "AUTON_DRIVE":
