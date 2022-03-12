@@ -144,9 +144,9 @@ gull_lake = {
       'FEEDER_SPEED': 0.4,
     },
     'AUTON': {
-        'SPINUP_TIME': 0.5,
-        'FIRING_TIME': 0.25,
-        'BACKUP_TIME': 1,
+        'SPINUP_TIME': 3,
+        'FIRING_TIME': 3,
+        'BACKUP_TIME': 1.5,
     },
     'CLIMBER': {
         'WINCH_LEFT_ID': 6,
@@ -162,6 +162,12 @@ gull_lake = {
         # Extend speed must be lower than natural extend rate
         'EXTEND_SPEED': 0.2,
         'RETRACT_SPEED': 0.5,
+    },
+    'INTAKE': {
+        # Update IDs when known
+        'INTAKE_MOTOR_ID': 17,
+        'INTAKE_SOLENOID_FORWARD_ID': 1,
+        'INTAKE_SOLENOID_REVERSE_ID': 7,
     },
 }
 

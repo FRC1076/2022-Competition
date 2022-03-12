@@ -154,13 +154,14 @@ class MyRobot(wpilib.TimedRobot):
         # assuming this is a Neo; otherwise it may not be brushless
         motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
         pneumatics_module_type = wpilib.PneumaticsModuleType.CTREPCM
-        motor = rev.CANSparkMax(config['INTAKE_MOTOR_ID'], motor_type)
+        #motor = rev.CANSparkMax(config['INTAKE_MOTOR_ID'], motor_type)
         solenoid = wpilib.DoubleSolenoid(0,
                                          pneumatics_module_type,
                                          config['INTAKE_SOLENOID_FORWARD_ID'],
                                          config['INTAKE_SOLENOID_REVERSE_ID'])
 
-        return Intake(solenoid, motor)
+        #return Intake(solenoid, motor)
+        return Intake(solenoid)
 
     def initClimber(self, config):
         # assuming this is a Neo; otherwise it may not be brushless
@@ -379,16 +380,19 @@ class MyRobot(wpilib.TimedRobot):
         if self.intake is None:
             return
 
+        print("In teleopIntake")
         operator = self.operator.xboxController
         lta = self.operator.left_trigger_axis
 
-        if operator.getLeftBumper():
+        if operator.getLeftBumperPressed():
             self.intake.toggle()
-
+            print("toggling intake")
+        '''
         if operator.getRawAxis(lta) > 0.95:
             self.intake.motorOn()
         else:
             self.intake.motorOff()
+        '''
 
     def teleopTiltShooter(self):
         if not self.tiltShooter:
@@ -405,12 +409,13 @@ class MyRobot(wpilib.TimedRobot):
         else:  # Adjusting tiltShooter mannual
             if (operator.getXButton()):
                 self.tiltShooter.resetPosition()
-            elif (operator.getYButton) and (getPOVrange(operator.getPOV()) == 180):
+            elif (operator.getYButton()) and (self.getPOVRange(operator.getPOV()) == 180):
                  self.tiltShooter.setSpeed(-speed)
-            elif (getPOVrange(operator.getPOV()) == 180) and (self.tiltShooter.getDegrees() > self.tiltShooter.getMinDegrees()):
+            elif (self.getPOVRange(operator.getPOV()) == 180) and (self.tiltShooter.getDegrees() > self.tiltShooter.getMinDegrees()):
                 self.tiltShooter.setSpeed(-speed)
-            elif (getPOVrange(operator.getPOV()) == 0) and (self.tiltShooter.getDegrees() < self.tiltShooter.getMaxDegrees()):
+            elif (self.getPOVRange(operator.getPOV()) == 0) and (self.tiltShooter.getDegrees() < self.tiltShooter.getMaxDegrees()):
                 self.tiltShooter.setSpeed(speed)
+
             #elif(operator.getYButton() and (operator.getRightY() < -0.95)):
             #    self.tiltShooter.setSpeed(-speed)
             #elif(operator.getRightY() < -0.95) and (self.tiltShooter.getDegrees() > self.tiltShooter.getMinDegrees()):
@@ -423,7 +428,7 @@ class MyRobot(wpilib.TimedRobot):
 
         # print("Int tilt shooter: degrees:", self.tiltShooter.getDegrees(), " speed: ", self.tiltShooter.getSpeed())
 
-    def getPOVRange(self, value)
+    def getPOVRange(self, value):
         if (value >=0 and value < 45) or (value > 315 and value <= 360):
             return 0
         elif (value > 135) and (value < 225):
@@ -610,11 +615,14 @@ class MyRobot(wpilib.TimedRobot):
         # Auton Logic
         # Spin up the shooter motor
         if self.autonPhase == "AUTON_SPINUP":
-            self.shooter.pidController.setReference(self.shooter.shooterRPM, rev.CANSparkMax.ControlType.kVelocity)
-        
+            # self.shooter.pidController.setReference(self.shooter.shooterRPM, rev.CANSparkMax.ControlType.kVelocity)
+            self.shooter.set(-0.5)
+
         # Activate the feeder/trigger motor
         elif self.autonPhase == "AUTON_FIRING":
+            # self.shooter.pidController.setReference(self.shooter.shooterRPM, rev.CANSparkMax.ControlType.kVelocity)
             self.feeder.setFeeder(self.feeder.feederSpeed)
+            self.shooter.set(-0.5)
 
         # Turn off the shooter and feeder/trigger motors, and drive backwards
         elif self.autonPhase == "AUTON_DRIVE":

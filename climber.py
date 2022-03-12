@@ -119,6 +119,7 @@ class WinchGroup:
         leftSpeed = left_speed * self.winch_mod
         rightSpeed = right_speed * self.winch_mod
         
+        '''
         #print("limits: ", self.atRightLimit(), self.atLeftLimit())
         if self.atRightLimit():
             if rightSpeed > 0:
@@ -126,8 +127,10 @@ class WinchGroup:
         if self.atLeftLimit():
             if leftSpeed > 0:
                 leftSpeed = 0
+        '''
 
-        self.right_winch.set(rightSpeed)
+
+        self.right_winch.set(-rightSpeed)
         self.left_winch.set(-leftSpeed)
 
     def atRightLimit(self):

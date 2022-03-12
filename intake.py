@@ -7,10 +7,11 @@ kReverse = DoubleSolenoid.Value.kReverse
 
 # Simplified version of the Climber class
 class Intake:
-    def __init__(self, doubleSolenoid, motor, motorSpeed=0.5):
+    #def __init__(self, doubleSolenoid, motor, motorSpeed=0.5):
+    def __init__(self, doubleSolenoid):
         self.solenoid = doubleSolenoid
-        self.motor = motor
-        self.motorSpeed = motorSpeed
+        #self.motor = motor
+        #self.motorSpeed = motorSpeed
 
         self.solenoid.set(kOff)
 
@@ -29,9 +30,10 @@ class Intake:
 
     def retract(self):
         self.solenoid.set(kReverse)
-
+    '''
     def motorOn(self):
         self.motor.set(self.motorSpeed)
 
     def motorOff(self):
         self.motor.set(0.0)
+    '''
