@@ -530,6 +530,16 @@ class MyRobot(wpilib.TimedRobot):
         #self.climber.setWinch(self.deadzoneCorrection(operator.getLeftY(), deadzone))
         self.climber.setWinch(operator.getLeftY())
 
+    def disabledInit(self):
+        
+        print('resetting timers in disabledInit')
+
+        if hasattr(self, 'autonTimer') and self.autonTimer is not None:
+            self.autonTimer.reset()
+        
+        if hasattr(self, 'shooterTimer') and self.shooterTimer is not None:
+            self.shooterTimer.reset()
+
     def autonomousInit(self):
 
         if not self.auton:
