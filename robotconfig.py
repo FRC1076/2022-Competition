@@ -67,9 +67,11 @@ competition = {
         'CAMERA_PITCH': 0,
     },
     'AUTON': {
-        'SPINUP_TIME': 0.5,
-        'FIRING_TIME': 0.25,
-        'BACKUP_TIME': 1,
+        'TILTING_TIME': 2,
+        'SPINUP_TIME': 3,
+        'FIRING_TIME': 3,
+        'BACKUP_TIME': 1.5,
+        'TILT_TARGET_DEGREES': 20,
     },
     'CLIMBER': {
         'WINCH_LEFT_ID': 7,
@@ -144,9 +146,11 @@ gull_lake = {
       'FEEDER_SPEED': 0.4,
     },
     'AUTON': {
+        'TILTING_TIME': 2,
         'SPINUP_TIME': 3,
         'FIRING_TIME': 3,
         'BACKUP_TIME': 1.5,
+        'TILT_TARGET_DEGREES': 20,
     },
     'CLIMBER': {
         'WINCH_LEFT_ID': 6,

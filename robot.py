@@ -101,9 +101,11 @@ class MyRobot(wpilib.TimedRobot):
         return ctrls
 
     def initAuton(self, config):
+        self.autonTiltingTime = config['TILTING_TIME']
         self.autonSpinUpTime = config['SPINUP_TIME']
         self.autonFiringTime = config['FIRING_TIME']
         self.autonBackupTime = config['BACKUP_TIME']
+        self.autonTiltTargetDegrees = config['TILT_TARGET_DEGREES']
         return True
 
     def initDrivetrain(self, config):
@@ -384,7 +386,7 @@ class MyRobot(wpilib.TimedRobot):
         operator = self.operator.xboxController
         lta = self.operator.left_trigger_axis
 
-        if operator.getLeftBumperPressed():
+        if operator.getLeftBumper():
             self.intake.toggle()
             print("toggling intake")
         '''
@@ -553,13 +555,12 @@ class MyRobot(wpilib.TimedRobot):
         if not self.auton:
             return
 
-        #print("In autonomousInit")
-
-        #self.auton = self.initAuton(config)
-
-        self.autonPhase = "AUTON_SPINUP"
+        self.autonPhase = "AUTON_TILTING"
         self.theta = None
         self.rotationSpeed = 1000
+
+        self.tiltShooter.resetPosition()
+        self.tiltShooter.setTargetDegrees(self.autonTiltTargetDegrees)
 
         self.autonTimer = wpilib.Timer()
         self.shooterTimer = wpilib.Timer()
@@ -603,17 +604,24 @@ class MyRobot(wpilib.TimedRobot):
         print("Auton Timer: ", timer)
 
         # Phase transitions
-        if timer > self.autonSpinUpTime and self.autonPhase == "AUTON_SPINUP":
+        if timer > self.autonTiltingTime and self.autonPhase == "AUTON_TILTING":
+            self.autonPhase = "AUTON_SPINUP"
+
+        if timer > self.autonSpinUpTime + self.autonTiltingTime and self.autonPhase == "AUTON_SPINUP":
             self.autonPhase = "AUTON_FIRING"
         
-        if timer > self.autonFiringTime + self.autonSpinUpTime and self.autonPhase == "AUTON_FIRING":
+        if timer > self.autonFiringTime + self.autonSpinUpTime + self.autonTiltingTime and self.autonPhase == "AUTON_FIRING":
             self.autonPhase = "AUTON_DRIVE"
         
-        if timer > self.autonBackupTime + self.autonFiringTime + self.autonSpinUpTime and self.autonPhase == "AUTON_DRIVE":
+        if timer > self.autonBackupTime + self.autonFiringTime + self.autonSpinUpTime + self.autonTiltingTime and self.autonPhase == "AUTON_DRIVE":
             self.autonPhase = "AUTON_DONE"
 
         # Auton Logic
         # Spin up the shooter motor
+
+        if self.autonPhase == "AUTON_TILTING":
+            self.tiltShooterPeriodic()
+
         if self.autonPhase == "AUTON_SPINUP":
             # self.shooter.pidController.setReference(self.shooter.shooterRPM, rev.CANSparkMax.ControlType.kVelocity)
             self.shooter.set(-0.5)
