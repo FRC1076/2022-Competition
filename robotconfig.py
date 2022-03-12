@@ -79,14 +79,12 @@ visionConfig = {
 
 
 autonConfig = {
-    'TILTING_TIME': 1.0,
-    'TILT_TARGET_DEGREES': 15,
-    'SHOOT_SPEED': 2000,
-    'SPINUP_TIME': 0.5,
-    'FIRING_TIME': 0.25,
-    'BACKUP_TIME': 1,
-
-
+    'TILTING_TIME': 2,
+    'SPINUP_TIME': 3,
+    'FIRING_TIME': 3,
+    'BACKUP_TIME': 1.5,
+    'TILT_TARGET_DEGREES': 20,
+    'SHOOT_SPEED': 0.5,
 }
 
 climberConfig = {
