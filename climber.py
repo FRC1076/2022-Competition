@@ -27,16 +27,20 @@ class Climber:
     def getWinch(self):
         return(self.winch.get())
     
-    def setWinch(self, x): # positive corresponds to extend, negative corresponds to retract
-        #print("in setWinch, x = ", x)
-
-        if x >= 0: 
-            self.winch.set(self.extendSpeed * x)
-            #print("extending! speed = ", self.extendSpeed * x)
+    def setWinch(self, leftSpeedMod, rightSpeedMod):
+        
+        # positive corresponds to extend, negative corresponds to retract
+        if (leftSpeedMod >= 0):
+            leftSpeed = self.extendSpeed * leftSpeedMod
         else:
-            self.winch.set(self.retractSpeed * x)
-            #print("retract speed", -self.retractSpeed * x)
+            leftSpeed = self.retractSpeed * leftSpeedMod
+        
+        if (rightSpeedMod >= 0):
+            rightSpeed = self.extendSpeed * rightSpeedMod
+        else: 
+            rightSpeed = self.retractSpeed * rightSpeedMod
 
+        self.winch.set(leftSpeed, rightSpeed)
 
     def pistonForward(self):
         self.solenoids.set(kForward)
@@ -107,20 +111,27 @@ class WinchGroup:
     def get(self):
         return (self.right_winch.get(), self.left_winch.get())
     
-    def set(self, speed):
-        speed = speed*self.winch_mod
-
+    def set(self, left_speed, right_speed):
+        
         # meaning right motor not allowed to spin clockwise (negative) more
         # assuming cable wrapped under
         
+        leftSpeed = left_speed * self.winch_mod
+        rightSpeed = right_speed * self.winch_mod
         
+        '''
         #print("limits: ", self.atRightLimit(), self.atLeftLimit())
-        if self.atRightLimit() or self.atLeftLimit():
-            if speed < 0:
-                speed = 0
+        if self.atRightLimit():
+            if rightSpeed > 0:
+                rightSpeed = 0
+        if self.atLeftLimit():
+            if leftSpeed > 0:
+                leftSpeed = 0
+        '''
 
-        self.right_winch.set(speed)
-        self.left_winch.set(-speed)
+
+        self.right_winch.set(-rightSpeed)
+        self.left_winch.set(-leftSpeed)
 
     def atRightLimit(self):
         return not(self.right_limit.get())

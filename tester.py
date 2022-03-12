@@ -96,6 +96,9 @@ class TestXBC():
     def getBButtonPressed(self):
         return self.responses['B_BUTTON']
 
+    def getPOV(self):
+        return -1
+
 
 class Tester():
     def __init__(self, robot):
