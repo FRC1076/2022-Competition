@@ -43,7 +43,7 @@ shooterConfig = {
 
 intakeConfig = {
     # Update IDs when known
-    'INTAKE_MOTOR_ID': 2,
+    'INTAKE_MOTOR_ID': 17,
     'INTAKE_SOLENOID_FORWARD_ID': 1,
     'INTAKE_SOLENOID_REVERSE_ID': 2,
 }
@@ -75,8 +75,6 @@ visionConfig = {
     'CAMERA_HEIGHT': 4,
     'CAMERA_PITCH': 0,
 }
-
-
 
 autonConfig = {
     'TILTING_TIME': 2,
