@@ -134,7 +134,7 @@ gull_lake = {
         'TILTSHOOTER_ID': 1,
         'ROTATIONS_PER_360': 75,
         'MIN_DEGREES': 5,
-        'MAX_DEGREES': 25,
+        'MAX_DEGREES': 35,
         'BUFFER_DEGREES': 2,
         'SPEED': 0.1,
     },
@@ -148,11 +148,12 @@ gull_lake = {
     },
     'AUTON': {
         'TILTING_TIME': 2,
-        'SPINUP_TIME': 3,
+        'SPINUP_TIME': 3.5,
         'FIRING_TIME': 3,
-        'BACKUP_TIME': 1.5,
-        'TILT_TARGET_DEGREES': 20,
-        'SHOOT_SPEED': 0.5,
+        'BACKUP_TIME': 1.5, #1.5
+        'TILT_TARGET_DEGREES': 30, #30
+
+        'SHOOT_SPEED': 0.6, #0.65
     },
     'CLIMBER': {
         'WINCH_LEFT_ID': 6,
