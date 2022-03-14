@@ -136,7 +136,6 @@ showbot = {
     'VISION': visionConfig,
     'SHOOTER': shooterConfig,
 }
-print(showbot)
 showbot['SHOOTER']['SHOOTER_ID'] = 10 # how to override just one thing
 
 ##########################

@@ -621,11 +621,13 @@ class MyRobot(wpilib.TimedRobot):
         if self.autonPhase == "AUTON_SPINUP":
             # self.shooter.pidController.setReference(self.shooter.shooterRPM, rev.CANSparkMax.ControlType.kVelocity)
             self.shooter.set(-self.autonShootSpeed)
+            self.tiltShooterPeriodic()
 
         # Activate the feeder/trigger motor
         elif self.autonPhase == "AUTON_FIRING":
             # self.shooter.pidController.setReference(self.shooter.shooterRPM, rev.CANSparkMax.ControlType.kVelocity)
             self.feeder.setFeeder(self.feeder.feederSpeed)
+            self.tiltShooterPeriodic()
             self.shooter.set(-self.autonShootSpeed)
 
         # Turn off the shooter and feeder/trigger motors, and drive backwards
