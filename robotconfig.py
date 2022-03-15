@@ -77,10 +77,17 @@ visionConfig = {
 }
 
 autonConfig = {
-    'TILTING_TIME': 2,
-    'SPINUP_TIME': 3,
-    'FIRING_TIME': 3,
-    'BACKUP_TIME': 1.5,
+    'TILTING_1_TIME': 2,
+    'SPINUP_1_TIME': 3,
+    'FIRING_1_TIME': 3,
+    'ROTATE_1_TIME': 3,
+    'DRIVE_1_TIME': 1.5,
+    'INTAKE_TIME': 1,
+    'ROTATE_2_TIME': 1,
+    'DRIVE_2_TIME': 1,
+    'TILTING_2_TIME': 1,
+    'SPINUP_2_TIME': 1,
+    'FIRING_2_TIME': 1,
     'TILT_TARGET_DEGREES': 20,
     'SHOOT_SPEED': 0.5,
 }

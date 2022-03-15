@@ -101,10 +101,18 @@ class MyRobot(wpilib.TimedRobot):
         return ctrls
 
     def initAuton(self, config):
-        self.autonTiltingTime = config['TILTING_TIME']
-        self.autonSpinUpTime = config['SPINUP_TIME']
-        self.autonFiringTime = config['FIRING_TIME']
-        self.autonBackupTime = config['BACKUP_TIME']
+        self.autonTilting1Time = config['TILTING_1_TIME']
+        self.autonSpinUp1Time = config['SPINUP_1_TIME']
+        self.autonFiring1Time = config['FIRING_1_TIME']
+        self.autonDrive1Time = config['DRIVE_1_TIME']
+        self.autonRotate1Time = config['ROTATE_1_TIME']
+        self.autonIntakeTime = config['INTAKE_TIME']
+        self.autonRotate2Time = config['ROTATE_2_TIME']
+        self.autonDrive2Time = config['DRIVE_2_TIME']
+        self.autonTilting2Time = config['TILTING_2_TIME']
+        self.autonSpinUp2Time = config['SPINUP_2_TIME']
+        self.autonFiring2Time = config['FIRING_2_TIME']
+
         self.autonTiltTargetDegrees = config['TILT_TARGET_DEGREES']
         self.autonShootSpeed = config['SHOOT_SPEED']
         return True
@@ -537,6 +545,11 @@ class MyRobot(wpilib.TimedRobot):
 
     def disabledInit(self):
         
+        
+        self.autonTimeBase = 0
+        
+        self.autonPhase = "AUTON_TILTING"
+        
         print('resetting timers in disabledInit')
 
         if hasattr(self, 'autonTimer') and self.autonTimer is not None:
@@ -549,6 +562,8 @@ class MyRobot(wpilib.TimedRobot):
 
         if not self.auton:
             return
+
+        self.autonTimeBase = self.autonTiltingTime
 
         self.autonPhase = "AUTON_TILTING"
         self.theta = None
@@ -600,43 +615,133 @@ class MyRobot(wpilib.TimedRobot):
         print("Auton Timer: ", timer)
 
         # Phase transitions
-        if timer > self.autonTiltingTime and self.autonPhase == "AUTON_TILTING":
-            self.autonPhase = "AUTON_SPINUP"
+        if timer > self.autonTimeBase and self.autonPhase == "AUTON_1_TILTING":
+            self.autonPhase = "AUTON_1_SPINUP"
+            self.autonTimeBase += self.autonTiltingTime
 
-        if timer > self.autonSpinUpTime + self.autonTiltingTime and self.autonPhase == "AUTON_SPINUP":
-            self.autonPhase = "AUTON_FIRING"
+        if timer > self.autonTimeBase and self.autonPhase == "AUTON_1_SPINUP":
+            self.autonPhase = "AUTON_1_FIRING"
+            self.autonTimeBase += self.autonSpinup1Time
         
-        if timer > self.autonFiringTime + self.autonSpinUpTime + self.autonTiltingTime and self.autonPhase == "AUTON_FIRING":
-            self.autonPhase = "AUTON_DRIVE"
+        if timer > self.autonTimeBase and self.autonPhase == "AUTON_1_FIRING":
+            self.autonPhase = "AUTON_1_ROTATE"
+            self.autonTimeBase += self.autonFiring1Time
+
+        if timer > self.autonTimeBase and self.autonPhase == "AUTON_1_ROTATE":
+            self.autonPhase = "AUTON_1_DRIVE"
+            self.autonTimeBase += self.autonRotate1Time
         
-        if timer > self.autonBackupTime + self.autonFiringTime + self.autonSpinUpTime + self.autonTiltingTime and self.autonPhase == "AUTON_DRIVE":
+        if timer > self.autonTimeBase and self.autonPhase == "AUTON_1_DRIVE":
+            self.autonPhase = "AUTON_INTAKE"
+            self.autonTimeBase += self.autonDrive1Time
+
+        if timer > self.autonTimeBase and self.autonPhase == "AUTON_INTAKE":
+            self.autonPhase = "AUTON_2_ROTATE"
+            self.autonTimeBase += self.autonIntakeTime
+
+        if timer > self.autonTimeBase and self.autonPhase == "AUTON_2_ROTATE":
+            self.autonPhase = "AUTON_2_DRIVE"
+            self.autonTimeBase += self.autonRotate2Time
+        
+        if timer > self.autonTimeBase and self.autonPhase == "AUTON_2_DRIVE":
+            self.autonPhase = "AUTON_2_TILTING"
+            self.autonTimeBase += self.autonDrive2Time
+
+        if timer > self.autonTimeBase and self.autonPhase == "AUTON_2_TILTING":
+            self.autonPhase = "AUTON_2_SPINUP"
+            self.autonTimeBase += self.autonTilting2Time
+
+        if timer > self.autonTimeBase and self.autonPhase == "AUTON_2_SPINUP":
+            self.autonPhase = "AUTON_2_FIRING"
+            self.autonTimeBase += self.autonSpinup2Time
+
+        if timer > self.autonTimeBase and self.autonPhase == "AUTON_2_FIRING":
             self.autonPhase = "AUTON_DONE"
+            self.autonTimeBase += self.autonFiring2Time
 
         # Auton Logic
         # Spin up the shooter motor
 
-        if self.autonPhase == "AUTON_TILTING":
+        # Tilt the hood
+        if self.autonPhase == "AUTON_1_TILTING":
             self.tiltShooterPeriodic()
+            # Shooter not moving
+            # Feeder not moving
+            self.drivetrain.arcadeDrive(0, 0) # Don't drive
 
-        if self.autonPhase == "AUTON_SPINUP":
+        # Start spinning motor
+        if self.autonPhase == "AUTON_1_SPINUP":
             # self.shooter.pidController.setReference(self.shooter.shooterRPM, rev.CANSparkMax.ControlType.kVelocity)
-            self.shooter.set(-self.autonShootSpeed)
             self.tiltShooterPeriodic()
+            self.shooter.set(-self.autonShootSpeed) #Start spinning shooter
+            # Feeder not moving
+            self.drivetrain.arcadeDrive(0, 0) # Don't drive
 
         # Activate the feeder/trigger motor
-        elif self.autonPhase == "AUTON_FIRING":
-            # self.shooter.pidController.setReference(self.shooter.shooterRPM, rev.CANSparkMax.ControlType.kVelocity)
-            self.feeder.setFeeder(self.feeder.feederSpeed)
+        elif self.autonPhase == "AUTON_1_FIRING":
             self.tiltShooterPeriodic()
-            self.shooter.set(-self.autonShootSpeed)
+            # Keep spinning shooter
+            self.feeder.setFeeder(self.feeder.feederSpeed) # Trigger shot
+            self.drivetrain.arcadeDrive(0, 0) # Don't drive
 
-        # Turn off the shooter and feeder/trigger motors, and drive backwards
-        elif self.autonPhase == "AUTON_DRIVE":
-            self.shooter.pidController.setReference(0.0, rev.CANSparkMax.ControlType.kVelocity)
+        # Turn off the feeder/trigger motors, and rotate to ball
+        elif self.autonPhase == "AUTON_1_ROTATE":
+            self.tiltShooterPeriodic()
+            # Keep spinning shooter
             self.feeder.setFeeder(0.0)
-            
-            self.drivetrain.arcadeDrive(0, 0.8)
+            self.drivetrain.arcadeDrive(0.8, 0) # Rotate
+
+        # Drive to ball
+        elif self.autonPhase == "AUTON_1_DRIVE":
+            self.tiltShooterPeriodic()
+            # Keep spinning shooter
+            # Feeder not moving
+            self.drivetrain.arcadeDrive(0, 0.8) # Drive forward
+
+        # Scoop up ball
+        elif self.autonPhase == "AUTON_INTAKE":
+            print("Intake!!!")
         
+        # Rotate to target
+        elif self.autonPhase == "AUTON_2_ROTATE":
+            self.tiltShooterPeriodic()
+            # Keep spinning shooter
+            # Feeder not moving
+            self.drivetrain.arcadeDrive(0.8, 0) # Rotate again
+
+        #Drive to target
+        elif self.autonPhase == "AUTON_2_DRIVE":
+            self.tiltShooterPeriodic()
+            # Keep spinning shooter
+            # Feeder not moving
+            self.drivetrain.arcadeDrive(0, 0.8) # Drive forward
+        
+        # Re-tilt the hood
+        elif self.autonPhase == "AUTON_2_TILTING":
+            self.tiltShooterPeriodic()
+            # Keep spinning shooter
+            # Feeder not moving
+            self.drivetrain.arcadeDrive(0, 0) # Don't drive
+
+        # Keep spinning motor
+        elif self.autonPhase == "AUTON_2_SPINUP": # Phase may be unnecessary
+            self.tiltShooterPeriodic()
+            # Keep spinning shooter
+            # Feeder not moving
+            self.drivetrain.arcadeDrive(0, 0) #  Don't drive
+
+        # Activate the feeder/trigger motor
+        elif self.autonPhase == "AUTON_2_FIRING":
+            self.tiltShooterPeriodic()
+            #keep spinning shooter
+            self.feeder.setFeeder(self.feeder.feederSpeed) # Trigger shot
+            self.drivetrain.arcadeDrive(0, 0) #  Don't drive
+
+        else:
+            # Ignore the tilter
+            self.feeder.setFeeder(0.0)
+            self.shooter.set(0) #Stop spinning shooter
+            self.drivetrain.arcadeDrive(0, 0) # Don't drive
 
     def comp1Auton(self):
 
