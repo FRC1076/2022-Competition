@@ -101,9 +101,12 @@ class MyRobot(wpilib.TimedRobot):
         return ctrls
 
     def initAuton(self, config):
+        self.autonTiltingTime = config['TILTING_TIME']
         self.autonSpinUpTime = config['SPINUP_TIME']
         self.autonFiringTime = config['FIRING_TIME']
         self.autonBackupTime = config['BACKUP_TIME']
+        self.autonTiltTargetDegrees = config['TILT_TARGET_DEGREES']
+        self.autonShootSpeed = config['SHOOT_SPEED']
         return True
 
     def initDrivetrain(self, config):
@@ -154,13 +157,14 @@ class MyRobot(wpilib.TimedRobot):
         # assuming this is a Neo; otherwise it may not be brushless
         motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
         pneumatics_module_type = wpilib.PneumaticsModuleType.CTREPCM
-        motor = rev.CANSparkMax(config['INTAKE_MOTOR_ID'], motor_type)
+        #motor = rev.CANSparkMax(config['INTAKE_MOTOR_ID'], motor_type)
         solenoid = wpilib.DoubleSolenoid(0,
                                          pneumatics_module_type,
                                          config['INTAKE_SOLENOID_FORWARD_ID'],
                                          config['INTAKE_SOLENOID_REVERSE_ID'])
 
-        return Intake(solenoid, motor)
+        #return Intake(solenoid, motor)
+        return Intake(solenoid)
 
     def initClimber(self, config):
         # assuming this is a Neo; otherwise it may not be brushless
@@ -379,16 +383,19 @@ class MyRobot(wpilib.TimedRobot):
         if self.intake is None:
             return
 
+        print("In teleopIntake")
         operator = self.operator.xboxController
         lta = self.operator.left_trigger_axis
 
         if operator.getLeftBumper():
             self.intake.toggle()
-
+            print("toggling intake")
+        '''
         if operator.getRawAxis(lta) > 0.95:
             self.intake.motorOn()
         else:
             self.intake.motorOff()
+        '''
 
     def teleopTiltShooter(self):
         if not self.tiltShooter:
@@ -405,18 +412,32 @@ class MyRobot(wpilib.TimedRobot):
         else:  # Adjusting tiltShooter mannual
             if (operator.getXButton()):
                 self.tiltShooter.resetPosition()
-            elif(operator.getYButton() and (operator.getRightY() < -0.95)):
+            elif (operator.getYButton()) and (self.getPOVRange(operator.getPOV()) == 180):
+                 self.tiltShooter.setSpeed(-speed)
+            elif (self.getPOVRange(operator.getPOV()) == 180) and (self.tiltShooter.getDegrees() > self.tiltShooter.getMinDegrees()):
                 self.tiltShooter.setSpeed(-speed)
-            elif(operator.getRightY() < -0.95) and (self.tiltShooter.getDegrees() > self.tiltShooter.getMinDegrees()):
-                self.tiltShooter.setSpeed(-speed)
-            elif(operator.getRightY() > 0.95) and (self.tiltShooter.getDegrees() < self.tiltShooter.getMaxDegrees()):
+            elif (self.getPOVRange(operator.getPOV()) == 0) and (self.tiltShooter.getDegrees() < self.tiltShooter.getMaxDegrees()):
                 self.tiltShooter.setSpeed(speed)
+
+            #elif(operator.getYButton() and (operator.getRightY() < -0.95)):
+            #    self.tiltShooter.setSpeed(-speed)
+            #elif(operator.getRightY() < -0.95) and (self.tiltShooter.getDegrees() > self.tiltShooter.getMinDegrees()):
+            #    self.tiltShooter.setSpeed(-speed)
+            #elif(operator.getRightY() > 0.95) and (self.tiltShooter.getDegrees() < self.tiltShooter.getMaxDegrees()):
+            #    self.tiltShooter.setSpeed(speed)
             else:
                 self.tiltShooter.setSpeed(0.0)
             #print("manually tilt: ", self.tiltShooter.getSpeed())
 
         # print("Int tilt shooter: degrees:", self.tiltShooter.getDegrees(), " speed: ", self.tiltShooter.getSpeed())
 
+    def getPOVRange(self, value):
+        if (value >=0 and value < 45) or (value > 315 and value <= 360):
+            return 0
+        elif (value > 135) and (value < 225):
+            return 180
+        else:
+            return -1
     def tiltShooterPeriodic(self):
         if not self.tiltShooter:
             return
@@ -506,42 +527,36 @@ class MyRobot(wpilib.TimedRobot):
 
         operator = self.operator.xboxController
         deadzone = self.operator.deadzone
-        '''
-        # AUTO CLIMBER
-        # NOTE: None of this seems quite right... --mwn
-        if operator.getAButtonPressed() and operator.getBButtonPressed():
-            self.climbRunning = True
-            self.duration = self.climber.climbActions[self.climber.climbstep][1] 
-            self.t = time.time()
-    
-        if self.climbRunning:
-            if operator.getAButtonPressed():
-                self.climbRunning = False # cancel AutoClimb
-            elif time.time() - self.t > self.duration:
-                self.climbRunning = False
-                self.climber.nextStep()
-            else:
-                self.climber.stepAction()
-        '''
+
         # self.climber.solenoids.get()
         if operator.getAButtonPressed():
             self.climber.solenoids.toggle()
 
         #self.climber.setWinch(self.deadzoneCorrection(operator.getLeftY(), deadzone))
-        self.climber.setWinch(operator.getLeftY())
+        self.climber.setWinch(operator.getLeftY(), operator.getRightY())
+
+    def disabledInit(self):
+        
+        print('resetting timers in disabledInit')
+
+        if hasattr(self, 'autonTimer') and self.autonTimer is not None:
+            self.autonTimer.reset()
+        
+        if hasattr(self, 'shooterTimer') and self.shooterTimer is not None:
+            self.shooterTimer.reset()
 
     def autonomousInit(self):
 
         if not self.auton:
             return
 
-        #print("In autonomousInit")
-
-        #self.auton = self.initAuton(config)
-
-        self.autonPhase = "AUTON_SPINUP"
+        self.autonPhase = "AUTON_TILTING"
         self.theta = None
         self.rotationSpeed = 1000
+
+        if (self.tiltShooter):
+            self.tiltShooter.resetPosition()
+            self.tiltShooter.setTargetDegrees(self.autonTiltTargetDegrees)
 
         self.autonTimer = wpilib.Timer()
         self.shooterTimer = wpilib.Timer()
@@ -585,23 +600,35 @@ class MyRobot(wpilib.TimedRobot):
         print("Auton Timer: ", timer)
 
         # Phase transitions
-        if timer > self.autonSpinUpTime and self.autonPhase == "AUTON_SPINUP":
+        if timer > self.autonTiltingTime and self.autonPhase == "AUTON_TILTING":
+            self.autonPhase = "AUTON_SPINUP"
+
+        if timer > self.autonSpinUpTime + self.autonTiltingTime and self.autonPhase == "AUTON_SPINUP":
             self.autonPhase = "AUTON_FIRING"
         
-        if timer > self.autonFiringTime + self.autonSpinUpTime and self.autonPhase == "AUTON_FIRING":
+        if timer > self.autonFiringTime + self.autonSpinUpTime + self.autonTiltingTime and self.autonPhase == "AUTON_FIRING":
             self.autonPhase = "AUTON_DRIVE"
         
-        if timer > self.autonBackupTime + self.autonFiringTime + self.autonSpinUpTime and self.autonPhase == "AUTON_DRIVE":
+        if timer > self.autonBackupTime + self.autonFiringTime + self.autonSpinUpTime + self.autonTiltingTime and self.autonPhase == "AUTON_DRIVE":
             self.autonPhase = "AUTON_DONE"
 
         # Auton Logic
         # Spin up the shooter motor
+
+        if self.autonPhase == "AUTON_TILTING":
+            self.tiltShooterPeriodic()
+
         if self.autonPhase == "AUTON_SPINUP":
-            self.shooter.pidController.setReference(self.shooter.shooterRPM, rev.CANSparkMax.ControlType.kVelocity)
-        
+            # self.shooter.pidController.setReference(self.shooter.shooterRPM, rev.CANSparkMax.ControlType.kVelocity)
+            self.shooter.set(-self.autonShootSpeed)
+            self.tiltShooterPeriodic()
+
         # Activate the feeder/trigger motor
         elif self.autonPhase == "AUTON_FIRING":
+            # self.shooter.pidController.setReference(self.shooter.shooterRPM, rev.CANSparkMax.ControlType.kVelocity)
             self.feeder.setFeeder(self.feeder.feederSpeed)
+            self.tiltShooterPeriodic()
+            self.shooter.set(-self.autonShootSpeed)
 
         # Turn off the shooter and feeder/trigger motors, and drive backwards
         elif self.autonPhase == "AUTON_DRIVE":
