@@ -88,8 +88,11 @@ autonConfig = {
     'TILTING_2_TIME': 1,
     'SPINUP_2_TIME': 1,
     'FIRING_2_TIME': 1,
-    'TILT_TARGET_DEGREES': 20,
+    'TILT_1_TARGET_DEGREES': 20,
+    'TILT_2_TARGET_DEGREES': 10,
     'SHOOT_SPEED': 0.5,
+    'DRIVE_1_SPEED': 0.8,
+    'DRIVE_2_SPEED': 0.2,
 }
 
 climberConfig = {

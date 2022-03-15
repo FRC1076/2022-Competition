@@ -113,8 +113,13 @@ class MyRobot(wpilib.TimedRobot):
         self.autonSpinUp2Time = config['SPINUP_2_TIME']
         self.autonFiring2Time = config['FIRING_2_TIME']
 
-        self.autonTiltTargetDegrees = config['TILT_TARGET_DEGREES']
+        self.autonTilt1TargetDegrees = config['TILT_1_TARGET_DEGREES']
+        self.autonTilt2TargetDegrees = config['TILT_2_TARGET_DEGREES']
+
         self.autonShootSpeed = config['SHOOT_SPEED']
+        
+        self.autonDrive1Speed = config['DRIVE_1_SPEED']
+        self.autonDrive2Speed = config['DRIVE_2_SPEED']
         return True
 
     def initDrivetrain(self, config):
@@ -554,29 +559,23 @@ class MyRobot(wpilib.TimedRobot):
 
         if hasattr(self, 'autonTimer') and self.autonTimer is not None:
             self.autonTimer.reset()
-        
-        if hasattr(self, 'shooterTimer') and self.shooterTimer is not None:
-            self.shooterTimer.reset()
 
     def autonomousInit(self):
 
         if not self.auton:
             return
 
-        self.autonTimeBase = self.autonTiltingTime
+        self.autonTimer = wpilib.Timer()
+        self.autonTimer.start()
 
         self.autonPhase = "AUTON_TILTING"
-        self.theta = None
-        self.rotationSpeed = 1000
-
+        self.autonTimeBase = self.autonTilting1Time
         if (self.tiltShooter):
             self.tiltShooter.resetPosition()
-            self.tiltShooter.setTargetDegrees(self.autonTiltTargetDegrees)
+            self.tiltShooter.setTargetDegrees(self.autonTilt1TargetDegrees)
 
-        self.autonTimer = wpilib.Timer()
-        self.shooterTimer = wpilib.Timer()
-
-        self.autonTimer.start()
+        self.theta = None
+        #self.rotationSpeed = 1000
 
         if (self.aimer):
             self.aimer.reset()
@@ -594,7 +593,8 @@ class MyRobot(wpilib.TimedRobot):
 
         print("In autonomousPeriodic")
         self.comp1AutonSimple()
-
+    
+    '''
     def autonForwardAndBack(self):
         driver = self.driver.xboxController
         if driver.getLeftBumper() and driver.getRightBumper():
@@ -606,6 +606,7 @@ class MyRobot(wpilib.TimedRobot):
                 theta = self.aimer.calculateTheta(driver.getLeftX(), driver.getLeftY())
                 result = self.aimer.calcRotationCoordinates(theta)
                 self.drivetrain.arcadeDrive(result[0], result[1])
+    '''
 
     def comp1AutonSimple(self):
 
@@ -645,6 +646,8 @@ class MyRobot(wpilib.TimedRobot):
         
         if timer > self.autonTimeBase and self.autonPhase == "AUTON_2_DRIVE":
             self.autonPhase = "AUTON_2_TILTING"
+            if (self.tiltShooter):
+                self.tiltShooter.setTargetDegrees(self.autonTilt2TargetDegrees)
             self.autonTimeBase += self.autonDrive2Time
 
         if timer > self.autonTimeBase and self.autonPhase == "AUTON_2_TILTING":
@@ -696,7 +699,7 @@ class MyRobot(wpilib.TimedRobot):
             self.tiltShooterPeriodic()
             # Keep spinning shooter
             # Feeder not moving
-            self.drivetrain.arcadeDrive(0, 0.8) # Drive forward
+            self.drivetrain.arcadeDrive(0, self.autonDrive1Speed) # Drive forward
 
         # Scoop up ball
         elif self.autonPhase == "AUTON_INTAKE":
@@ -714,7 +717,7 @@ class MyRobot(wpilib.TimedRobot):
             self.tiltShooterPeriodic()
             # Keep spinning shooter
             # Feeder not moving
-            self.drivetrain.arcadeDrive(0, 0.8) # Drive forward
+            self.drivetrain.arcadeDrive(0, self.autonDrive2Speed) # Drive forward
         
         # Re-tilt the hood
         elif self.autonPhase == "AUTON_2_TILTING":
@@ -743,6 +746,7 @@ class MyRobot(wpilib.TimedRobot):
             self.shooter.set(0) #Stop spinning shooter
             self.drivetrain.arcadeDrive(0, 0) # Don't drive
 
+    '''
     def comp1Auton(self):
 
         backupTime = 0.5
@@ -778,6 +782,7 @@ class MyRobot(wpilib.TimedRobot):
                 self.shooter.pidController.setReference(0, rev.CANSparkMax.ControlType.kVelocity)
             else:
                 self.feeder.setFeeder(0.4)
+    '''
 
     def deadzoneCorrection(self, val, deadzone):
         """
