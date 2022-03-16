@@ -68,12 +68,12 @@ aimerConfig = {
 }
 
 visionConfig = {
-    'TARGET_HEIGHT': 8.5,
-    'TARGET_RADIUS': 2,
+    'TARGET_HEIGHT': 8.91,
+    'TARGET_RADIUS': 4,
     'SHOOTER_HEIGHT': 3.5,
     'SHOOTER_OFFSET': 1,
-    'CAMERA_HEIGHT': 4,
-    'CAMERA_PITCH': 0,
+    'CAMERA_HEIGHT': 2.71,
+    'CAMERA_PITCH': 25,
 }
 
 autonConfig = {
@@ -81,8 +81,9 @@ autonConfig = {
     'SPINUP_TIME': 3,
     'FIRING_TIME': 3,
     'BACKUP_TIME': 1.5,
-    'TILT_TARGET_DEGREES': 20,
+    'TILT_TARGET_DEGREES': 15,
     'SHOOT_SPEED': 0.5,
+    'SHOOT_RPM': -3500, # Motor goes backwards
 }
 
 climberConfig = {
@@ -138,7 +139,19 @@ showbot = {
 }
 showbot['SHOOTER']['SHOOTER_ID'] = 10 # how to override just one thing
 
+shooterTesting = {
+    'CONTROLLERS': controllerConfig,
+    #'DRIVETRAIN': drivetrainConfig,
+    #'AIMER': aimerConfig,
+    'VISION': visionConfig,
+    #'TILTSHOOTER': tiltShooterConfig,
+    #'SHOOTER': shooterConfig,
+    #'FEEDER': feederConfig,
+    #'AUTON': autonConfig,
+    #'CLIMBER': climberConfig
+}
+
 ##########################
 ###  CONFIG TO DEPLOY  ###
 ##########################
-robotconfig = gull_lake
+robotconfig = shooterTesting
