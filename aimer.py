@@ -21,6 +21,7 @@ class Aimer:
         self.turnController = turnController
         self.theta = None
 
+
     #    setRotateToAngleRate = 0
 
     def reset(self):
@@ -50,11 +51,31 @@ class Aimer:
     # def pidWrite(self, output):
     #    self.setRotateToAngleRate = output
 
-    def calcDiff(self, theta):
+    def calcDiff(self, theta, setpoint):
         if(not theta):
             return None
-        angle = self.getYaw()
-        return(abs(angle - theta))
+        #angle = self.getYaw() # in -180 to 180
+
+
+        # make theta in -180 to 180 also
+        theta = theta%360
+        if 180<theta<=360:
+            theta = theta - 360
+
+        diff1 = abs(setpoint-theta)
+        diff2 = 360 - abs(setpoint-theta)
+
+        # we would like to return positive diff if theta is counterclockwise of angle, 
+        # and negative diff if its clockwise of angle
+        if diff1 < diff2: 
+            return theta - setpoint
+
+        else: # note if angle and theta have the same sign then diff1<diff2 
+            # so in this case angle and theta have different signs. 
+            if setpoint >= 0 # so theta <0 so theta is counterclockwise of angle
+                return diff2
+            else: 
+                return -diff2
     
     def getInRange(self, diff):
         if(diff > self.accuracyDegrees):
@@ -62,13 +83,15 @@ class Aimer:
         else:
             return True
     
-    def calculateDriveSpeeds(self, theta):
-        angle = self.getYaw()
+    def calculateDriveSpeeds(self, theta): # theta should be in -180 to 180  
+
         # rotationRate = self.turnController.calculate(angle, theta)
         # return(rotationRate, 0)
 
         diff = self.calcDiff(theta)
-        correctionFactor = (diff / 10.0)
+
+
+        """correctionFactor = (diff / 10.0)
         if correctionFactor > 1.0:
             correctionFactor = 1.0
 
@@ -79,7 +102,7 @@ class Aimer:
             if theta > 0:
                 return (-self.rotationSpeed * correctionFactor), 0
             else:
-                return (self.rotationSpeed * correctionFactor), 0
+                return (self.rotationSpeed * correctionFactor), 0"""
             
     def calculateTheta(self, x, y):
         y = -y

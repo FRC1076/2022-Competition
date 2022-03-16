@@ -370,7 +370,7 @@ class MyRobot(wpilib.TimedRobot):
             self.drivetrain.arcadeDrive(rotateSpeed, driveSpeed)
 
         else:  # self.drive == SWERVE
-            # Panic
+            # Panik
             return
 
     def teleopIntake(self):
