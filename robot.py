@@ -115,6 +115,8 @@ class MyRobot(wpilib.TimedRobot):
 
         self.autonTilt1TargetDegrees = config['TILT_1_TARGET_DEGREES']
         self.autonTilt2TargetDegrees = config['TILT_2_TARGET_DEGREES']
+        self.autonRotate1TargetDegrees = config['ROTATE_1_TARGET_DEGREES']
+        self.autonRotate2TargetDegrees = config['ROTATE_2_TARGET_DEGREES']
 
         self.autonShootSpeed = config['SHOOT_SPEED']
         
@@ -574,14 +576,14 @@ class MyRobot(wpilib.TimedRobot):
             self.tiltShooter.resetPosition()
             self.tiltShooter.setTargetDegrees(self.autonTilt1TargetDegrees)
 
-        self.theta = None
+        #self.theta = None
         #self.rotationSpeed = 1000
 
         if (self.aimer):
             self.aimer.reset()
 
-        if (self.intake):
-            self.intake.extend()
+        #if (self.intake):
+        #    self.intake.extend()
 
     def autonomousPeriodic(self):
 
@@ -611,6 +613,8 @@ class MyRobot(wpilib.TimedRobot):
     def comp1AutonSimple(self):
 
         timer = self.autonTimer.get()
+
+        deadzone = self.driver.deadzone
 
         print("Auton Phase: ", self.autonPhase)
         print("Auton Timer: ", timer)
@@ -686,13 +690,20 @@ class MyRobot(wpilib.TimedRobot):
             # Keep spinning shooter
             self.feeder.setFeeder(self.feeder.feederSpeed) # Trigger shot
             self.drivetrain.arcadeDrive(0, 0) # Don't drive
+            self.aimer.setTheta(self.autonRotate1TargetDegrees)
 
         # Turn off the feeder/trigger motors, and rotate to ball
         elif self.autonPhase == "AUTON_1_ROTATE":
             self.tiltShooterPeriodic()
             # Keep spinning shooter
             self.feeder.setFeeder(0.0)
-            self.drivetrain.arcadeDrive(0.8, 0) # Rotate
+
+            result = (0,0)
+            if(self.aimer.getTheta() is not None):
+                result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
+
+            rotateSpeed = speedratio * self.deadzoneCorrection(rotateSpeed + self.rotationCorrection, deadzone)
+            self.drivetrain.arcadeDrive(rotateSpeed, deadzone)
 
         # Drive to ball
         elif self.autonPhase == "AUTON_1_DRIVE":
@@ -704,13 +715,19 @@ class MyRobot(wpilib.TimedRobot):
         # Scoop up ball
         elif self.autonPhase == "AUTON_INTAKE":
             print("Intake!!!")
+            self.aimer.setTheta(self.autonRotate2TargetDegrees)
         
         # Rotate to target
         elif self.autonPhase == "AUTON_2_ROTATE":
             self.tiltShooterPeriodic()
             # Keep spinning shooter
             # Feeder not moving
-            self.drivetrain.arcadeDrive(0.8, 0) # Rotate again
+            result = (0,0)
+            if(self.aimer.getTheta() is not None):
+                result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
+
+            rotateSpeed = speedratio * self.deadzoneCorrection(rotateSpeed + self.rotationCorrection, deadzone)
+            self.drivetrain.arcadeDrive(rotateSpeed, deadzone)
 
         #Drive to target
         elif self.autonPhase == "AUTON_2_DRIVE":
