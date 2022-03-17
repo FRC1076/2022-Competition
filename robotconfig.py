@@ -64,7 +64,7 @@ tiltShooterConfig = {
 
 aimerConfig = {
     'AIMING_ROTATION_SPEED': 0.6,
-    'AIMING_ACCURACY_DEGREES': 3,
+    'AIMING_ACCURACY_DEGREES': 1.5,
 }
 
 visionConfig = {

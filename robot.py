@@ -204,6 +204,7 @@ class MyRobot(wpilib.TimedRobot):
         aimer = Aimer(ahrs, config['AIMING_ROTATION_SPEED'], config['AIMING_ACCURACY_DEGREES'])
         # aimer = Aimer(ahrs, 0.6, 3)
         aimer.reset()
+
         return aimer
 
     def initVision(self, config):
@@ -274,7 +275,7 @@ class MyRobot(wpilib.TimedRobot):
                 self.phase = "DRIVE_PHASE"
                 self.teleopDrivetrain()
             else:
-                if (self.aimer.getInRange(self.aimer.getTheta())):
+                if self.aimer.isInRange():
                     self.phase = "AS_TILT_PHASE"
                     self.teleopTiltShooter()
                 else:
@@ -338,22 +339,42 @@ class MyRobot(wpilib.TimedRobot):
             result = (-driver.getRightX(), driver.getLeftY())
 
             if (self.vision and self.aimer and self.tiltShooter):
+
                 if (self.phase == "DRIVE_PHASE"):
+
                     if driver.getLeftBumper():  # for testing auto-rotate
                         self.aimer.reset()
-                    if (driver.getRightBumper()):
-                        self.aimer.setTheta(self.vision.getSmoothYaw())
+
+                    if (driver.getRightBumper() and self.vision.getSmoothYaw()):
+
+                        self.aimer.setError(self.vision.getSmoothYaw())
                         self.tiltShooter.setTargetDegrees(self.vision.calculateAngle(10))
+
                         if (self.vision.hasTargets()):
-                            if (self.aimer.getTheta() is not None):
-                                result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
+
+                            # transition phase if bumper is pressed and we have targets
+                            if (self.aimer.getError() is not None):
+
+                                result = self.aimer.calculateDriveSpeeds(self.aimer.getError())
                                 self.phase = "AS_ROTATE_PHASE"
-                elif (self.phase == "AS_ROTATE_PHASE"):
-                    if (self.aimer.getTheta() is not None):
-                        result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
+
+                elif (self.phase == "AS_ROTATE_PHASE"): 
+
+                    # Want to 0 out the diff, which is either the current yaw from vision
+                    if (self.vision.hasTargets()):
+                        # result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
+                        self.aimer.setError(self.vision.getSmoothYaw())
+                        self.aimer.gyroSetPoint = self.aimer.getAccumulatedYaw() + self.aimer.getError()
+
+                    elif (self.aimer.gyroSetPoint is not None):
+                        self.aimer.setError = self.aimer.gyroSetPoint - self.aimer.getAccumulatedYaw()
+
                     else:
                         print("should never happen")
                         self.phase = "DRIVE_PHASE"
+                    
+                    result = (self.aimer.PIDcalc(self.aimer.getError()), 0)
+
                 else:
                     print("In AS_AIMER_PHASE: should never happen")
                     self.phase = "DRIVE_PHASE"
@@ -579,18 +600,6 @@ class MyRobot(wpilib.TimedRobot):
 
         print("In autonomousPeriodic")
         self.comp1AutonSimple()
-
-    def autonForwardAndBack(self):
-        driver = self.driver.xboxController
-        if driver.getLeftBumper() and driver.getRightBumper():
-            if self.autonTimer.get() < 1.0:
-                self.drivetrain.arcadeDrive(0, -0.75)
-            elif 1.0 <= self.autonTimer.get() < 2.0:
-                self.drivetrain.arcadeDrive(0, 0.75)
-            elif 2.0 <= self.autonTimer.get() < 3.0:
-                theta = self.aimer.calculateTheta(driver.getLeftX(), driver.getLeftY())
-                result = self.aimer.calcRotationCoordinates(theta)
-                self.drivetrain.arcadeDrive(result[0], result[1])
 
     def comp1AutonSimple(self):
 
