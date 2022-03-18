@@ -34,6 +34,10 @@ drivetrainConfig = {
     },
     'DRIVETYPE': ARCADE,
     'ROTATION_CORRECTION': 0.0,
+    'COUNTS_PER_REVOLUTION': 80,
+    'GEAR_RATIO': 10,
+    'WHEEL_CIRCUMFERENCE': 8,
+    'LEFT_ENCODER': 13,
 }
 
 shooterConfig = {
@@ -145,12 +149,11 @@ showbot = {
     'CONTROLLERS': controllerConfig,
     'DRIVETRAIN': drivetrainConfig,
     'AIMER': aimerConfig,
-    'VISION': visionConfig,
     'SHOOTER': shooterConfig,
 }
-showbot['SHOOTER']['SHOOTER_ID'] = 10 # how to override just one thing
+#showbot['SHOOTER']['SHOOTER_ID'] = 10 # how to override just one thing
 
 ##########################
 ###  CONFIG TO DEPLOY  ###
 ##########################
-robotconfig = gull_lake
+robotconfig = showbot

@@ -14,6 +14,7 @@ from robotconfig import robotconfig
 import climber  # not needed?
 from climber import Climber, WinchGroup
 from vision import Vision
+from drivetrain import Drivetrain
 from aimer import Aimer
 from shooter import Shooter
 from tiltshooter import TiltShooter
@@ -128,12 +129,20 @@ class MyRobot(wpilib.TimedRobot):
         left_motors = []
         right_motors = []
         motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushed
+        left_encoder_motor = None
+        right_encoder_motor = None
 
         for controller_id in config['LEFT'].values():
-            left_motors.append(rev.CANSparkMax(controller_id, motor_type))
+            motor = rev.CANSparkMax(controller_id, motor_type)
+            left_motors.append(motor)
+            if 'LEFT_ENCODER' in config.keys() and controller_id == config['LEFT_ENCODER']:
+                left_encoder_motor = motor
 
         for controller_id in config['RIGHT'].values():
-            right_motors.append(rev.CANSparkMax(controller_id, motor_type))
+            motor = rev.CANSparkMax(controller_id, motor_type)
+            right_motors.append(motor)
+            if 'RIGHT_ENCODER' in config.keys() and controller_id == config['RIGHT_ENCODER']:
+                right_encoder_motor = motor
 
         self.drive_type = config['DRIVETYPE']  # side effect!
 
@@ -144,7 +153,8 @@ class MyRobot(wpilib.TimedRobot):
         right_side = wpilib.MotorControllerGroup(*right_motors)
 
         # Create Drivetrain
-        return wpilib.drive.DifferentialDrive(left_side, right_side)
+        motors = wpilib.drive.DifferentialDrive(left_side, right_side)
+        return Drivetrain(motors, config['GEAR_RATIO'], config['WHEEL_CIRCUMFERENCE'], config['COUNTS_PER_REVOLUTION'], left_encoder_motor, right_encoder_motor)
 
     def initShooter(self, config):
         # assuming this is a Neo; otherwise it may not be brushless
@@ -343,7 +353,7 @@ class MyRobot(wpilib.TimedRobot):
             rightspeed = speedratio * self.deadzoneCorrection(rightspeed, deadzone)
 
             # Invoke Tank Drive
-            self.drivetrain.tankDrive(leftspeed, rightspeed)
+            self.drivetrain.motors.tankDrive(leftspeed, rightspeed)
 
         # ARCADE DRIVE
         elif self.drive_type == ARCADE:
@@ -382,11 +392,13 @@ class MyRobot(wpilib.TimedRobot):
             driveSpeed = speedratio * self.deadzoneCorrection(driveSpeed, deadzone)
 
             #print(rotateSpeed, driveSpeed)
-            self.drivetrain.arcadeDrive(rotateSpeed, driveSpeed)
+            self.drivetrain.motors.arcadeDrive(rotateSpeed, driveSpeed)
 
         else:  # self.drive == SWERVE
             # Panic
             return
+
+        print("rotations (L/R): ", self.drivetrain.getLeftInches(), self.drivetrain.getRightInches())
 
     def teleopIntake(self):
         '''
@@ -674,7 +686,7 @@ class MyRobot(wpilib.TimedRobot):
             self.tiltShooterPeriodic()
             # Shooter not moving
             # Feeder not moving
-            self.drivetrain.arcadeDrive(0, 0) # Don't drive
+            self.drivetrain.motors.arcadeDrive(0, 0) # Don't drive
 
         # Start spinning motor
         if self.autonPhase == "AUTON_1_SPINUP":
@@ -682,14 +694,14 @@ class MyRobot(wpilib.TimedRobot):
             self.tiltShooterPeriodic()
             self.shooter.set(-self.autonShootSpeed) #Start spinning shooter
             # Feeder not moving
-            self.drivetrain.arcadeDrive(0, 0) # Don't drive
+            self.drivetrain.motors.arcadeDrive(0, 0) # Don't drive
 
         # Activate the feeder/trigger motor
         elif self.autonPhase == "AUTON_1_FIRING":
             self.tiltShooterPeriodic()
             # Keep spinning shooter
             self.feeder.setFeeder(self.feeder.feederSpeed) # Trigger shot
-            self.drivetrain.arcadeDrive(0, 0) # Don't drive
+            self.drivetrain.motors.arcadeDrive(0, 0) # Don't drive
             self.aimer.setTheta(self.autonRotate1TargetDegrees)
 
         # Turn off the feeder/trigger motors, and rotate to ball
@@ -703,14 +715,14 @@ class MyRobot(wpilib.TimedRobot):
                 result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
 
             rotateSpeed = speedratio * self.deadzoneCorrection(rotateSpeed + self.rotationCorrection, deadzone)
-            self.drivetrain.arcadeDrive(rotateSpeed, deadzone)
+            self.drivetrain.motors.arcadeDrive(rotateSpeed, deadzone)
 
         # Drive to ball
         elif self.autonPhase == "AUTON_1_DRIVE":
             self.tiltShooterPeriodic()
             # Keep spinning shooter
             # Feeder not moving
-            self.drivetrain.arcadeDrive(0, self.autonDrive1Speed) # Drive forward
+            self.drivetrain.motors.arcadeDrive(0, self.autonDrive1Speed) # Drive forward
 
         # Scoop up ball
         elif self.autonPhase == "AUTON_INTAKE":
@@ -727,41 +739,41 @@ class MyRobot(wpilib.TimedRobot):
                 result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
 
             rotateSpeed = speedratio * self.deadzoneCorrection(rotateSpeed + self.rotationCorrection, deadzone)
-            self.drivetrain.arcadeDrive(rotateSpeed, deadzone)
+            self.drivetrain.motors.arcadeDrive(rotateSpeed, deadzone)
 
         #Drive to target
         elif self.autonPhase == "AUTON_2_DRIVE":
             self.tiltShooterPeriodic()
             # Keep spinning shooter
             # Feeder not moving
-            self.drivetrain.arcadeDrive(0, self.autonDrive2Speed) # Drive forward
+            self.drivetrain.motors.arcadeDrive(0, self.autonDrive2Speed) # Drive forward
         
         # Re-tilt the hood
         elif self.autonPhase == "AUTON_2_TILTING":
             self.tiltShooterPeriodic()
             # Keep spinning shooter
             # Feeder not moving
-            self.drivetrain.arcadeDrive(0, 0) # Don't drive
+            self.drivetrain.motors.arcadeDrive(0, 0) # Don't drive
 
         # Keep spinning motor
         elif self.autonPhase == "AUTON_2_SPINUP": # Phase may be unnecessary
             self.tiltShooterPeriodic()
             # Keep spinning shooter
             # Feeder not moving
-            self.drivetrain.arcadeDrive(0, 0) #  Don't drive
+            self.drivetrain.motors.arcadeDrive(0, 0) #  Don't drive
 
         # Activate the feeder/trigger motor
         elif self.autonPhase == "AUTON_2_FIRING":
             self.tiltShooterPeriodic()
             #keep spinning shooter
             self.feeder.setFeeder(self.feeder.feederSpeed) # Trigger shot
-            self.drivetrain.arcadeDrive(0, 0) #  Don't drive
+            self.drivetrain.motors.arcadeDrive(0, 0) #  Don't drive
 
         else:
             # Ignore the tilter
             self.feeder.setFeeder(0.0)
             self.shooter.set(0) #Stop spinning shooter
-            self.drivetrain.arcadeDrive(0, 0) # Don't drive
+            self.drivetrain.motors.arcadeDrive(0, 0) # Don't drive
 
     '''
     def comp1Auton(self):
