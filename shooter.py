@@ -1,12 +1,14 @@
 import wpilib
 
 class Shooter:
-    def __init__(self, motor_controller, shooterRPM): # takes a SPARK MAX motorcontroller
+    def __init__(self, motor_controller, shooterRPM, shooterMaxRPM, shooterMinRPM): # takes a SPARK MAX motorcontroller
         self.controller = motor_controller
         # self.controller.setClosedLoopRampRate(1.0)
         self.encoder = self.controller.getEncoder()
         self.pidController = self.controller.getPIDController()
         self.shooterRPM = shooterRPM
+        self.shooterMaxRPM = shooterMaxRPM
+        self.shooterMinRPM = shooterMinRPM
         
     def set(self, speed):
         self.controller.set(speed)
@@ -16,6 +18,12 @@ class Shooter:
 
     def getShooterRPM(self):
         return self.get()
+
+    def getShooterMaxRPM(self):
+        return self.shooterMaxRPM
+
+    def getShooterMinRPM(self):
+        return self.shooterMinRPM
         
     def setPIDController(self):
         kP = 0.00001
