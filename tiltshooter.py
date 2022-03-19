@@ -12,7 +12,9 @@ class TiltShooter:
         self.maxDegrees = maxDegrees # Upper bound for tilt shooter
         self.targetDegrees = self.minDegrees # Starting position
         self.bufferDegrees = bufferDegrees
-        self.targetSpeed = targetSpeed
+        #self.targetSpeed = targetSpeed
+        self.pidController = self.motor.getPIDController()
+
 
     def resetPosition(self):
         self.encoder.setPosition(0)
@@ -70,3 +72,15 @@ class TiltShooter:
 
     def degreesToRotations(self, degrees):
         return(degrees * self.rotationsPer360 / 360)
+
+    def setPIDController(self):
+        kP = 0.00001
+        kI = 0.00000
+        kD = 0.00000
+        kMaxOutput = 1
+        kMinOutput = -1
+
+        self.pidController.setP(kP)
+        self.pidController.setI(kI)
+        self.pidController.setD(kD)
+        self.pidController.setOutputRange(kMinOutput, kMaxOutput)

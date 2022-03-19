@@ -1,5 +1,3 @@
-import wpilib
-
 class Shooter:
     def __init__(self, motor_controller, shooterRPM): # takes a SPARK MAX motorcontroller
         self.controller = motor_controller
