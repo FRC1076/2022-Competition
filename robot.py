@@ -120,6 +120,8 @@ class MyRobot(wpilib.TimedRobot):
         self.autonRotate2TargetDegrees = config['ROTATE_2_TARGET_DEGREES']
 
         self.autonShootSpeed = config['SHOOT_SPEED']
+
+        self.autonRotateSpeed = config['ROTATE_SPEED']
         
         self.autonDrive1Speed = config['DRIVE_1_SPEED']
         self.autonDrive2Speed = config['DRIVE_2_SPEED']
@@ -138,12 +140,14 @@ class MyRobot(wpilib.TimedRobot):
 
         for controller_id in config['LEFT'].values():
             motor = rev.CANSparkMax(controller_id, motor_type)
+            motor.setOpenLoopRampRate(config['OPEN_LOOP_RAMP_RATE'])
             left_motors.append(motor)
             if 'LEFT_ENCODER' in config.keys() and controller_id == config['LEFT_ENCODER']:
                 left_encoder_motor = motor
 
         for controller_id in config['RIGHT'].values():
             motor = rev.CANSparkMax(controller_id, motor_type)
+            motor.setOpenLoopRampRate(config['OPEN_LOOP_RAMP_RATE'])
             right_motors.append(motor)
             if 'RIGHT_ENCODER' in config.keys() and controller_id == config['RIGHT_ENCODER']:
                 right_encoder_motor = motor
@@ -445,11 +449,14 @@ class MyRobot(wpilib.TimedRobot):
             if (operator.getXButton()):
                 self.tiltShooter.resetPosition()
             elif (operator.getYButton()) and (self.getPOVRange(operator.getPOV()) == 180):
-                 self.tiltShooter.setSpeed(-speed)
+                self.tiltShooter.setSpeed(-speed)
+                print("negative speed")
             elif (self.getPOVRange(operator.getPOV()) == 180) and (self.tiltShooter.getDegrees() > self.tiltShooter.getMinDegrees()):
                 self.tiltShooter.setSpeed(-speed)
+                print("negative speed")
             elif (self.getPOVRange(operator.getPOV()) == 0) and (self.tiltShooter.getDegrees() < self.tiltShooter.getMaxDegrees()):
                 self.tiltShooter.setSpeed(speed)
+                print("positive speed")
 
             #elif(operator.getYButton() and (operator.getRightY() < -0.95)):
             #    self.tiltShooter.setSpeed(-speed)
@@ -459,6 +466,7 @@ class MyRobot(wpilib.TimedRobot):
             #    self.tiltShooter.setSpeed(speed)
             else:
                 self.tiltShooter.setSpeed(0.0)
+                print("no speed")
             #print("manually tilt: ", self.tiltShooter.getSpeed())
 
         # print("Int tilt shooter: degrees:", self.tiltShooter.getDegrees(), " speed: ", self.tiltShooter.getSpeed())
@@ -570,9 +578,9 @@ class MyRobot(wpilib.TimedRobot):
     def disabledInit(self):
         
         
-        self.autonTimeBase = 0
+        self.autonTimeBase = self.autonTilting1Time
         
-        self.autonPhase = "AUTON_TILTING"
+        self.autonPhase = "AUTON_1_TILTING"
         
         print('resetting timers in disabledInit')
 
@@ -587,7 +595,7 @@ class MyRobot(wpilib.TimedRobot):
         self.autonTimer = wpilib.Timer()
         self.autonTimer.start()
 
-        self.autonPhase = "AUTON_TILTING"
+        self.autonPhase = "AUTON_1_TILTING"
         self.autonTimeBase = self.autonTilting1Time
         if (self.tiltShooter):
             self.tiltShooter.resetPosition()
@@ -615,54 +623,69 @@ class MyRobot(wpilib.TimedRobot):
         timer = self.autonTimer.get()
 
         deadzone = self.driver.deadzone
+        speedratio = 1.0
 
         print("Auton Phase: ", self.autonPhase)
         print("Auton Timer: ", timer)
 
+        print("auton time base", self.autonTimeBase)
+
         # Phase transitions
         if timer > self.autonTimeBase and self.autonPhase == "AUTON_1_TILTING":
+            print("Auton Phase: ", self.autonPhase)
             self.autonPhase = "AUTON_1_SPINUP"
-            self.autonTimeBase += self.autonTiltingTime
+            print("self.autonTilting1Time", self.autonTilting1Time)
+            self.autonTimeBase += self.autonTilting1Time
 
         if timer > self.autonTimeBase and self.autonPhase == "AUTON_1_SPINUP":
+            print("Auton Phase: ", self.autonPhase)
             self.autonPhase = "AUTON_1_FIRING"
-            self.autonTimeBase += self.autonSpinup1Time
+            self.autonTimeBase += self.autonSpinUp1Time
         
         if timer > self.autonTimeBase and self.autonPhase == "AUTON_1_FIRING":
+            print("Auton Phase: ", self.autonPhase)
             self.autonPhase = "AUTON_1_ROTATE"
             self.autonTimeBase += self.autonFiring1Time
 
         if timer > self.autonTimeBase and self.autonPhase == "AUTON_1_ROTATE":
+            print("Auton Phase: ", self.autonPhase)
             self.autonPhase = "AUTON_1_DRIVE"
             self.autonTimeBase += self.autonRotate1Time
         
         if timer > self.autonTimeBase and self.autonPhase == "AUTON_1_DRIVE":
+            print("Auton Phase: ", self.autonPhase)
             self.autonPhase = "AUTON_INTAKE"
             self.autonTimeBase += self.autonDrive1Time
 
         if timer > self.autonTimeBase and self.autonPhase == "AUTON_INTAKE":
+            print("Auton Phase: ", self.autonPhase)
             self.autonPhase = "AUTON_2_ROTATE"
             self.autonTimeBase += self.autonIntakeTime
 
         if timer > self.autonTimeBase and self.autonPhase == "AUTON_2_ROTATE":
+            print("Auton Phase: ", self.autonPhase)
             self.autonPhase = "AUTON_2_DRIVE"
             self.autonTimeBase += self.autonRotate2Time
         
         if timer > self.autonTimeBase and self.autonPhase == "AUTON_2_DRIVE":
+            print("Auton Phase: ", self.autonPhase)
             self.autonPhase = "AUTON_2_TILTING"
             if (self.tiltShooter):
                 self.tiltShooter.setTargetDegrees(self.autonTilt2TargetDegrees)
             self.autonTimeBase += self.autonDrive2Time
 
         if timer > self.autonTimeBase and self.autonPhase == "AUTON_2_TILTING":
+            print("Auton Phase: ", self.autonPhase)
             self.autonPhase = "AUTON_2_SPINUP"
             self.autonTimeBase += self.autonTilting2Time
 
         if timer > self.autonTimeBase and self.autonPhase == "AUTON_2_SPINUP":
+            print("Auton Phase: ", self.autonPhase)
             self.autonPhase = "AUTON_2_FIRING"
             self.autonTimeBase += self.autonSpinup2Time
 
         if timer > self.autonTimeBase and self.autonPhase == "AUTON_2_FIRING":
+            print("Auton Phase: ", self.autonPhase)
             self.autonPhase = "AUTON_DONE"
             self.autonTimeBase += self.autonFiring2Time
 
@@ -702,8 +725,9 @@ class MyRobot(wpilib.TimedRobot):
             if(self.aimer.getTheta() is not None):
                 result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
 
-            rotateSpeed = speedratio * self.deadzoneCorrection(rotateSpeed + self.rotationCorrection, deadzone)
-            self.drivetrain.motors.arcadeDrive(rotateSpeed, deadzone)
+            rotateSpeed = speedratio * self.deadzoneCorrection(self.autonRotateSpeed + self.rotationCorrection, deadzone)
+            print("rotate speed", rotateSpeed)
+            self.drivetrain.motors.arcadeDrive(rotateSpeed, 0)
 
             self.drivetrain.resetPosition()
 
@@ -712,6 +736,7 @@ class MyRobot(wpilib.TimedRobot):
             self.tiltShooterPeriodic()
             # Keep spinning shooter
             # Feeder not moving
+            print("Drive Distance (L/R)", self.drivetrain.getLeftInches(), self.drivetrain.getRightInches())
             if(self.drivetrain.getLeftInches() and self.drivetrain.getRightInches()):
                 if(self.drivetrain.getLeftInches() < self.autonDrive1Distance or self.drivetrain.getRightInches() < self.autonDrive1Distance):
                     self.drivetrain.motors.arcadeDrive(0, self.autonDrive1Speed) # Drive forward
@@ -743,7 +768,7 @@ class MyRobot(wpilib.TimedRobot):
             if(self.aimer.getTheta() is not None):
                 result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
 
-            rotateSpeed = speedratio * self.deadzoneCorrection(rotateSpeed + self.rotationCorrection, deadzone)
+            rotateSpeed = speedratio * self.deadzoneCorrection(self.autonRotateSpeed + self.rotationCorrection, deadzone)
             self.drivetrain.motors.arcadeDrive(rotateSpeed, deadzone)
             
             self.drivetrain.resetPosition()
