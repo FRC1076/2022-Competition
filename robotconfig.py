@@ -34,6 +34,11 @@ drivetrainConfig = {
     },
     'DRIVETYPE': ARCADE,
     'ROTATION_CORRECTION': 0.0,
+    'COUNTS_PER_REVOLUTION': 80,
+    'GEAR_RATIO': 10,
+    'WHEEL_CIRCUMFERENCE': 8,
+    'LEFT_ENCODER': 13,
+    'RIGHT_ENCODER': 7,
 }
 
 shooterConfig = {
@@ -79,12 +84,26 @@ visionConfig = {
 }
 
 autonConfig = {
-    'TILTING_TIME': 2,
-    'SPINUP_TIME': 3,
-    'FIRING_TIME': 3,
-    'BACKUP_TIME': 1.5,
-    'TILT_TARGET_DEGREES': 20,
+    'TILTING_1_TIME': 1,
+    'SPINUP_1_TIME': 2,
+    'FIRING_1_TIME': 0.5,
+    'ROTATE_1_TIME': 2,
+    'DRIVE_1_TIME': 2,
+    'INTAKE_TIME': 1,
+    'ROTATE_2_TIME': 2,
+    'DRIVE_2_TIME': 2,
+    'TILTING_2_TIME': 1,
+    'SPINUP_2_TIME': 1,
+    'FIRING_2_TIME': 0.5,
+    'TILT_1_TARGET_DEGREES': 20,
+    'TILT_2_TARGET_DEGREES': 10,
+    'ROTATE_1_TARGET_DEGREES': 90,
+    'ROTATE_2_TARGET_DEGREES': 135,
     'SHOOT_SPEED': 0.5,
+    'DRIVE_1_SPEED': 0.8,
+    'DRIVE_2_SPEED': 0.2,
+    'DRIVE_1_DISTANCE': 60, #inches
+    'DRIVE_2_DISTANCE': 60, #inches
 }
 
 climberConfig = {
@@ -180,13 +199,9 @@ showbot = {
     'CONTROLLERS': controllerConfig,
     'DRIVETRAIN': drivetrainConfig,
     'AIMER': aimerConfig,
-    'VISION': visionConfig,
     'SHOOTER': shooterConfig,
 }
-
-
-
-showbot['SHOOTER']['SHOOTER_ID'] = 10 # how to override just one thing
+#showbot['SHOOTER']['SHOOTER_ID'] = 10 # how to override just one thing
 
 ##########################
 ###  CONFIG TO DEPLOY  ###
