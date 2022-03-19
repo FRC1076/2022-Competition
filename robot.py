@@ -151,6 +151,7 @@ class MyRobot(wpilib.TimedRobot):
         tiltShooter = rev.CANSparkMax(config['TILTSHOOTER_ID'], motor_type)
         tiltShooter = TiltShooter(tiltShooter, config['ROTATIONS_PER_360'], config['MIN_DEGREES'],
                                   config['MAX_DEGREES'], config['BUFFER_DEGREES'], config['SPEED'])
+        self.tiltShooter.setPIDController()
         return tiltShooter
 
     def initIntake(self, config):
@@ -438,19 +439,30 @@ class MyRobot(wpilib.TimedRobot):
             return 180
         else:
             return -1
+
     def tiltShooterPeriodic(self):
         if not self.tiltShooter:
             return
 
+        """
         speed = self.tiltShooter.getTargetSpeed()
+        
         buffer = self.tiltShooter.getBufferDegrees()
 
         if (self.tiltShooter.getDegrees() < (self.tiltShooter.getTargetDegrees() - buffer)):
-            self.tiltShooter.setSpeed(speed)
+            #self.tiltShooter.setSpeed(speed)
+            self.tiltShooter.pidController.setReference()
+
         elif (self.tiltShooter.getDegrees() > (self.tiltShooter.getTargetDegrees() + buffer)):
             self.tiltShooter.setSpeed(-speed)
+            
         else:
             self.tiltShooter.setSpeed(0.0)
+        """
+        targetDegrees = self.tiltShooter.getTargetDegrees()
+        self.tiltShooter.setTargetDegrees(targetDegrees + 7/20)
+        self.tiltShooter.pidController.setReference(targetDegrees, rev.CANSparkMax.ControlType.kPosition)
+        print("tiltShooter degrees, targetDegrees = "+ self.tiltShooter.getDegrees()+", "+targetDegrees)
 
     def teleopShooter(self, shooterRPM=None, shooterVelocity=None):
 
