@@ -2,14 +2,14 @@ import wpilib
 import rev
 
 class Drivetrain:
-    def __init__(self, motor_controllers, gear_ratio, wheel_circumference, countsPerRevolution, left_encoder_motor, right_encoder_motor):
-        self.motors = motor_controllers
+    def __init__(self, motorControllers, gearRatio, wheelCircumference, countsPerRevolution, leftEncoderMotor, rightEncoderMotor):
+        self.motors = motorControllers
         #self.motors.setClosedLoopRampRate(1.0)
-        self.gearRatio = gear_ratio
-        self.wheelCircumference = wheel_circumference
+        self.gearRatio = gearRatio
+        self.wheelCircumference = wheelCircumference
         self.countsPerRevolution = countsPerRevolution
-        self.leftEncoderMotor = left_encoder_motor
-        self.rightEncoderMotor = right_encoder_motor
+        self.leftEncoderMotor = leftEncoderMotor
+        self.rightEncoderMotor = rightEncoderMotor
         if self.leftEncoderMotor:
             self.leftEncoder = self.leftEncoderMotor.getAlternateEncoder(self.countsPerRevolution)
             self.leftEncoder.setPosition(0) # Reset position of motor to zero

@@ -1,4 +1,5 @@
 from email.policy import default
+from drivetrain import Drivetrain
 import robotconfig
 from aimer import Aimer
 
@@ -22,7 +23,8 @@ defaultResponses = {
     'THETA': 0.0,
     'IN_RANGE': False,
     # MOTOR VALUES
-    'MOTOR_POSITION': 6,
+    'LEFT_ENCODER_POSTION': 0.0,
+    'RIGHT_ENCODER_POSITION': 0.0,
 }
 
 
@@ -37,6 +39,41 @@ class TestAimer(Aimer):
     def getTheta(self):
         return self.responses['THETA']
 
+class TestDrivetrain():
+    def __init__(self, drivetrain):
+        self.robotDrivetrain = drivetrain
+        #robotconfig.drivetrainConfig['GEAR_RATIO'], robotconfig.drivetrainConfig['WHEEL_CIRCUMFERENCE']
+        self.resetResponses()
+
+    def resetResponses(self):
+        self.responses = defaultResponses
+
+    def resetPosition(self):
+        self.leftResetPosition()
+        self.rightResetPosition()
+
+    def leftResetPosition(self):
+        self.responses['LEFT_ENCODER_POSITION'] = 0.0
+
+    def rightResetPosition(self):
+        self.responses['RIGHT_ENCODER_POSITION'] = 0.0
+
+    def getLeftRotations(self):
+        return self.responses['LEFT_ENCODER_POSITION']
+
+    def getRightRotations(self):
+        return self.responses['RIGHT_ENCODER_POSITION']
+
+    def getLeftInches(self):
+        return self.rotationsToInches(self.getLeftRotations())
+
+    def getRightInches(self):
+        return self.rotationsToInches(self.getRightRotations())
+
+    def rotationsToInches(self, rotations):
+        print(rotations, self.robotDrivetrain.gearRatio, self.robotDrivetrain.wheelCircumference)
+        return (rotations / (self.robotDrivetrain.gearRatio * self.robotDrivetrain.wheelCircumference))
+        
 
 class TestController():
     def __init__(self):
@@ -119,6 +156,7 @@ class Tester():
     def __init__(self, robot):
         self.robot = robot
         self.aimer = TestAimer(robot.aimer)
+        self.drivetrain = TestDrivetrain(robot.drivetrain)
         robot.aimer = self.aimer
 
     @staticmethod
@@ -132,12 +170,6 @@ class Tester():
         self.testOperatorXBC = self.testDriverController.xboxController
         self.robot.driver = self.testDriverController
         self.robot.operator = self.testOperatorController
-        self.testLeftMotor = TestMotor()
-        self.testRightMotor = TestMotor()
-        self.testLeftMotorWithEncoder = self.testLeftMotor.motor
-        self.testRightMotorWithEncoder = self.testRightMotor.motor
-        self.robot.leftmotor = self.testLeftMotorWithEncoder
-        self.robot.rightmotor = self.testRightMotorWithEncoder
         self.robot.teleopInit()
 
     def logResult(self, result):
@@ -152,6 +184,7 @@ class Tester():
         self.testManualClimber()
         self.testRotatePhase()
         self.testTiltShooter()
+        self.testDrivetrain()
 
     def testTankDrive(self):
         self.robot.drive_type = robotconfig.TANK
@@ -304,14 +337,40 @@ class Tester():
         print('******************\n')
 
     def testDrivetrain(self):
-        self.testLeftMotorWithEncoder.reset()
-        self.testRightMotorWithEncoder.reset()
 
-        self.testLeftMotorWithEncoder.responses['MOTOR_POSITION'] = 8
-        self.testRightMotorWithEncoder.responses['MOTOR_POSITION'] = 8
-        self.testLeftMotorWithEncoder.leftResetPosition()
-        self.testRightMotorWithEncoder.rightResetPosition()
-        self.robot.teleopPeriodic()
+        self.drivetrain.responses['LEFT_ENCODER_POSITION'] = 8.0
+        self.drivetrain.responses['RIGHT_ENCODER_POSITION'] = 8.0
+
+        self.drivetrain.resetPosition()
+        
         print('\n******************')
-        print('Motor Position Reset: Passed!')
+        print('Encoder Position Reset: Passed!')
+        print('******************\n')
+
+        self.drivetrain.resetPosition()
+        
+        self.drivetrain.responses['LEFT_ENCODER_POSITION'] = 5.0
+        self.drivetrain.responses['RIGHT_ENCODER_POSITION'] = 10.0
+
+        leftRotations = self.drivetrain.getLeftRotations()
+        rightRotations = self.drivetrain.getRightRotations()
+        
+        print('\n******************')
+        print('Left Rotations: ', leftRotations)
+        print('Right Rotations: ', rightRotations)
+        print('Encoder Position Get: Passed!')
+        print('******************\n')
+
+        self.drivetrain.resetPosition()
+
+        self.drivetrain.responses['LEFT_ENCODER_POSITION'] = 10.0
+        self.drivetrain.responses['RIGHT_ENCODER_POSITION'] = 5.0
+
+        leftInches = self.drivetrain.getLeftInches()
+        rightInches = self.drivetrain.getRightInches()
+
+        print('\n******************')
+        print('Left Inches: ', leftInches)
+        print('Right Inches: ', rightInches)
+        print('Encoder Inches Get: Passed!')
         print('******************\n')
