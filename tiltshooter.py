@@ -57,7 +57,7 @@ class TiltShooter:
         return(self.rotationsToDegrees(self.getRotations()))
 
     def isNearTarget(self):
-        if((self.getDegrees() > (self.getTargetDegrees() - self.bufferDegrees)) and (self.getDegrees() > (self.getTargetDegrees() - self.bufferDegrees))):
+        if((self.getDegrees() > (self.getTargetDegrees() - self.bufferDegrees)) and (self.getDegrees() < (self.getTargetDegrees() + self.bufferDegrees))):
             return True
         else:
             return False
