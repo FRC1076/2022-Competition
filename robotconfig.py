@@ -99,6 +99,8 @@ autonConfig = {
     'SHOOT_SPEED': 0.5,
     'DRIVE_1_SPEED': 0.8,
     'DRIVE_2_SPEED': 0.2,
+    'DRIVE_1_DISTANCE': 60, #inches
+    'DRIVE_2_DISTANCE': 60, #inches
 }
 
 climberConfig = {
