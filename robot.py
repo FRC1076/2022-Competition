@@ -711,9 +711,23 @@ class MyRobot(wpilib.TimedRobot):
             self.tiltShooterPeriodic()
             # Keep spinning shooter
             # Feeder not moving
-            if(self.drivetrain.getLeftInches() < self.autonDrive1Distance or self.drivetrain.getRightInches() < self.autonDrive1Distance):
+            if(self.drivetrain.getLeftInches() and self.drivetrain.getRightInches()):
+                if(self.drivetrain.getLeftInches() < self.autonDrive1Distance or self.drivetrain.getRightInches() < self.autonDrive1Distance):
+                    self.drivetrain.motors.arcadeDrive(0, self.autonDrive1Speed) # Drive forward
+                else:
+                    self.drivetrain.motors.arcadeDrive(0, 0) # Stop driving
+            elif(self.drivetrain.getLeftInches() and not self.drivetrain.getRightInches()):
+                if(self.drivetrain.getLeftInches() < self.autonDrive1Distance):
+                    self.drivetrain.motors.arcadeDrive(0, self.autonDrive1Speed) # Drive forward
+                else:
+                    self.drivetrain.motors.arcadeDrive(0, 0) # Stop driving
+            elif(not self.drivetrain.getLeftInches() and self.drivetrain.getRightInches()):
+                if(self.drivetrain.getRightInches() < self.autonDrive1Distance):
+                    self.drivetrain.motors.arcadeDrive(0, self.autonDrive1Speed) # Drive forward
+                else:
+                    self.drivetrain.motors.arcadeDrive(0, 0) # Stop driving
+            else:
                 self.drivetrain.motors.arcadeDrive(0, self.autonDrive1Speed) # Drive forward
-
         # Scoop up ball
         elif self.autonPhase == "AUTON_INTAKE":
             print("Intake!!!")
@@ -738,7 +752,22 @@ class MyRobot(wpilib.TimedRobot):
             self.tiltShooterPeriodic()
             # Keep spinning shooter
             # Feeder not moving
-            if(self.drivetrain.getLeftInches() < self.autonDrive2Distance or self.drivetrain.getRightInches() < self.autonDrive2Distance):
+            if(self.drivetrain.getLeftInches() and self.drivetrain.getRightInches()):
+                if(self.drivetrain.getLeftInches() < self.autonDrive2Distance or self.drivetrain.getRightInches() < self.autonDrive2Distance):
+                    self.drivetrain.motors.arcadeDrive(0, self.autonDrive2Speed) # Drive forward
+                else:
+                    self.drivetrain.motors.arcadeDrive(0, 0) # Stop driving
+            elif(self.drivetrain.getLeftInches() and not self.drivetrain.getRightInches()):
+                if(self.drivetrain.getLeftInches() < self.autonDrive2Distance):
+                    self.drivetrain.motors.arcadeDrive(0, self.autonDrive2Speed) # Drive forward
+                else:
+                    self.drivetrain.motors.arcadeDrive(0, 0) # Stop driving
+            elif(not self.drivetrain.getLeftInches() and self.drivetrain.getRightInches()):
+                if(self.drivetrain.getRightInches() < self.autonDrive2Distance):
+                    self.drivetrain.motors.arcadeDrive(0, self.autonDrive2Speed) # Drive forward
+                else:
+                    self.drivetrain.motors.arcadeDrive(0, 0) # Stop driving
+            else:
                 self.drivetrain.motors.arcadeDrive(0, self.autonDrive2Speed) # Drive forward
         
         # Re-tilt the hood
