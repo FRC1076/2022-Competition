@@ -21,6 +21,8 @@ defaultResponses = {
     # AIMER VALUES
     'THETA': 0.0,
     'IN_RANGE': False,
+    # MOTOR VALUES
+    'MOTOR_POSITION': 6,
 }
 
 
@@ -99,6 +101,19 @@ class TestXBC():
     def getPOV(self):
         return -1
 
+class TestMotorWithEncoder():
+    def __init__(self):
+        self.motor = TestMotor()
+
+class TestMotor():
+    def __init__(self):
+        self.reset()
+
+    def reset(self):
+        self.responses = defaultResponses 
+
+    def getPosition(self):
+        return self.responses['MOTOR_POSITION']
 
 class Tester():
     def __init__(self, robot):
@@ -117,6 +132,12 @@ class Tester():
         self.testOperatorXBC = self.testDriverController.xboxController
         self.robot.driver = self.testDriverController
         self.robot.operator = self.testOperatorController
+        self.testLeftMotor = TestMotor()
+        self.testRightMotor = TestMotor()
+        self.testLeftMotorWithEncoder = self.testLeftMotor.motor
+        self.testRightMotorWithEncoder = self.testRightMotor.motor
+        self.robot.leftmotor = self.testLeftMotorWithEncoder
+        self.robot.rightmotor = self.testRightMotorWithEncoder
         self.robot.teleopInit()
 
     def logResult(self, result):
@@ -280,4 +301,17 @@ class Tester():
         self.robot.teleopPeriodic()
         print('\n******************')
         print('AS_TILT_PHASE Teleop: Passed!')
+        print('******************\n')
+
+    def testDrivetrain(self):
+        self.testLeftMotorWithEncoder.reset()
+        self.testRightMotorWithEncoder.reset()
+
+        self.testLeftMotorWithEncoder.responses['MOTOR_POSITION'] = 8
+        self.testRightMotorWithEncoder.responses['MOTOR_POSITION'] = 8
+        self.testLeftMotorWithEncoder.leftResetPosition()
+        self.testRightMotorWithEncoder.rightResetPosition()
+        self.robot.teleopPeriodic()
+        print('\n******************')
+        print('Motor Position Reset: Passed!')
         print('******************\n')
