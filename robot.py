@@ -10,7 +10,7 @@ import rev
 from navx import AHRS
 from intake import Intake
 
-from robotconfig import robotconfig
+from robotconfig import robotconfig, autoaimTable
 import climber  # not needed?
 from climber import Climber, WinchGroup
 from vision import Vision
@@ -164,7 +164,7 @@ class MyRobot(wpilib.TimedRobot):
         # assuming this is a Neo; otherwise it may not be brushless
         motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
         shooter_motor = rev.CANSparkMax(config['SHOOTER_ID'], motor_type)
-        shooter = Shooter(shooter_motor, config['SHOOTER_RPM'])
+        shooter = Shooter(shooter_motor, config['SHOOTER_RPM'], config['SHOOTER_MAX_RPM'], config['SHOOTER_MIN_RPM'])
         shooter.setPIDController()
         shooter.pidController.setFF(0.000167)  # assuming max shooter RPM of 6000
         return shooter
@@ -283,6 +283,7 @@ class MyRobot(wpilib.TimedRobot):
             self.climber.solenoids.set(climber.kReverse)
 
     def teleopPeriodic(self):
+
         driver = self.driver.xboxController
         rta = self.driver.right_trigger_axis
 
@@ -853,6 +854,23 @@ class MyRobot(wpilib.TimedRobot):
     def logResult(self, *result):
         if (TEST_MODE):
             print(result)
+
+    def autoaimLookup(self, distanceInches):
+        if distanceInches > 480 or distanceInches < 0:
+            return (0, 0)
+
+        distanceFeet = round(distanceInches / 12, 0)
+
+        velocity = autoaimTable[distanceFeet][0]
+        angle = autoaimTable[distanceFeet][1]
+
+        if velocity > self.shooter.getShooterMaxRPM() or velocity < self.shooter.getShooterMinRPM():
+            return (0, 0)
+        
+        if angle > self.tiltShooter.getMaxDegrees() or angle < self.tiltShooter.getMinDegrees():
+            return (0, 0)
+
+        return (velocity, angle)
 
 
 if __name__ == "__main__":
