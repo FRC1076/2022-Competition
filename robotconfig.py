@@ -38,6 +38,7 @@ drivetrainConfig = {
     'GEAR_RATIO': 10,
     'WHEEL_CIRCUMFERENCE': 8,
     'LEFT_ENCODER': 13,
+    'RIGHT_ENCODER': 7,
 }
 
 shooterConfig = {
@@ -81,17 +82,17 @@ visionConfig = {
 }
 
 autonConfig = {
-    'TILTING_1_TIME': 2,
-    'SPINUP_1_TIME': 3,
-    'FIRING_1_TIME': 3,
-    'ROTATE_1_TIME': 3,
-    'DRIVE_1_TIME': 1.5,
+    'TILTING_1_TIME': 1,
+    'SPINUP_1_TIME': 2,
+    'FIRING_1_TIME': 0.5,
+    'ROTATE_1_TIME': 2,
+    'DRIVE_1_TIME': 2,
     'INTAKE_TIME': 1,
-    'ROTATE_2_TIME': 1,
-    'DRIVE_2_TIME': 1,
+    'ROTATE_2_TIME': 2,
+    'DRIVE_2_TIME': 2,
     'TILTING_2_TIME': 1,
     'SPINUP_2_TIME': 1,
-    'FIRING_2_TIME': 1,
+    'FIRING_2_TIME': 0.5,
     'TILT_1_TARGET_DEGREES': 20,
     'TILT_2_TARGET_DEGREES': 10,
     'ROTATE_1_TARGET_DEGREES': 90,
