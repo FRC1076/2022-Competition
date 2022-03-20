@@ -7,19 +7,19 @@ kP = 0.1
 kI = 0.00
 kD = 0.0
 kF = 0.0
-kToleranceDegrees = 1.5
+#kToleranceDegrees = 1.5
 
 
 class Aimer:
     def __init__(self, gyro, rotationSpeed, accuracyDegrees):
         self.gyro = gyro
         self.rotationSpeed = rotationSpeed
-        self.accuracyDegrees = accuracyDegrees
+        self.accuracyDegrees = accuracyDegrees #kToleranceDegrees
         self.gyroSetPoint = None # target angle for the gyro to reach
         self.error = None # current offset from the target angle
 
         self.turnController = wpimath.controller.PIDController(kP, kI, kD)
-        self.turnController.setTolerance(kToleranceDegrees)
+        self.turnController.setTolerance(self.accuracyDegrees)
         self.turnController.enableContinuousInput(-180.0, 180.0)
         self.turnController.setSetpoint(0) # we're calculating the error in the robot loop so this is fine
 
@@ -38,6 +38,7 @@ class Aimer:
     def getAccumulatedYaw(self):
         return self.gyro.getAngle()
 
+    '''
     def calcDiffModulated(self, theta):
         if(not theta):
             return None
@@ -63,7 +64,8 @@ class Aimer:
                 return diff2
             else: 
                 return -diff2
-
+    '''
+    
     def calcDiffAccumulated(self, theta): # Now theta can be any int
         return theta - self.gyro.getAngle()
 
@@ -96,7 +98,7 @@ class Aimer:
             else:
                 return (self.rotationSpeed * correctionFactor), 0
     '''
-           
+
     def calculateTheta(self, x, y):
         y = -y
         theta = 0.0
