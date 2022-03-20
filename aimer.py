@@ -96,7 +96,7 @@ class Aimer:
             else:
                 return (self.rotationSpeed * correctionFactor), 0
     '''
-            
+           
     def calculateTheta(self, x, y):
         y = -y
         theta = 0.0
