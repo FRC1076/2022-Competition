@@ -238,6 +238,7 @@ class MyRobot(wpilib.TimedRobot):
         aimer = Aimer(ahrs, config['AIMING_ROTATION_SPEED'], config['AIMING_ACCURACY_DEGREES'])
         # aimer = Aimer(ahrs, 0.6, 3)
         aimer.reset()
+
         return aimer
 
     def initVision(self, config):
@@ -311,9 +312,7 @@ class MyRobot(wpilib.TimedRobot):
                 self.phase = "DRIVE_PHASE"
                 self.teleopDrivetrain()
             else:
-                print("self.aimer.getTheta: ", self.aimer.getTheta())
-                print("self.aimer.getInRange(calcdiff(getTheta)): ", self.aimer.getInRange(self.aimer.calcDiff(self.aimer.getTheta())))
-                if (self.aimer.getInRange(self.aimer.calcDiff(self.aimer.getTheta()))):
+                if self.aimer.isInRange():
                     self.phase = "AS_TILT_PHASE"
                     currentDistance = self.vision.getDistanceFeet()
                     autoAimResult = self.autoAimLookup(currentDistance)
@@ -391,27 +390,42 @@ class MyRobot(wpilib.TimedRobot):
             result = (-driver.getRightX(), driver.getLeftY())
 
             if (self.vision and self.aimer and self.tiltShooter):
+
                 if (self.phase == "DRIVE_PHASE"):
+
                     if driver.getLeftBumper():  # for testing auto-rotate
                         self.aimer.reset()
-                    if (driver.getRightBumperPressed()):
-                        print("Initiating Auto Shoot: SmoothYaw = ", self.vision.getSmoothYaw())
-                        self.aimer.setTheta(self.vision.getSmoothYaw())
-                        print("Initiating Auto Shoot: Theta = ", self.aimer.getTheta())
+
+                    if (driver.getRightBumper() and self.vision.getSmoothYaw()):
+
+                        self.aimer.setError(self.vision.getSmoothYaw())
+                        
                         if (self.vision.hasTargets()):
-                            print("Auto-shoot has targets")
-                            if (self.aimer.getTheta() is not None):
-                                result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
+
+                            # transition phase if bumper is pressed and we have targets
+                            if (self.aimer.getError() is not None):
+
+                                result = self.aimer.calculateDriveSpeeds(self.aimer.getError())
                                 self.phase = "AS_ROTATE_PHASE"
-                                print("Entering AS_ROTATE_PHASE")
-                elif (self.phase == "AS_ROTATE_PHASE"):
-                    print("In AS_ROTATE_PHASE, self.aimer.getTheta() = ", self.aimer.getTheta())
-                    if (self.aimer.getTheta() is not None):
-                        result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
-                        print("In AS_ROTATE_PHASE, theta = ", self.aimer.getTheta(), "result = ", result)
+
+                elif (self.phase == "AS_ROTATE_PHASE"): 
+
+                    # Want to 0 out the diff, which is either the current yaw from vision
+                    if (self.vision.hasTargets()):
+                        # result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
+                        self.aimer.setError(self.vision.getSmoothYaw())
+                        self.aimer.gyroSetPoint = self.aimer.getAccumulatedYaw() + self.aimer.getError()
+
+                    elif (self.aimer.gyroSetPoint is not None):
+                        self.aimer.setError = self.aimer.gyroSetPoint - self.aimer.getAccumulatedYaw()
+
+
                     else:
                         print("should never happen")
                         self.phase = "DRIVE_PHASE"
+                    
+                    result = (self.aimer.PIDcalc(self.aimer.getError()), 0)
+
                 else:
                     print("In AS_AIMER_PHASE: should never happen")
                     self.phase = "DRIVE_PHASE"
@@ -431,7 +445,7 @@ class MyRobot(wpilib.TimedRobot):
             self.drivetrain.motors.arcadeDrive(rotateSpeed, driveSpeed)
 
         else:  # self.drive == SWERVE
-            # Panic
+            # Panik
             return
 
         #print("rotations (L/R): ", self.drivetrain.getLeftInches(), self.drivetrain.getRightInches())

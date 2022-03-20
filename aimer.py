@@ -7,53 +7,81 @@ kP = 0.1
 kI = 0.00
 kD = 0.0
 kF = 0.0
-kToleranceDegrees = 2.0
+kToleranceDegrees = 1.5
 
 
 class Aimer:
     def __init__(self, gyro, rotationSpeed, accuracyDegrees):
         self.gyro = gyro
-        turnController = wpimath.controller.PIDController(kP, kI, kD)
-        turnController.setTolerance(kToleranceDegrees)
-        turnController.enableContinuousInput(-180.0, 180.0)
         self.rotationSpeed = rotationSpeed
         self.accuracyDegrees = accuracyDegrees
-        self.turnController = turnController
-        self.theta = None
+        self.gyroSetPoint = None # target angle for the gyro to reach
+        self.error = None # current offset from the target angle
 
-    #    setRotateToAngleRate = 0
+        self.turnController = wpimath.controller.PIDController(kP, kI, kD)
+        self.turnController.setTolerance(kToleranceDegrees)
+        self.turnController.enableContinuousInput(-180.0, 180.0)
+        self.turnController.setSetpoint(0) # we're calculating the error in the robot loop so this is fine
+
+    def getError(self):
+        return self.error
+
+    def setError(self, error):
+        self.error = error
 
     def reset(self):
         self.gyro.reset()
 
-    def getTheta(self):
-        return(self.theta)
-    
-    def setTheta(self, theta):
-        self.theta = theta
-
     def getYaw(self):
         return self.gyro.getYaw()
 
-    def calculate(self, m):
-        return (self.turnController.calculate(m))
+    def getAccumulatedYaw(self):
+        return self.gyro.getAngle()
 
-    def calcDiff(self, theta):
+    def calcDiffModulated(self, theta):
         if(not theta):
-            return 0
-        angle = self.getYaw()
-        return(abs(angle - theta))
+            return None
+        angle = self.getYaw() # in -180 to 180
+
+
+        # make theta in -180 to 180 also
+        theta = theta%360
+        if 180<theta<=360:
+            theta = theta - 360
+
+        diff1 = abs(angle-theta)
+        diff2 = 360 - abs(angle-theta)
+
+        # we would like to return positive diff if theta is counterclockwise of angle, 
+        # and negative diff if its clockwise of angle
+        if diff1 < diff2: 
+            return theta - angle
+
+        else: # note if angle and theta have the same sign then diff1<diff2 
+            # so in this case angle and theta have different signs. 
+            if angle >= 0: # so theta <0 so theta is counterclockwise of angle
+                return diff2
+            else: 
+                return -diff2
+
+    def calcDiffAccumulated(self, theta): # Now theta can be any int
+        return theta - self.gyro.getAngle()
+
+    def PIDcalc(self, error):
+        return self.turnController.calculate(error)
     
-    def getInRange(self, diff):
-        #print("aimer.getInRange: diff: ", diff, " self.accuracyDegrees: ", self.accuracyDegrees)
-        if(abs(diff) > self.accuracyDegrees):
-            return False
-        else:
-            return True
+    def isInRange(self):
+        return self.turnController.atSetpoint()
     
-    def calculateDriveSpeeds(self, theta):
+    '''
+    def calculateDriveSpeeds(self, theta): # theta should be in -180 to 180  
+
+        # rotationRate = self.turnController.calculate(angle, theta)
+        # return(rotationRate, 0)
 
         diff = self.calcDiff(theta)
+
+
         correctionFactor = (diff / 10.0)
         if correctionFactor > 1.0:
             correctionFactor = 1.0
@@ -67,6 +95,7 @@ class Aimer:
                 return (-self.rotationSpeed * correctionFactor), 0
             else:
                 return (self.rotationSpeed * correctionFactor), 0
+    '''
             
     def calculateTheta(self, x, y):
         y = -y
