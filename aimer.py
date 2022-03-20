@@ -23,29 +23,17 @@ class Aimer:
         self.turnController.enableContinuousInput(-180.0, 180.0)
         self.turnController.setSetpoint(0) # we're calculating the error in the robot loop so this is fine
 
-
     def getError(self):
         return self.error
 
     def setError(self, error):
         self.error = error
 
-
-
     def reset(self):
         self.gyro.reset()
 
-    # def setAim(self, setPoint):
-    #    self.setPoint = setPoint
-    #    self.turnController.setSetPoint(self.gyro.getAngle() + self.setPoint())
-
     def getYaw(self):
-        self.yaw = self.gyro.getYaw()
-        return (self.yaw)
-
-        # def getAngle(self):
-        ##    self.ag = abs(self.gyro.getAngle()) % 360
-        #return self.ag
+        return self.gyro.getYaw()
 
     def getAccumulatedYaw(self):
         return self.gyro.getAngle()
@@ -85,6 +73,7 @@ class Aimer:
     def isInRange(self):
         return self.turnController.atSetpoint()
     
+    '''
     def calculateDriveSpeeds(self, theta): # theta should be in -180 to 180  
 
         # rotationRate = self.turnController.calculate(angle, theta)
@@ -97,14 +86,16 @@ class Aimer:
         if correctionFactor > 1.0:
             correctionFactor = 1.0
 
+        #print("calculateDriveSpeeds: diff:", diff)
         if (self.getInRange(diff)):
-            print("diff <= ", self.accuracyDegrees)
+            #print("diff <= ", self.accuracyDegrees)
             return (0, 0)
         else:
             if theta > 0:
                 return (-self.rotationSpeed * correctionFactor), 0
             else:
                 return (self.rotationSpeed * correctionFactor), 0
+    '''
             
     def calculateTheta(self, x, y):
         y = -y

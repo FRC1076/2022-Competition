@@ -33,12 +33,20 @@ drivetrainConfig = {
         'RIGHT_FOLLOWER_ID': 7,
     },
     'DRIVETYPE': ARCADE,
+    'OPEN_LOOP_RAMP_RATE': 1.0,
     'ROTATION_CORRECTION': 0.0,
+    'COUNTS_PER_REVOLUTION': 80,
+    'GEAR_RATIO': 10,
+    'WHEEL_CIRCUMFERENCE': 18.84, # 6 inches * pi
+    'LEFT_ENCODER': 13,
+    'RIGHT_ENCODER': 15, #was 7
 }
 
 shooterConfig = {
     'SHOOTER_ID': 10,
     'SHOOTER_RPM': 3500,
+    'SHOOTER_MAX_RPM': 6000,
+    'SHOOTER_MIN_RPM': 0,
 }
 
 intakeConfig = {
@@ -57,7 +65,7 @@ tiltShooterConfig = {
     'TILTSHOOTER_ID': 1,
     'ROTATIONS_PER_360': 75,
     'MIN_DEGREES': 5,
-    'MAX_DEGREES': 25,
+    'MAX_DEGREES': 20,
     'BUFFER_DEGREES': 2,
     'SPEED': 0.1,
 }
@@ -77,12 +85,27 @@ visionConfig = {
 }
 
 autonConfig = {
-    'TILTING_TIME': 2,
-    'SPINUP_TIME': 3,
-    'FIRING_TIME': 3,
-    'BACKUP_TIME': 1.5,
-    'TILT_TARGET_DEGREES': 20,
-    'SHOOT_SPEED': 0.5,
+    'TILTING_1_TIME': 1,
+    'SPINUP_1_TIME': 3,
+    'FIRING_1_TIME': 0.5,
+    'ROTATE_1_TIME': 2,
+    'DRIVE_1_TIME': 0, #2
+    'INTAKE_TIME': 1,
+    'ROTATE_2_TIME': 2,
+    'DRIVE_2_TIME': 0, #2
+    'TILTING_2_TIME': 1,
+    'SPINUP_2_TIME': 1,
+    'FIRING_2_TIME': 0.5,
+    'TILT_1_TARGET_DEGREES': 20,
+    'TILT_2_TARGET_DEGREES': 10,
+    'ROTATE_1_TARGET_DEGREES': 90,
+    'ROTATE_2_TARGET_DEGREES': 135,
+    'ROTATE_SPEED':0.5,
+    'SHOOT_SPEED': 0.8,
+    'DRIVE_1_SPEED': 0.8,
+    'DRIVE_2_SPEED': 0.2,
+    'DRIVE_1_DISTANCE': 1000, #inches
+    'DRIVE_2_DISTANCE': 1000, #inches
 }
 
 climberConfig = {
@@ -99,6 +122,51 @@ climberConfig = {
     # Extend speed must be lower than natural extend rate
     'EXTEND_SPEED': 0.2,
     'RETRACT_SPEED': 0.5,
+}
+
+# keys are distances in ft. Values are (v, angle) in rpm and degrees, respectively
+autoAimTable = {
+    0: (3000, 20),
+    1: (3000, 20),
+    2: (3000, 20),
+    3: (3000, 20),
+    4: (3000, 20),
+    5: (3000, 20),
+    6: (3000, 20),
+    7: (3000, 20),
+    8: (3000, 20),
+    9: (3000, 20),
+    10: (3000, 20),
+    11: (3000, 20),
+    12: (3000, 20),
+    13: (3000, 20),
+    14: (3000, 20),
+    15: (3000, 20),
+    16: (3000, 20),
+    17: (3000, 20),
+    18: (3000, 20),
+    19: (3000, 20),
+    20: (3000, 20),
+    21: (3000, 20),
+    22: (3000, 20),
+    23: (3000, 20),
+    24: (3000, 20),
+    25: (3000, 20),
+    26: (3000, 20),
+    27: (3000, 20),
+    28: (3000, 20),
+    29: (3000, 20),
+    30: (3000, 20),
+    31: (3000, 20),
+    32: (3000, 20),
+    33: (3000, 20),
+    34: (3000, 20),
+    35: (3000, 20),
+    36: (3000, 20),
+    37: (3000, 20),
+    38: (3000, 20),
+    39: (3000, 20),
+    40: (3000, 20),
 }
 
 #######################
@@ -133,10 +201,9 @@ showbot = {
     'CONTROLLERS': controllerConfig,
     'DRIVETRAIN': drivetrainConfig,
     'AIMER': aimerConfig,
-    'VISION': visionConfig,
     'SHOOTER': shooterConfig,
 }
-showbot['SHOOTER']['SHOOTER_ID'] = 10 # how to override just one thing
+#showbot['SHOOTER']['SHOOTER_ID'] = 10 # how to override just one thing
 
 ##########################
 ###  CONFIG TO DEPLOY  ###
