@@ -396,7 +396,7 @@ class MyRobot(wpilib.TimedRobot):
 
                         # transition phase if bumper is pressed and we have targets
                         self.aimer.setError(self.vision.getSmoothYaw())
-                        self.aimer.gyroSetPoint = self.aimer.getAccumulatedYaw() + self.aimer.getError()
+                        self.aimer.setGyroSetPoint(self.aimer.getAccumulatedYaw() + self.aimer.getError())
                         self.phase = "AS_ROTATE_PHASE"
 
                 elif (self.phase == "AS_ROTATE_PHASE"): 
@@ -404,9 +404,9 @@ class MyRobot(wpilib.TimedRobot):
                     # Want to 0 out the diff, which is either the current yaw from vision
                     if (self.vision.getSmoothYaw()):
                         self.aimer.setError(self.vision.getSmoothYaw())
-                        self.aimer.gyroSetPoint = self.aimer.getAccumulatedYaw() + self.aimer.getError()
-                    elif (self.aimer.gyroSetPoint is not None):
-                        self.aimer.setError(self.aimer.gyroSetPoint - self.aimer.getAccumulatedYaw())
+                        self.aimer.setGyroSetPoint(self.aimer.getAccumulatedYaw() + self.aimer.getError())
+                    elif (self.aimer.getGyroSetPoint() is not None):
+                        self.aimer.setError(self.aimer.getGyroSetPoint() - self.aimer.getAccumulatedYaw())
                     else:
                         print("should never happen")
                         self.phase = "DRIVE_PHASE"

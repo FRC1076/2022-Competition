@@ -38,6 +38,12 @@ class Aimer:
     def getAccumulatedYaw(self):
         return self.gyro.getAngle()
 
+    def setGyroSetPoint(self, gyroSetPoint):
+        self.gyroSetPoint = gyroSetPoint
+
+    def getGyroSetPoint(self):
+        return(self.gyroSetPoint)
+
     '''
     def calcDiffModulated(self, theta):
         if(not theta):
@@ -65,7 +71,7 @@ class Aimer:
             else: 
                 return -diff2
     '''
-    
+
     def calcDiffAccumulated(self, theta): # Now theta can be any int
         return theta - self.gyro.getAngle()
 
