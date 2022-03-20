@@ -102,8 +102,7 @@ autonConfig = {
     'ROTATE_2_TARGET_DEGREES': 135,
     'ROTATE_SPEED':0.5,
     'SHOOT_SPEED': 0.8,
-    'DRIVE_1_SPEED': 0.8,
-    'DRIVE_2_SPEED': 0.2,
+    'DRIVE_SPEED': 0.8,
     'DRIVE_1_DISTANCE': 1000, #inches
     'DRIVE_2_DISTANCE': 1000, #inches
 }
