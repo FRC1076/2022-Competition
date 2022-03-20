@@ -40,7 +40,7 @@ class Aimer:
 
     def calcDiff(self, theta):
         if(not theta):
-            return None
+            return 0
         angle = self.getYaw()
         return(abs(angle - theta))
     

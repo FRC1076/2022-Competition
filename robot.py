@@ -906,6 +906,9 @@ class MyRobot(wpilib.TimedRobot):
             print(result)
 
     def autoAimLookup(self, distanceInches):
+        if not distanceInches:
+            return (0, 0)
+
         if distanceInches > 480 or distanceInches < 0:
             print("Auto Aim Lookup: distanceInches out of bounds")
             return (0, 0)
