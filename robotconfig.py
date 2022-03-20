@@ -39,7 +39,7 @@ drivetrainConfig = {
     'GEAR_RATIO': 10,
     'WHEEL_CIRCUMFERENCE': 18.84, # 6 inches * pi
     'LEFT_ENCODER': 13,
-    'RIGHT_ENCODER': 7,
+    'RIGHT_ENCODER': 15, #was 7
 }
 
 shooterConfig = {
@@ -101,7 +101,7 @@ autonConfig = {
     'ROTATE_1_TARGET_DEGREES': 90,
     'ROTATE_2_TARGET_DEGREES': 135,
     'ROTATE_SPEED':0.5,
-    'SHOOT_SPEED': 0.5,
+    'SHOOT_SPEED': 0.8,
     'DRIVE_1_SPEED': 0.8,
     'DRIVE_2_SPEED': 0.2,
     'DRIVE_1_DISTANCE': 1000, #inches
@@ -125,7 +125,7 @@ climberConfig = {
 }
 
 # keys are distances in ft. Values are (v, angle) in rpm and degrees, respectively
-autoaimTable = {
+autoAimTable = {
     0: (3000, 20),
     1: (3000, 20),
     2: (3000, 20),

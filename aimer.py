@@ -26,10 +26,6 @@ class Aimer:
     def reset(self):
         self.gyro.reset()
 
-    # def setAim(self, setPoint):
-    #    self.setPoint = setPoint
-    #    self.turnController.setSetPoint(self.gyro.getAngle() + self.setPoint())
-
     def getTheta(self):
         return(self.theta)
     
@@ -37,18 +33,10 @@ class Aimer:
         self.theta = theta
 
     def getYaw(self):
-        self.yaw = self.gyro.getYaw()
-        return (self.yaw)
-
-        # def getAngle(self):
-        ##    self.ag = abs(self.gyro.getAngle()) % 360
-        #return self.ag
+        return self.gyro.getYaw()
 
     def calculate(self, m):
         return (self.turnController.calculate(m))
-
-    # def pidWrite(self, output):
-    #    self.setRotateToAngleRate = output
 
     def calcDiff(self, theta):
         if(not theta):
@@ -57,23 +45,22 @@ class Aimer:
         return(abs(angle - theta))
     
     def getInRange(self, diff):
-        if(diff > self.accuracyDegrees):
+        #print("aimer.getInRange: diff: ", diff, " self.accuracyDegrees: ", self.accuracyDegrees)
+        if(abs(diff) > self.accuracyDegrees):
             return False
         else:
             return True
     
     def calculateDriveSpeeds(self, theta):
-        angle = self.getYaw()
-        # rotationRate = self.turnController.calculate(angle, theta)
-        # return(rotationRate, 0)
 
         diff = self.calcDiff(theta)
         correctionFactor = (diff / 10.0)
         if correctionFactor > 1.0:
             correctionFactor = 1.0
 
+        #print("calculateDriveSpeeds: diff:", diff)
         if (self.getInRange(diff)):
-            print("diff <= ", self.accuracyDegrees)
+            #print("diff <= ", self.accuracyDegrees)
             return (0, 0)
         else:
             if theta > 0:
