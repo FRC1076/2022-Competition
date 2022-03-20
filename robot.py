@@ -745,15 +745,15 @@ class MyRobot(wpilib.TimedRobot):
             # Keep spinning shooter
             self.feeder.setFeeder(0.0)
 
-            result = (0,0)
-            if(self.aimer.getTheta() is not None):
-                result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
-
+            if (self.autonRotate1TargetDegrees >= -180 and self.autonRotate1TargetDegrees <= 180):
+                result = self.aimer.calculateDriveSpeeds(self.autonRotate1TargetDegrees)
+            else:
+                result = (0, 0)
+            
             rotateSpeed = speedratio * self.deadzoneCorrection(self.autonRotateSpeed + self.rotationCorrection, deadzone)
-            print("rotate speed", rotateSpeed)
             self.drivetrain.motors.arcadeDrive(rotateSpeed, 0)
 
-            self.drivetrain.resetPosition()
+            #self.drivetrain.resetPosition()
 
         # Drive to ball
         elif self.autonPhase == "AUTON_1_DRIVE":
@@ -788,14 +788,15 @@ class MyRobot(wpilib.TimedRobot):
             self.tiltShooterPeriodic()
             # Keep spinning shooter
             # Feeder not moving
-            result = (0,0)
-            if(self.aimer.getTheta() is not None):
-                result = self.aimer.calculateDriveSpeeds(self.aimer.getTheta())
-
-            rotateSpeed = speedratio * self.deadzoneCorrection(self.autonRotateSpeed + self.rotationCorrection, deadzone)
-            self.drivetrain.motors.arcadeDrive(rotateSpeed, deadzone)
+            if (self.autonRotate2TargetDegrees >= -180 and self.autonRotate2TargetDegrees <= 180):
+                result = self.aimer.calculateDriveSpeeds(self.autonRotate2TargetDegrees)
+            else:
+                result = (0, 0)
             
-            self.drivetrain.resetPosition()
+            rotateSpeed = speedratio * self.deadzoneCorrection(self.autonRotateSpeed + self.rotationCorrection, deadzone)
+            self.drivetrain.motors.arcadeDrive(rotateSpeed, 0)
+            
+            #self.drivetrain.resetPosition()
 
         #Drive to target
         elif self.autonPhase == "AUTON_2_DRIVE":
