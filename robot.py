@@ -135,6 +135,7 @@ class MyRobot(wpilib.TimedRobot):
         left_motors = []
         right_motors = []
         motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushed
+
         left_encoder_motor = None
         right_encoder_motor = None
 
@@ -153,6 +154,7 @@ class MyRobot(wpilib.TimedRobot):
                 right_encoder_motor = motor
 
         self.drive_type = config['DRIVETYPE']  # side effect!
+        self.clutchFactor = config['CLUTCH_FACTOR']
 
         self.rotationCorrection = config['ROTATION_CORRECTION']
 
@@ -427,7 +429,10 @@ class MyRobot(wpilib.TimedRobot):
             #print("After Correction: rotateSpeed: ", rotateSpeed, " drivespeed ", driveSpeed)
 
             #print(rotateSpeed, driveSpeed)
-            self.drivetrain.motors.arcadeDrive(rotateSpeed, driveSpeed)
+            currentClutchFactor = 1.0
+            if (driver.getAButton()):
+                currentClutchFactor = self.clutchFactor
+            self.drivetrain.motors.arcadeDrive(rotateSpeed * currentClutchFactor, driveSpeed * currentClutchFactor)
 
         else:  # self.drive == SWERVE
             # Panic
@@ -628,6 +633,9 @@ class MyRobot(wpilib.TimedRobot):
             self.tiltShooter.resetPosition()
             self.tiltShooter.setTargetDegrees(self.autonTilt1TargetDegrees)
 
+        if self.drivetrain:
+            self.drivetrain.resetPosition()
+
         #self.theta = None
         #self.rotationSpeed = 1000
 
@@ -675,6 +683,8 @@ class MyRobot(wpilib.TimedRobot):
             print("Auton Phase: ", self.autonPhase)
             self.autonPhase = "AUTON_1_DRIVE"
             self.autonTimeBase += self.autonRotate1Time
+            if self.drivetrain:
+                self.drivetrain.resetPosition()
         
         if timer > self.autonTimeBase and self.autonPhase == "AUTON_1_DRIVE":
             print("Auton Phase: ", self.autonPhase)
@@ -690,6 +700,8 @@ class MyRobot(wpilib.TimedRobot):
             print("Auton Phase: ", self.autonPhase)
             self.autonPhase = "AUTON_2_DRIVE"
             self.autonTimeBase += self.autonRotate2Time
+            if self.drivetrain:
+                self.drivetrain.resetPosition()
         
         if timer > self.autonTimeBase and self.autonPhase == "AUTON_2_DRIVE":
             print("Auton Phase: ", self.autonPhase)
