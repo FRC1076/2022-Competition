@@ -292,6 +292,7 @@ class MyRobot(wpilib.TimedRobot):
 
         driver = self.driver.xboxController
         rta = self.driver.right_trigger_axis
+        lta = self.driver.left_trigger_axis
 
         if (self.vision is None or self.aimer is None or self.tiltShooter is None):
             self.phase = "DRIVE_PHASE"
@@ -430,7 +431,7 @@ class MyRobot(wpilib.TimedRobot):
 
             #print(rotateSpeed, driveSpeed)
             currentClutchFactor = 1.0
-            if (driver.getAButton()):
+            if (driver.getRawAxis(lta) > 0.95):
                 currentClutchFactor = self.clutchFactor
             self.drivetrain.motors.arcadeDrive(rotateSpeed * currentClutchFactor, driveSpeed * currentClutchFactor)
 
