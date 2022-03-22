@@ -54,6 +54,7 @@ intakeConfig = {
     'INTAKE_MOTOR_ID': 17,
     'INTAKE_SOLENOID_FORWARD_ID': 1,
     'INTAKE_SOLENOID_REVERSE_ID': 2,
+    'INTAKE_MOTOR_SPEED': 0.8,
 }
 
 feederConfig = {
@@ -103,8 +104,8 @@ autonConfig = {
     'ROTATE_SPEED':0.5,
     'SHOOT_SPEED': 0.8,
     'DRIVE_SPEED': 0.8,
-    'DRIVE_1_DISTANCE': 1000, #inches
-    'DRIVE_2_DISTANCE': 1000, #inches
+    'DRIVE_1_DISTANCE': 100, #inches
+    'DRIVE_2_DISTANCE': 100, #inches
 }
 
 climberConfig = {
