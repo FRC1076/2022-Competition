@@ -151,7 +151,7 @@ class MyRobot(wpilib.TimedRobot):
                 right_encoder_motor = motor
 
         self.drive_type = config['DRIVETYPE']  # side effect!
-
+        self.clutchMultiplier = config['CLUTCH_MULTIPLIER']
         self.rotationCorrection = config['ROTATION_CORRECTION']
 
         # Create Controller Groups
@@ -361,6 +361,7 @@ class MyRobot(wpilib.TimedRobot):
             return
 
         driver = self.driver.xboxController
+        lta = self.driver.left_trigger_axis
         deadzone = self.driver.deadzone
 
         # TANK DRIVE
@@ -428,7 +429,11 @@ class MyRobot(wpilib.TimedRobot):
             #print("After Correction: rotateSpeed: ", rotateSpeed, " drivespeed ", driveSpeed)
 
             #print(rotateSpeed, driveSpeed)
-            self.drivetrain.motors.arcadeDrive(rotateSpeed, driveSpeed)
+
+            clutchMultiplier = 1.0
+            if(driver.getRawAxis(lta) > 0.95):
+                clutchMultiplier = self.clutchMultiplier
+            self.drivetrain.motors.arcadeDrive(rotateSpeed * clutchMultiplier, driveSpeed * clutchMultiplier)
 
         else:  # self.drive == SWERVE
             # Panic

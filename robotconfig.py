@@ -40,6 +40,7 @@ drivetrainConfig = {
     'WHEEL_CIRCUMFERENCE': 18.84, # 6 inches * pi
     'LEFT_ENCODER': 13,
     'RIGHT_ENCODER': 15, #was 7
+    'CLUTCH_MULTIPLIER': 0.4,
 }
 
 shooterConfig = {
