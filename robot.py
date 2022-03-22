@@ -82,7 +82,7 @@ class MyRobot(wpilib.TimedRobot):
                 self.auton = self.initAuton(config)
 
         self.dashboard = NetworkTables.getTable('SmartDashboard')
-        self.periods = 0
+        self.initDashboard()
 
         if TEST_MODE:
             self.tester = Tester(self)
@@ -245,10 +245,22 @@ class MyRobot(wpilib.TimedRobot):
         # self.vision_table = NetworkTables.getTable("photonvision/mmal_service_16.1")
         return vision
 
+        
+    def initDashboard(self):
+        self.periods = 0
+        if self.shooter:
+            self.dashboard.putNumber('Shooter RPM', self.shooter.configShooterRPM)
+            print('set shooter rpm to', self.shooter.configShooterRPM)
+        if self.tiltShooter:
+            self.dashboard.putNumber('Tilt Target (Degrees)', self.tiltShooter.getTargetDegrees())
+
+
     def robotPeriodic(self):
+
         self.dashboard.putNumber('Periods', self.periods)
         self.periods += 1
         self.dashboard.putString('Phase ', '' + self.phase)
+
         if (self.vision):
             self.dashboard.putBoolean('Vision Has Target', self.vision.hasTargets())
             if (self.vision.hasTargets()):
@@ -262,9 +274,17 @@ class MyRobot(wpilib.TimedRobot):
             self.dashboard.putNumber('Aimer Accumulated Yaw (Degrees)', self.aimer.getAccumulatedYaw())
         if (self.tiltShooter):
             self.dashboard.putNumber('Tilt (Degrees)', self.tiltShooter.getDegrees())
+            newTiltDegrees = self.dashboard.getNumber('Tilt Target (Degrees)', -1.0)
+            if newTiltDegrees != -1.0:
+                self.tiltShooter.setTargetDegrees(newTiltDegrees) # could adjust for min/max degrees, so write back
+                self.dashboard.putNumber('Tilt Target (Degrees)', self.tiltShooter.getTargetDegrees())
             self.dashboard.putNumber('Tilt Target (Degrees)', self.tiltShooter.getTargetDegrees())
         if (self.shooter):
-            self.dashboard.putNumber('Shooter Speed (RPM)', self.shooter.encoder.getVelocity())
+            newShooterRPM = self.dashboard.getNumber('Shooter RPM', 0)
+            if newShooterRPM != 0:
+                self.shooter.setStoredShooterRPM(newShooterRPM)
+                #print ('shooter rpm', self.shooter.getStoredShooterRPM())
+            self.dashboard.putNumber('Current Shooter RPM', self.shooter.encoder.getVelocity())
         if (self.feeder):
             self.dashboard.putBoolean('Feeder Has Fired', self.feeder.hasFired())
 
@@ -431,7 +451,7 @@ class MyRobot(wpilib.TimedRobot):
             self.drivetrain.motors.arcadeDrive(rotateSpeed, driveSpeed)
 
         else:  # self.drive == SWERVE
-            # Panic
+            # PANIC
             return
 
         #print("rotations (L/R): ", self.drivetrain.getLeftInches(), self.drivetrain.getRightInches())
@@ -506,6 +526,7 @@ class MyRobot(wpilib.TimedRobot):
             return 180
         else:
             return -1
+
     def tiltShooterPeriodic(self):
         if not self.tiltShooter:
             return

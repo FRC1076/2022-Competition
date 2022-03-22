@@ -11,7 +11,7 @@
         "vgap": 16.0,
         "titleType": 0,
         "tiles": {
-          "0,0": {
+          "4,2": {
             "size": [
               2,
               1
@@ -22,21 +22,7 @@
               "_title": "phase"
             }
           },
-          "2,0": {
-            "size": [
-              2,
-              2
-            ],
-            "content": {
-              "_type": "Gyro",
-              "_title": "Gyro",
-              "Visuals/Major tick spacing": 45.0,
-              "Visuals/Starting angle": 180.0,
-              "Visuals/Show tick mark ring": true,
-              "Visuals/Counter clockwise": false
-            }
-          },
-          "0,1": {
+          "8,1": {
             "size": [
               2,
               1
@@ -92,7 +78,7 @@
               "_title": "Aimer Yaw (Degrees)"
             }
           },
-          "7,1": {
+          "6,1": {
             "size": [
               2,
               1
@@ -103,7 +89,7 @@
               "_title": "Tilt Target (Degrees)"
             }
           },
-          "6,1": {
+          "7,2": {
             "size": [
               1,
               1
@@ -127,15 +113,67 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "4,2": {
+          "7,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Aimer Accumulated Yaw (Degrees)",
+              "_title": "Aimer Accumulated Yaw (Degrees)"
+            }
+          },
+          "2,0": {
             "size": [
               2,
               1
             ],
             "content": {
+              "_type": "Number Slider",
+              "_source0": "network_table:///SmartDashboard/Shooter RPM",
+              "_title": "/SmartDashboard/Shooter RPM",
+              "Slider Settings/Min": 0.0,
+              "Slider Settings/Max": 6000.0,
+              "Slider Settings/Block increment": 2000.0,
+              "Visuals/Display value": true
+            }
+          },
+          "2,1": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Number Slider",
+              "_source0": "network_table:///SmartDashboard/Tilt Target (Degrees)",
+              "_title": "SmartDashboard/Tilt Target (Degrees)",
+              "Slider Settings/Min": 0.0,
+              "Slider Settings/Max": 35.0,
+              "Slider Settings/Block increment": 1.0,
+              "Visuals/Display value": true
+            }
+          },
+          "2,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Shooter Speed (RPM)",
-              "_title": "Shooter Speed (RPM)"
+              "_source0": "network_table:///SmartDashboard/Current Shooter RPM",
+              "_title": "Current Shooter RPM"
+            }
+          },
+          "0,0": {
+            "size": [
+              2,
+              3
+            ],
+            "content": {
+              "_type": "Network Table Tree",
+              "_source0": "network_table:///SmartDashboard",
+              "_title": "SmartDashboard"
             }
           }
         }
@@ -189,24 +227,30 @@
                   "_type": "Text View",
                   "_source0": "network_table:///LiveWindow/Ungrouped/DoubleSolenoid[0,3]/Value",
                   "_title": "DoubleSolenoid[0,3]/Value"
+                },
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/DigitalInput[0]/Value",
+                  "_title": "LiveWindow/Ungrouped/DigitalInput[0]/Value",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/DoubleSolenoid[0,6]/Value",
+                  "_title": "LiveWindow/Ungrouped/DoubleSolenoid[0,6]/Value"
+                },
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/DigitalInput[1]/Value",
+                  "_title": "LiveWindow/Ungrouped/DigitalInput[1]/Value",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
                 }
               ]
             }
           }
         }
-      }
-    },
-    {
-      "title": "Tab 3",
-      "autoPopulate": false,
-      "autoPopulatePrefix": "",
-      "widgetPane": {
-        "gridSize": 128.0,
-        "showGrid": true,
-        "hgap": 16.0,
-        "vgap": 16.0,
-        "titleType": 0,
-        "tiles": {}
       }
     }
   ],
