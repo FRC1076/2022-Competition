@@ -54,7 +54,8 @@ class Drivetrain:
             return None
 
     def rotationsToInches(self, rotations):
-        return(rotations * (55 / 12) * (54 / 20) * self.wheelCircumference)
+        #return(rotations * (55 / 12) * (54 / 20) * self.wheelCircumference)
+        return(rotations * (12 / 55) * (20 / 54) * self.wheelCircumference)
 
         #12 to 20 to 54 
 

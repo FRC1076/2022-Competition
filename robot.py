@@ -203,14 +203,10 @@ class MyRobot(wpilib.TimedRobot):
         # assuming this is a Neo; otherwise it may not be brushless
         motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
         pneumatics_module_type = wpilib.PneumaticsModuleType.CTREPCM
-        #motor = rev.CANSparkMax(config['INTAKE_MOTOR_ID'], motor_type)
-        solenoid = wpilib.DoubleSolenoid(0,
-                                         pneumatics_module_type,
-                                         config['INTAKE_SOLENOID_FORWARD_ID'],
-                                         config['INTAKE_SOLENOID_REVERSE_ID'])
+        motor = rev.CANSparkMax(config['INTAKE_MOTOR_ID'], motor_type)
+        solenoid = wpilib.DoubleSolenoid(0, pneumatics_module_type, config['INTAKE_SOLENOID_FORWARD_ID'], config['INTAKE_SOLENOID_REVERSE_ID'])
 
-        #return Intake(solenoid, motor)
-        return Intake(solenoid)
+        return Intake(solenoid, motor, config['INTAKE_MOTOR_SPEED'])
 
     def initClimber(self, config):
         # assuming this is a Neo; otherwise it may not be brushless
@@ -466,19 +462,17 @@ class MyRobot(wpilib.TimedRobot):
         if self.intake is None:
             return
 
-        #print("In teleopIntake")
         operator = self.operator.xboxController
         lta = self.operator.left_trigger_axis
 
         if operator.getLeftBumper():
             self.intake.toggle()
-            #print("toggling intake")
-        '''
+        
         if operator.getRawAxis(lta) > 0.95:
             self.intake.motorOn()
         else:
             self.intake.motorOff()
-        '''
+        
 
     def teleopTiltShooter(self):
         if not self.tiltShooter:
@@ -737,6 +731,7 @@ class MyRobot(wpilib.TimedRobot):
             self.tiltShooterPeriodic()
             # Shooter not moving
             # Feeder not moving
+            # No intake movement
             self.drivetrain.motors.arcadeDrive(0, 0) # Don't drive
 
         # Start spinning motor
@@ -745,12 +740,14 @@ class MyRobot(wpilib.TimedRobot):
             self.tiltShooterPeriodic()
             self.shooter.setShooterVelocity(-self.autonShootSpeed) #Start spinning shooter
             # Feeder not moving
+            # No intake movement
             self.drivetrain.motors.arcadeDrive(0, 0) # Don't drive
 
         # Activate the feeder/trigger motor
         elif self.autonPhase == "AUTON_1_FIRING":
             self.tiltShooterPeriodic()
             # Keep spinning shooter
+            # No intake movement
             self.feeder.setFeeder(self.feeder.feederSpeed) # Trigger shot
             self.drivetrain.motors.arcadeDrive(0, 0) # Don't drive
             self.aimer.reset() # Reset gyro to current heading
@@ -760,6 +757,7 @@ class MyRobot(wpilib.TimedRobot):
             self.tiltShooter.setTargetDegrees(self.autonTilt2TargetDegrees)
             self.tiltShooterPeriodic()
             # Keep spinning shooter
+            self.intake.motorOn()
             self.feeder.setFeeder(0.0)
 
             if (self.autonRotate1TargetDegrees >= -180 and self.autonRotate1TargetDegrees <= 180):
@@ -781,6 +779,8 @@ class MyRobot(wpilib.TimedRobot):
             self.tiltShooterPeriodic()
             # Keep spinning shooter
             # Feeder not moving
+            # Keep spinning intake motor
+            self.intake.extend()
             print("Drive Distance (L/R)", self.drivetrain.getLeftInches(), self.drivetrain.getRightInches())
             if(self.drivetrain.getLeftInches() and self.drivetrain.getRightInches()):
                 if(self.drivetrain.getLeftInches() < self.autonDrive1Distance or self.drivetrain.getRightInches() < self.autonDrive1Distance):
@@ -802,7 +802,8 @@ class MyRobot(wpilib.TimedRobot):
 
         # Scoop up ball
         elif self.autonPhase == "AUTON_INTAKE":
-            print("Intake!!!")
+            # Keep spinning intake motor
+            self.intake.retract() # Retract intake
             self.aimer.reset() # Reset gyro to current heading
 
         # Rotate to target
@@ -810,6 +811,7 @@ class MyRobot(wpilib.TimedRobot):
             self.tiltShooterPeriodic()
             # Keep spinning shooter
             # Feeder not moving
+            self.intake.motorOff()
             
             if (self.autonRotate2TargetDegrees >= -180 and self.autonRotate2TargetDegrees <= 180):
                 self.aimer.setError(self.autonRotate2TargetDegrees - self.aimer.getYaw())
