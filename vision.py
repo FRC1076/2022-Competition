@@ -130,7 +130,7 @@ class Vision:
         self.result = self.camera.getLatestResult()
         self.latestResult = self.result
         targets = self.result.getTargets()
-        print("hasTargets = ", self.result.hasTargets())
+        #print("hasTargets = ", self.result.hasTargets())
         self.camera.takeOutputSnapshot()
 
         if self.result.hasTargets():
@@ -145,6 +145,5 @@ class Vision:
             if len(self.yawlog) > 3:
                 self.yawlog.pop(0)
 
-        # distance = self.camera.getDistanceFeet()
-        print("yaw = ", self.yaw, " pitch = ", self.pitch, " distance = ", self.getDistanceFeet())
+        #print("yaw = ", self.yaw, " pitch = ", self.pitch, " distance = ", self.getDistanceFeet())
         return targets

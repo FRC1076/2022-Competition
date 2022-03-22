@@ -6,19 +6,31 @@ class Shooter:
         # self.controller.setClosedLoopRampRate(1.0)
         self.encoder = self.controller.getEncoder()
         self.pidController = self.controller.getPIDController()
-        self.shooterRPM = shooterRPM
+        self.configShooterRPM = shooterRPM
+        self.storedShooterRPM = shooterRPM
         self.shooterMaxRPM = shooterMaxRPM
         self.shooterMinRPM = shooterMinRPM
         
-    def set(self, speed):
+    def setShooterVelocity(self, speed):
         self.controller.set(speed)
 
-    def get(self):
+    def getShooterVelocity(self):
         return self.controller.get()
 
-    def getShooterRPM(self):
-        return self.get()
+    def getConfigShooterRPM(self):
+        return(self.configShooterRPM)
 
+    def setStoredShooterRPM(self, storedRPM):
+        if(storedRPM > self.getShooterMaxRPM()):
+            self.storedShooterRPM = self.getShooterMaxRPM()
+        elif(storedRPM < self.getShooterMinRPM()):
+            self.storedShooterRPM = self.getShooterMinRPM()
+        else:
+            self.storedShooterRPM = storedRPM
+
+    def getStoredShooterRPM(self):
+        return self.storedShooterRPM
+    
     def getShooterMaxRPM(self):
         return self.shooterMaxRPM
 

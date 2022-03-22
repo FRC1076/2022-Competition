@@ -33,12 +33,13 @@ drivetrainConfig = {
         'RIGHT_FOLLOWER_ID': 7,
     },
     'DRIVETYPE': ARCADE,
+    'OPEN_LOOP_RAMP_RATE': 1.0,
     'ROTATION_CORRECTION': 0.0,
     'COUNTS_PER_REVOLUTION': 80,
     'GEAR_RATIO': 10,
-    'WHEEL_CIRCUMFERENCE': 8,
+    'WHEEL_CIRCUMFERENCE': 18.84, # 6 inches * pi
     'LEFT_ENCODER': 13,
-    'RIGHT_ENCODER': 7,
+    'RIGHT_ENCODER': 15, #was 7
 }
 
 shooterConfig = {
@@ -64,14 +65,14 @@ tiltShooterConfig = {
     'TILTSHOOTER_ID': 1,
     'ROTATIONS_PER_360': 75,
     'MIN_DEGREES': 5,
-    'MAX_DEGREES': 25,
+    'MAX_DEGREES': 20,
     'BUFFER_DEGREES': 2,
     'SPEED': 0.1,
 }
 
 aimerConfig = {
     'AIMING_ROTATION_SPEED': 0.6,
-    'AIMING_ACCURACY_DEGREES': 3,
+    'AIMING_ACCURACY_DEGREES': 1.5,
 }
 
 visionConfig = {
@@ -85,13 +86,13 @@ visionConfig = {
 
 autonConfig = {
     'TILTING_1_TIME': 1,
-    'SPINUP_1_TIME': 2,
+    'SPINUP_1_TIME': 3,
     'FIRING_1_TIME': 0.5,
     'ROTATE_1_TIME': 2,
-    'DRIVE_1_TIME': 2,
+    'DRIVE_1_TIME': 0, #2
     'INTAKE_TIME': 1,
     'ROTATE_2_TIME': 2,
-    'DRIVE_2_TIME': 2,
+    'DRIVE_2_TIME': 0, #2
     'TILTING_2_TIME': 1,
     'SPINUP_2_TIME': 1,
     'FIRING_2_TIME': 0.5,
@@ -99,11 +100,11 @@ autonConfig = {
     'TILT_2_TARGET_DEGREES': 10,
     'ROTATE_1_TARGET_DEGREES': 90,
     'ROTATE_2_TARGET_DEGREES': 135,
-    'SHOOT_SPEED': 0.5,
-    'DRIVE_1_SPEED': 0.8,
-    'DRIVE_2_SPEED': 0.2,
-    'DRIVE_1_DISTANCE': 60, #inches
-    'DRIVE_2_DISTANCE': 60, #inches
+    'ROTATE_SPEED':0.5,
+    'SHOOT_SPEED': 0.8,
+    'DRIVE_SPEED': 0.8,
+    'DRIVE_1_DISTANCE': 1000, #inches
+    'DRIVE_2_DISTANCE': 1000, #inches
 }
 
 climberConfig = {
@@ -123,7 +124,7 @@ climberConfig = {
 }
 
 # keys are distances in ft. Values are (v, angle) in rpm and degrees, respectively
-autoaimTable = {
+autoAimTable = {
     0: (3000, 20),
     1: (3000, 20),
     2: (3000, 20),

@@ -10,6 +10,8 @@ defaultResponses = {
     'RIGHT_X': 0.0,
     'LEFT_BUMPER': False,
     'RIGHT_BUMPER': False,
+    'LEFT_BUMPER_PRESSED': False,
+    'RIGHT_BUMPER_PRESSED': False,
     'RAW_AXIS': {
         2: 0.0,
         3: 0.0
@@ -32,8 +34,8 @@ class TestAimer(Aimer):
     def resetResponses(self):
         self.responses = defaultResponses
 
-    def getTheta(self):
-        return self.responses['THETA']
+    #def getTheta(self):
+    #    return self.responses['THETA']
 
 
 class TestController():
@@ -68,6 +70,12 @@ class TestXBC():
 
     def getRightBumper(self):
         return self.responses['RIGHT_BUMPER']
+
+    def getLeftBumperPressed(self):
+        return self.responses['LEFT_BUMPER_PRESSED']
+
+    def getRightBumperPressed(self):
+        return self.responses['RIGHT_BUMPER_PRESSED']
 
     def getRawAxis(self, axis_id):
         return self.responses['RAW_AXIS'][axis_id]
