@@ -104,20 +104,20 @@ autonConfig = {
     'DRIVE_SPEED': 0.8,
     'TILT_1_TARGET_DEGREES': 20,
     'POS_1_TILT_2_TARGET_DEGREES': 10,
-    'POS_1_ROTATE_1_TARGET_DEGREES': 90,
-    'POS_1_ROTATE_2_TARGET_DEGREES': 135,
-    'POS_1_DRIVE_1_DISTANCE': 100, #inches
-    'POS_1_DRIVE_2_DISTANCE': 100, #inches
+    'POS_1_ROTATE_1_TARGET_DEGREES': -165.5,
+    'POS_1_ROTATE_2_TARGET_DEGREES': 165.5,
+    'POS_1_DRIVE_1_DISTANCE': 51.2, #inches from front bumper to middle of ball
+    'POS_1_DRIVE_2_DISTANCE': 51.2, #inches from front bumper to middle of ball
     'POS_2_TILT_2_TARGET_DEGREES': 10,
-    'POS_2_ROTATE_1_TARGET_DEGREES': 90,
-    'POS_2_ROTATE_2_TARGET_DEGREES': 135,
-    'POS_2_DRIVE_1_DISTANCE': 100, #inches
-    'POS_2_DRIVE_2_DISTANCE': 100, #inches
+    'POS_2_ROTATE_1_TARGET_DEGREES': 147,
+    'POS_2_ROTATE_2_TARGET_DEGREES': -147,
+    'POS_2_DRIVE_1_DISTANCE': 56.5, #inches from front bumper to middle of ball
+    'POS_2_DRIVE_2_DISTANCE': 56.5, #inches from front bumper to middle of ball
     'POS_3_TILT_2_TARGET_DEGREES': 10,
-    'POS_3_ROTATE_1_TARGET_DEGREES': 90,
-    'POS_3_ROTATE_2_TARGET_DEGREES': 135,
-    'POS_3_DRIVE_1_DISTANCE': 100, #inches
-    'POS_3_DRIVE_2_DISTANCE': 100, #inches
+    'POS_3_ROTATE_1_TARGET_DEGREES': 165,
+    'POS_3_ROTATE_2_TARGET_DEGREES': -165,
+    'POS_3_DRIVE_1_DISTANCE': 51.9, #inches from front bumper to middle of ball
+    'POS_3_DRIVE_2_DISTANCE': 51.9, #inches from front bumper to middle of ball
 }
 
 climberConfig = {
