@@ -28,6 +28,21 @@ ARCADE = 1
 TANK = 2
 SWERVE = 3
 
+# Dashboard keys
+PARAM_SHOOTER_RPM = 'PARAM_SHOOTER_RPM'
+PARAM_TILT_ANGLE = 'PARAM_TILT_ANGLE'
+
+VALUE_PHASE = 'VALUE_PHASE'
+VALUE_SHOOTER_RPM = 'VALUE_SHOOTER_RPM'
+VALUE_TILT_ANGLE = 'VALUE_TILT_ANGLE'
+VALUE_VISION_HAS_TARGET = 'VALUE_VISION_HAS_TARGET'
+VALUE_VISION_NUM_TARGETS = 'VALUE_VISION_NUM_TARGETS'
+VALUE_VISION_PITCH = 'VALUE_VISION_PITCH'
+VALUE_VISION_YAW = 'VALUE_VISION_YAW'
+VALUE_VISION_DISTANCE = 'VALUE_VISION_DISTANCE'
+VALUE_GYRO_RELATIVE_YAW = 'VALUE_GYRO_RELATIVE_YAW'
+VALUE_GYRO_ACCUMULATED_YAW = 'VALUE_GYRO_ACCUMULATED_YAW'
+VALUE_SHOT_FIRED = 'VALUE_SHOT_FIRED'
 
 # Test Mode
 TEST_MODE = False
@@ -247,46 +262,71 @@ class MyRobot(wpilib.TimedRobot):
 
         
     def initDashboard(self):
-        self.periods = 0
+
         if self.shooter:
-            self.dashboard.putNumber('Shooter RPM', self.shooter.configShooterRPM)
-            print('set shooter rpm to', self.shooter.configShooterRPM)
+            self.dashboard.putNumber(PARAM_SHOOTER_RPM, self.shooter.getConfigShooterRPM())
+        
         if self.tiltShooter:
-            self.dashboard.putNumber('Tilt Target (Degrees)', self.tiltShooter.getTargetDegrees())
+            self.dashboard.putNumber(PARAM_TILT_ANGLE, self.tiltShooter.getTargetDegrees())
+
+        # make sure all VALUE fields exist
+        self.dashboard.putString(VALUE_PHASE, 'INIT')
+        self.dashboard.putNumber(VALUE_SHOOTER_RPM, 0)
+        self.dashboard.putNumber(VALUE_TILT_ANGLE, 0)
+        self.dashboard.putBoolean(VALUE_VISION_HAS_TARGET, False)
+        self.dashboard.putNumber(VALUE_VISION_NUM_TARGETS, 0)
+        self.dashboard.putNumber(VALUE_VISION_PITCH, 0)
+        self.dashboard.putNumber(VALUE_VISION_YAW, 0)
+        self.dashboard.putNumber(VALUE_VISION_DISTANCE, 0)
+        self.dashboard.putNumber(VALUE_GYRO_RELATIVE_YAW, 0)
+        self.dashboard.putNumber(VALUE_GYRO_ACCUMULATED_YAW, 0)
+        self.dashboard.putBoolean(VALUE_SHOT_FIRED, False)
+
+    def readDashboardParams(self):
+
+        if self.shooter:
+            newShooterRPM = self.dashboard.getNumber(PARAM_SHOOTER_RPM, -1.0)
+            if newShooterRPM != -1.0:
+                self.shooter.setStoredShooterRPM(newShooterRPM) # will clip to min/max
+                self.dashboard.putNumber(PARAM_SHOOTER_RPM, self.shooter.getStoredShooterRPM())
+
+        if self.tiltShooter:
+            newTiltAngle = self.dashboard.getNumber(PARAM_TILT_ANGLE, -1.0)
+            if newTiltAngle != -1.0:
+                self.tiltShooter.setTargetDegrees(newTiltAngle) # will clip to min/max
+                self.dashboard.putNumber(PARAM_TILT_ANGLE, self.tiltShooter.getTargetDegrees())
+    
+    def updateDashboardInfo(self):
+
+        self.dashboard.putString(VALUE_PHASE, self.phase)
+
+        if (self.vision):
+            self.dashboard.putBoolean(VALUE_VISION_HAS_TARGET, self.vision.hasTargets())
+            if (self.vision.hasTargets()):
+                self.dashboard.putNumber(VALUE_VISION_YAW, self.vision.getSmoothYaw())
+                self.dashboard.putNumber(VALUE_VISION_PITCH, self.vision.getSmoothPitch())
+                self.dashboard.putNumber(VALUE_VISION_DISTANCE, self.vision.getDistanceFeet())
+                self.dashboard.putNumber(VALUE_VISION_NUM_TARGETS, self.vision.getNumTargets())
+
+        if (self.aimer):
+            # self.dashboard.putNumber('Aimer In Range (T/F)', self.aimer.getInRange())
+            self.dashboard.putNumber(VALUE_GYRO_RELATIVE_YAW, self.aimer.getYaw())
+            self.dashboard.putNumber(VALUE_GYRO_ACCUMULATED_YAW, self.aimer.getAccumulatedYaw())
+
+        if (self.tiltShooter):
+            self.dashboard.putNumber(VALUE_TILT_ANGLE, self.tiltShooter.getDegrees())
+
+        if (self.shooter):
+            self.dashboard.putNumber(VALUE_SHOOTER_RPM, self.shooter.encoder.getVelocity())
+
+        if (self.feeder):
+            self.dashboard.putBoolean(VALUE_SHOT_FIRED, self.feeder.hasFired())
 
 
     def robotPeriodic(self):
+        self.readDashboardParams()
+        self.updateDashboardInfo()
 
-        self.dashboard.putNumber('Periods', self.periods)
-        self.periods += 1
-        self.dashboard.putString('Phase ', '' + self.phase)
-
-        if (self.vision):
-            self.dashboard.putBoolean('Vision Has Target', self.vision.hasTargets())
-            if (self.vision.hasTargets()):
-                self.dashboard.putNumber('Vision Pitch', self.vision.getSmoothYaw())
-                self.dashboard.putNumber('Vision Yaw', self.vision.getSmoothPitch())
-                self.dashboard.putNumber('Vision Distance', self.vision.getDistanceFeet())
-                self.dashboard.putNumber('Vision # Targets', self.vision.getNumTargets())
-        if (self.aimer):
-            # self.dashboard.putNumber('Aimer In Range (T/F)', self.aimer.getInRange())
-            self.dashboard.putNumber('Aimer Yaw (Degrees)', self.aimer.getYaw())
-            self.dashboard.putNumber('Aimer Accumulated Yaw (Degrees)', self.aimer.getAccumulatedYaw())
-        if (self.tiltShooter):
-            self.dashboard.putNumber('Tilt (Degrees)', self.tiltShooter.getDegrees())
-            newTiltDegrees = self.dashboard.getNumber('Tilt Target (Degrees)', -1.0)
-            if newTiltDegrees != -1.0:
-                self.tiltShooter.setTargetDegrees(newTiltDegrees) # could adjust for min/max degrees, so write back
-                self.dashboard.putNumber('Tilt Target (Degrees)', self.tiltShooter.getTargetDegrees())
-            self.dashboard.putNumber('Tilt Target (Degrees)', self.tiltShooter.getTargetDegrees())
-        if (self.shooter):
-            newShooterRPM = self.dashboard.getNumber('Shooter RPM', 0)
-            if newShooterRPM != 0:
-                self.shooter.setStoredShooterRPM(newShooterRPM)
-                #print ('shooter rpm', self.shooter.getStoredShooterRPM())
-            self.dashboard.putNumber('Current Shooter RPM', self.shooter.encoder.getVelocity())
-        if (self.feeder):
-            self.dashboard.putBoolean('Feeder Has Fired', self.feeder.hasFired())
 
     def teleopInit(self):
         self.theta = None
