@@ -384,8 +384,8 @@ class MyRobot(wpilib.TimedRobot):
             rightspeed = -(driver.getRightY())
 
             # Eliminate deadzone and correct speed
-            leftspeed = speedratio * self.deadzoneCorrection(leftspeed, deadzone)
-            rightspeed = speedratio * self.deadzoneCorrection(rightspeed, deadzone)
+            leftspeed = speedratio * self.cubicMap(leftspeed, .2, 1, deadzone)
+            rightspeed = speedratio * self.cubicMap(rightspeed, .2, 1, deadzone)
 
             # Invoke Tank Drive
             self.drivetrain.motors.tankDrive(leftspeed, rightspeed)
@@ -395,7 +395,12 @@ class MyRobot(wpilib.TimedRobot):
             # speedratio = 0.8  # ratio of joystick position to motor speed
             speedratio = 1.0
 
-            result = (-driver.getRightX(), driver.getLeftY())
+            result = (self.cubicMap(-driver.getRightX(), .2, 1, deadzone),
+                      self.cubicMap(driver.getLeftY(), .2, 1, deadzone))
+
+            if driver.getRawAxis(lta) > 0.95:
+                result = (self.cubicMap(-driver.getRightX(), .2, .4, deadzone),
+                          self.cubicMap(driver.getLeftY(), .2, .4, deadzone))
 
             if (self.vision and self.aimer):
 
@@ -441,10 +446,7 @@ class MyRobot(wpilib.TimedRobot):
 
             #print(rotateSpeed, driveSpeed)
 
-            clutchMultiplier = 1.0
-            if(driver.getRawAxis(lta) > 0.95):
-                clutchMultiplier = self.clutchMultiplier
-            self.drivetrain.motors.arcadeDrive(rotateSpeed * clutchMultiplier, driveSpeed * clutchMultiplier)
+            self.drivetrain.motors.arcadeDrive(rotateSpeed, driveSpeed)
 
         else:  # self.drive == SWERVE
             # Panic
@@ -520,6 +522,7 @@ class MyRobot(wpilib.TimedRobot):
             return 180
         else:
             return -1
+
     def tiltShooterPeriodic(self):
         if not self.tiltShooter:
             return
@@ -891,6 +894,17 @@ class MyRobot(wpilib.TimedRobot):
         else:
             x = (val - deadzone) / (1 - deadzone)
             return x
+
+    def cubicMap(self, val, min, max, deadzone):  # the min and max are min/max
+        a = (max - min) / ((1 - deadzone) ** 3)
+        if -deadzone <= val <= deadzone:
+            return 0
+        elif deadzone < val < 1:
+            return a(val - deadzone) ** 3 + min
+        elif -1 <= val < -deadzone:
+            return a(val + deadzone) ** 3 - min
+        else:
+            return None
 
     def logResult(self, *result):
         if (TEST_MODE):
