@@ -40,6 +40,7 @@ drivetrainConfig = {
     'WHEEL_CIRCUMFERENCE': 18.84, # 6 inches * pi
     'LEFT_ENCODER': 13,
     'RIGHT_ENCODER': 15, #was 7
+    'CLUTCH_MULTIPLIER': 0.4,
 }
 
 shooterConfig = {
@@ -54,6 +55,7 @@ intakeConfig = {
     'INTAKE_MOTOR_ID': 17,
     'INTAKE_SOLENOID_FORWARD_ID': 1,
     'INTAKE_SOLENOID_REVERSE_ID': 2,
+    'INTAKE_MOTOR_SPEED': 0.8,
 }
 
 feederConfig = {
@@ -85,6 +87,7 @@ visionConfig = {
 }
 
 autonConfig = {
+    'POSITION': 1, # 1, 2, or 3
     'TILTING_1_TIME': 1,
     'SPINUP_1_TIME': 3,
     'FIRING_1_TIME': 0.5,
@@ -96,15 +99,25 @@ autonConfig = {
     'TILTING_2_TIME': 1,
     'SPINUP_2_TIME': 1,
     'FIRING_2_TIME': 0.5,
-    'TILT_1_TARGET_DEGREES': 20,
-    'TILT_2_TARGET_DEGREES': 10,
-    'ROTATE_1_TARGET_DEGREES': 90,
-    'ROTATE_2_TARGET_DEGREES': 135,
     'ROTATE_SPEED':0.5,
     'SHOOT_SPEED': 0.8,
     'DRIVE_SPEED': 0.8,
-    'DRIVE_1_DISTANCE': 1000, #inches
-    'DRIVE_2_DISTANCE': 1000, #inches
+    'TILT_1_TARGET_DEGREES': 20,
+    'POS_1_TILT_2_TARGET_DEGREES': 10,
+    'POS_1_ROTATE_1_TARGET_DEGREES': -165.5,
+    'POS_1_ROTATE_2_TARGET_DEGREES': 165.5,
+    'POS_1_DRIVE_1_DISTANCE': 51.2, #inches from front bumper to middle of ball
+    'POS_1_DRIVE_2_DISTANCE': 51.2, #inches from front bumper to middle of ball
+    'POS_2_TILT_2_TARGET_DEGREES': 10,
+    'POS_2_ROTATE_1_TARGET_DEGREES': 147,
+    'POS_2_ROTATE_2_TARGET_DEGREES': -147,
+    'POS_2_DRIVE_1_DISTANCE': 56.5, #inches from front bumper to middle of ball
+    'POS_2_DRIVE_2_DISTANCE': 56.5, #inches from front bumper to middle of ball
+    'POS_3_TILT_2_TARGET_DEGREES': 10,
+    'POS_3_ROTATE_1_TARGET_DEGREES': 165,
+    'POS_3_ROTATE_2_TARGET_DEGREES': -165,
+    'POS_3_DRIVE_1_DISTANCE': 51.9, #inches from front bumper to middle of ball
+    'POS_3_DRIVE_2_DISTANCE': 51.9, #inches from front bumper to middle of ball
 }
 
 climberConfig = {

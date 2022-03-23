@@ -130,17 +130,32 @@ class MyRobot(wpilib.TimedRobot):
         self.autonSpinUp2Time = config['SPINUP_2_TIME']
         self.autonFiring2Time = config['FIRING_2_TIME']
 
-        self.autonTilt1TargetDegrees = config['TILT_1_TARGET_DEGREES']
-        self.autonTilt2TargetDegrees = config['TILT_2_TARGET_DEGREES']
-        self.autonRotate1TargetDegrees = config['ROTATE_1_TARGET_DEGREES']
-        self.autonRotate2TargetDegrees = config['ROTATE_2_TARGET_DEGREES']
-
         self.autonShootSpeed = config['SHOOT_SPEED']
         self.autonRotateSpeed = config['ROTATE_SPEED']
         self.autonDriveSpeed = config['DRIVE_SPEED']
 
-        self.autonDrive1Distance = config['DRIVE_1_DISTANCE']
-        self.autonDrive2Distance = config['DRIVE_2_DISTANCE']
+        self.autonTilt1TargetDegrees = config['TILT_1_TARGET_DEGREES']
+
+        if(config['POSITION'] == 1):
+            self.autonTilt2TargetDegrees = config['POS_1_TILT_2_TARGET_DEGREES']
+            self.autonRotate1TargetDegrees = config['POS_1_ROTATE_1_TARGET_DEGREES']
+            self.autonRotate2TargetDegrees = config['POS_1_ROTATE_2_TARGET_DEGREES']
+            self.autonDrive1Distance = config['POS_1_DRIVE_1_DISTANCE']
+            self.autonDrive2Distance = config['POS_1_DRIVE_2_DISTANCE']
+
+        elif(config['POSITION'] == 2):
+            self.autonTilt2TargetDegrees = config['POS_2_TILT_2_TARGET_DEGREES']
+            self.autonRotate1TargetDegrees = config['POS_2_ROTATE_1_TARGET_DEGREES']
+            self.autonRotate2TargetDegrees = config['POS_2_ROTATE_2_TARGET_DEGREES']
+            self.autonDrive1Distance = config['POS_2_DRIVE_1_DISTANCE']
+            self.autonDrive2Distance = config['POS_2_DRIVE_2_DISTANCE']
+        
+        else: #  (config['POSITION'] == 3)
+            self.autonTilt2TargetDegrees = config['POS_3_TILT_2_TARGET_DEGREES']
+            self.autonRotate1TargetDegrees = config['POS_3_ROTATE_1_TARGET_DEGREES']
+            self.autonRotate2TargetDegrees = config['POS_3_ROTATE_2_TARGET_DEGREES']
+            self.autonDrive1Distance = config['POS_3_DRIVE_1_DISTANCE']
+            self.autonDrive2Distance = config['POS_3_DRIVE_2_DISTANCE']
 
         return True
 
@@ -166,7 +181,7 @@ class MyRobot(wpilib.TimedRobot):
                 right_encoder_motor = motor
 
         self.drive_type = config['DRIVETYPE']  # side effect!
-
+        self.clutchMultiplier = config['CLUTCH_MULTIPLIER']
         self.rotationCorrection = config['ROTATION_CORRECTION']
 
         # Create Controller Groups
@@ -203,14 +218,10 @@ class MyRobot(wpilib.TimedRobot):
         # assuming this is a Neo; otherwise it may not be brushless
         motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
         pneumatics_module_type = wpilib.PneumaticsModuleType.CTREPCM
-        #motor = rev.CANSparkMax(config['INTAKE_MOTOR_ID'], motor_type)
-        solenoid = wpilib.DoubleSolenoid(0,
-                                         pneumatics_module_type,
-                                         config['INTAKE_SOLENOID_FORWARD_ID'],
-                                         config['INTAKE_SOLENOID_REVERSE_ID'])
+        motor = rev.CANSparkMax(config['INTAKE_MOTOR_ID'], motor_type)
+        solenoid = wpilib.DoubleSolenoid(0, pneumatics_module_type, config['INTAKE_SOLENOID_FORWARD_ID'], config['INTAKE_SOLENOID_REVERSE_ID'])
 
-        #return Intake(solenoid, motor)
-        return Intake(solenoid)
+        return Intake(solenoid, motor, config['INTAKE_MOTOR_SPEED'])
 
     def initClimber(self, config):
         # assuming this is a Neo; otherwise it may not be brushless
@@ -421,6 +432,7 @@ class MyRobot(wpilib.TimedRobot):
             return
 
         driver = self.driver.xboxController
+        lta = self.driver.left_trigger_axis
         deadzone = self.driver.deadzone
 
         # TANK DRIVE
@@ -488,7 +500,11 @@ class MyRobot(wpilib.TimedRobot):
             #print("After Correction: rotateSpeed: ", rotateSpeed, " drivespeed ", driveSpeed)
 
             #print(rotateSpeed, driveSpeed)
-            self.drivetrain.motors.arcadeDrive(rotateSpeed, driveSpeed)
+
+            clutchMultiplier = 1.0
+            if(driver.getRawAxis(lta) > 0.95):
+                clutchMultiplier = self.clutchMultiplier
+            self.drivetrain.motors.arcadeDrive(rotateSpeed * clutchMultiplier, driveSpeed * clutchMultiplier)
 
         else:  # self.drive == SWERVE
             # PANIC
@@ -506,19 +522,17 @@ class MyRobot(wpilib.TimedRobot):
         if self.intake is None:
             return
 
-        #print("In teleopIntake")
         operator = self.operator.xboxController
         lta = self.operator.left_trigger_axis
 
         if operator.getLeftBumper():
             self.intake.toggle()
-            #print("toggling intake")
-        '''
+        
         if operator.getRawAxis(lta) > 0.95:
             self.intake.motorOn()
         else:
             self.intake.motorOff()
-        '''
+        
 
     def teleopTiltShooter(self):
         if not self.tiltShooter:
@@ -778,6 +792,7 @@ class MyRobot(wpilib.TimedRobot):
             self.tiltShooterPeriodic()
             # Shooter not moving
             # Feeder not moving
+            # No intake movement
             self.drivetrain.motors.arcadeDrive(0, 0) # Don't drive
 
         # Start spinning motor
@@ -786,12 +801,14 @@ class MyRobot(wpilib.TimedRobot):
             self.tiltShooterPeriodic()
             self.shooter.setShooterVelocity(-self.autonShootSpeed) #Start spinning shooter
             # Feeder not moving
+            # No intake movement
             self.drivetrain.motors.arcadeDrive(0, 0) # Don't drive
 
         # Activate the feeder/trigger motor
         elif self.autonPhase == "AUTON_1_FIRING":
             self.tiltShooterPeriodic()
             # Keep spinning shooter
+            # No intake movement
             self.feeder.setFeeder(self.feeder.feederSpeed) # Trigger shot
             self.drivetrain.motors.arcadeDrive(0, 0) # Don't drive
             self.aimer.reset() # Reset gyro to current heading
@@ -801,6 +818,7 @@ class MyRobot(wpilib.TimedRobot):
             self.tiltShooter.setTargetDegrees(self.autonTilt2TargetDegrees)
             self.tiltShooterPeriodic()
             # Keep spinning shooter
+            self.intake.motorOn()
             self.feeder.setFeeder(0.0)
 
             if (self.autonRotate1TargetDegrees >= -180 and self.autonRotate1TargetDegrees <= 180):
@@ -822,6 +840,8 @@ class MyRobot(wpilib.TimedRobot):
             self.tiltShooterPeriodic()
             # Keep spinning shooter
             # Feeder not moving
+            # Keep spinning intake motor
+            self.intake.extend()
             print("Drive Distance (L/R)", self.drivetrain.getLeftInches(), self.drivetrain.getRightInches())
             if(self.drivetrain.getLeftInches() and self.drivetrain.getRightInches()):
                 if(self.drivetrain.getLeftInches() < self.autonDrive1Distance or self.drivetrain.getRightInches() < self.autonDrive1Distance):
@@ -843,7 +863,8 @@ class MyRobot(wpilib.TimedRobot):
 
         # Scoop up ball
         elif self.autonPhase == "AUTON_INTAKE":
-            print("Intake!!!")
+            # Keep spinning intake motor
+            self.intake.retract() # Retract intake
             self.aimer.reset() # Reset gyro to current heading
 
         # Rotate to target
@@ -851,6 +872,7 @@ class MyRobot(wpilib.TimedRobot):
             self.tiltShooterPeriodic()
             # Keep spinning shooter
             # Feeder not moving
+            self.intake.motorOff()
             
             if (self.autonRotate2TargetDegrees >= -180 and self.autonRotate2TargetDegrees <= 180):
                 self.aimer.setError(self.autonRotate2TargetDegrees - self.aimer.getYaw())
