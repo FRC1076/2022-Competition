@@ -760,6 +760,7 @@ class MyRobot(wpilib.TimedRobot):
             print("Auton Phase: ", self.autonPhase)
             self.autonPhase = "AUTON_1_ROTATE"
             self.autonTimeBase += self.autonFiring1Time
+            self.aimer.setGyroSetPoint(self.autonRotate1TargetDegrees + self.aimer.getAccumulatedYaw())
 
         if timer > self.autonTimeBase and self.autonPhase == "AUTON_1_ROTATE":
             print("Auton Phase: ", self.autonPhase)
@@ -840,11 +841,8 @@ class MyRobot(wpilib.TimedRobot):
             self.intake.motorOn()
             self.feeder.setFeeder(0.0)
 
-            if (self.autonRotate1TargetDegrees >= -180 and self.autonRotate1TargetDegrees <= 180):
-                self.aimer.setError(self.autonRotate1TargetDegrees - self.aimer.getYaw())
-                result = (self.aimer.PIDcalc(self.aimer.getError()), 0)
-            else:
-                result = (0, 0)
+            self.aimer.setError(self.aimer.getGyroSetPoint() - self.aimer.getAccumulatedYaw())
+            result = (self.aimer.PIDcalc(self.aimer.getError()), 0)
             
             rotateSpeed = result[0]
             driveSpeed = result[1]
