@@ -57,7 +57,6 @@ class Drivetrain:
 
     def rotationsToInches(self, rotations):
         #print("Left: ", self.getLeftRotations(), " Right: ", self.getRightRotations())
-        #return(abs(rotations * (55 / 12) * (54 / 20) * self.wheelCircumference))
         return(abs(rotations * (12 / 55) * (20 / 54) * self.wheelCircumference))
 
         #12 to 20 to 54 

@@ -53,8 +53,8 @@ shooterConfig = {
 intakeConfig = {
     # Update IDs when known
     'INTAKE_MOTOR_ID': 17,
-    'INTAKE_SOLENOID_FORWARD_ID': 1,
-    'INTAKE_SOLENOID_REVERSE_ID': 2,
+    'INTAKE_SOLENOID_FORWARD_ID': 6,
+    'INTAKE_SOLENOID_REVERSE_ID': 7,
     'INTAKE_MOTOR_SPEED': 0.8,
 }
 
