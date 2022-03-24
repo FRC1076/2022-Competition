@@ -45,7 +45,7 @@ drivetrainConfig = {
 
 shooterConfig = {
     'SHOOTER_ID': 10,
-    'SHOOTER_RPM': 3500,
+    'SHOOTER_RPM': 4000,
     'SHOOTER_MAX_RPM': 6000,
     'SHOOTER_MIN_RPM': 0,
 }
@@ -67,7 +67,7 @@ tiltShooterConfig = {
     'TILTSHOOTER_ID': 1,
     'ROTATIONS_PER_360': 75,
     'MIN_DEGREES': 5,
-    'MAX_DEGREES': 20,
+    'MAX_DEGREES': 30,
     'BUFFER_DEGREES': 2,
     'SPEED': 0.1,
 }
@@ -78,12 +78,12 @@ aimerConfig = {
 }
 
 visionConfig = {
-    'TARGET_HEIGHT': 8.5,
+    'TARGET_HEIGHT': 8.9,
     'TARGET_RADIUS': 2,
     'SHOOTER_HEIGHT': 3.5,
     'SHOOTER_OFFSET': 1,
-    'CAMERA_HEIGHT': 4,
-    'CAMERA_PITCH': 0,
+    'CAMERA_HEIGHT': 2.9,
+    'CAMERA_PITCH': 27,
 }
 
 autonConfig = {
@@ -91,41 +91,41 @@ autonConfig = {
     'TILTING_1_TIME': 1,
     'SPINUP_1_TIME': 3,
     'FIRING_1_TIME': 0.5,
-    'ROTATE_1_TIME': 2,
-    'DRIVE_1_TIME': 0, #2
+    'ROTATE_1_TIME': 4,
+    'DRIVE_1_TIME': 2, #2
     'INTAKE_TIME': 1,
-    'ROTATE_2_TIME': 2,
-    'DRIVE_2_TIME': 0, #2
+    'ROTATE_2_TIME': 4,
+    'DRIVE_2_TIME': 2, #2
     'TILTING_2_TIME': 1,
     'SPINUP_2_TIME': 1,
     'FIRING_2_TIME': 0.5,
-    'ROTATE_SPEED':0.5,
+    'ROTATE_SPEED':0.2,
     'SHOOT_SPEED': 0.8,
     'DRIVE_SPEED': 0.8,
     'TILT_1_TARGET_DEGREES': 20,
     'POS_1_TILT_2_TARGET_DEGREES': 10,
-    'POS_1_ROTATE_1_TARGET_DEGREES': -165.5,
-    'POS_1_ROTATE_2_TARGET_DEGREES': 165.5,
-    'POS_1_DRIVE_1_DISTANCE': 51.2, #inches from front bumper to middle of ball
-    'POS_1_DRIVE_2_DISTANCE': 51.2, #inches from front bumper to middle of ball
+    'POS_1_ROTATE_1_TARGET_DEGREES': -179, #-165.5,
+    'POS_1_ROTATE_2_TARGET_DEGREES': 179, # 165.5,
+    'POS_1_DRIVE_1_DISTANCE': 5, # 51.2, #inches from front bumper to middle of ball
+    'POS_1_DRIVE_2_DISTANCE': 5, # 51.2, #inches from front bumper to middle of ball
     'POS_2_TILT_2_TARGET_DEGREES': 10,
     'POS_2_ROTATE_1_TARGET_DEGREES': 147,
     'POS_2_ROTATE_2_TARGET_DEGREES': -147,
-    'POS_2_DRIVE_1_DISTANCE': 56.5, #inches from front bumper to middle of ball
-    'POS_2_DRIVE_2_DISTANCE': 56.5, #inches from front bumper to middle of ball
+    'POS_2_DRIVE_1_DISTANCE': 5, # 56.5, #inches from front bumper to middle of ball
+    'POS_2_DRIVE_2_DISTANCE': 5, # 56.5, #inches from front bumper to middle of ball
     'POS_3_TILT_2_TARGET_DEGREES': 10,
     'POS_3_ROTATE_1_TARGET_DEGREES': 165,
     'POS_3_ROTATE_2_TARGET_DEGREES': -165,
-    'POS_3_DRIVE_1_DISTANCE': 51.9, #inches from front bumper to middle of ball
-    'POS_3_DRIVE_2_DISTANCE': 51.9, #inches from front bumper to middle of ball
+    'POS_3_DRIVE_1_DISTANCE': 5, #51.9, #inches from front bumper to middle of ball
+    'POS_3_DRIVE_2_DISTANCE': 5, #51.9, #inches from front bumper to middle of ball
 }
 
 climberConfig = {
     'WINCH_LEFT_ID': 6,
     'WINCH_RIGHT_ID': 14,
     # Pneumatic board IDs
-    'SOLENOID_FORWARD_ID': 6,
-    'SOLENOID_REVERSE_ID': 0,
+    'SOLENOID_FORWARD_ID': 4,
+    'SOLENOID_REVERSE_ID': 5,
     # DIO pin numbers
     'LEFT_LIMIT_ID': 0,
     'RIGHT_LIMIT_ID': 1,
@@ -154,7 +154,7 @@ autoAimTable = {
     13: (3000, 20),
     14: (3000, 20),
     15: (3000, 20),
-    16: (3000, 20),
+    16: (6000, 20),
     17: (3000, 20),
     18: (3000, 20),
     19: (3000, 20),
