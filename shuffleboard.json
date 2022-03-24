@@ -165,6 +165,36 @@
               "_source0": "network_table:///SmartDashboard/VALUE_VISION_PITCH",
               "_title": "Vision: Pitch"
             }
+          },
+          "2,2": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Number Slider",
+              "_source0": "network_table:///SmartDashboard/PARAM_CLIMB_EXTEND",
+              "_title": "Set Climber Extend Speed",
+              "Slider Settings/Min": 0.0,
+              "Slider Settings/Max": 1.0,
+              "Slider Settings/Block increment": 0.0625,
+              "Visuals/Display value": true
+            }
+          },
+          "2,3": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Number Slider",
+              "_source0": "network_table:///SmartDashboard/PARAM_CLIMB_RETRACT",
+              "_title": "Set Climber Retract Speed",
+              "Slider Settings/Min": 0.0,
+              "Slider Settings/Max": 1.0,
+              "Slider Settings/Block increment": 0.0625,
+              "Visuals/Display value": true
+            }
           }
         }
       }
@@ -245,9 +275,9 @@
     }
   ],
   "windowGeometry": {
-    "x": 229.0,
-    "y": 25.0,
-    "width": 1691.0,
-    "height": 626.0
+    "x": -91.19999694824219,
+    "y": 28.799999237060547,
+    "width": 1553.5999755859375,
+    "height": 714.4000244140625
   }
 }

@@ -67,6 +67,27 @@ class Climber:
     def stepAction(self):
         self.climbActions[self.climbstep][0]()
 
+    def getExtendSpeed(self):
+        return self.extendSpeed
+
+    def getRetractSpeed(self):
+        return self.retractSpeed
+
+    def setExtendSpeed(self, speed):
+        if speed < 0.0:
+            self.extendSpeed = 0.0
+        elif speed > 1.0:
+            self.extendSpeed = 1.0
+        else:
+            self.extendSpeed = speed
+
+    def setRetractSpeed(self, speed):
+        if speed < 0.0:
+            self.retractSpeed = 0.0
+        elif speed > 1.0:
+            self.retractSpeed = 1.0
+        else:
+            self.extendSpeed = speed
 
 class SolenoidGroup:
     def __init__(self, solenoids):

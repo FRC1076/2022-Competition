@@ -31,6 +31,8 @@ SWERVE = 3
 # Dashboard keys
 PARAM_SHOOTER_RPM = 'PARAM_SHOOTER_RPM'
 PARAM_TILT_ANGLE = 'PARAM_TILT_ANGLE'
+PARAM_CLIMB_EXTEND = 'PARAM_CLIMB_EXTEND'
+PARAM_CLIMB_RETRACT = 'PARAM_CLIMB_RETRACT'
 
 VALUE_PHASE = 'VALUE_PHASE'
 VALUE_SHOOTER_RPM = 'VALUE_SHOOTER_RPM'
@@ -279,6 +281,10 @@ class MyRobot(wpilib.TimedRobot):
         
         if self.tiltShooter:
             self.dashboard.putNumber(PARAM_TILT_ANGLE, self.tiltShooter.getTargetDegrees())
+        
+        if self.climber:
+            self.dashboard.putNumber(PARAM_CLIMB_EXTEND, self.climber.getExtendSpeed())
+            self.dashboard.putNumber(PARAM_CLIMB_RETRACT, self.climber.getRetractSpeed())
 
         # make sure all VALUE fields exist
         self.dashboard.putString(VALUE_PHASE, 'INIT')
@@ -306,6 +312,19 @@ class MyRobot(wpilib.TimedRobot):
             if newTiltAngle != -1.0:
                 self.tiltShooter.setTargetDegrees(newTiltAngle) # will clip to min/max
                 self.dashboard.putNumber(PARAM_TILT_ANGLE, self.tiltShooter.getTargetDegrees())
+        
+        if self.climber:
+            newClimberExtend = self.dashboard.getNumber(PARAM_CLIMB_EXTEND, -1.0)
+            if newClimberExtend != -1.0:
+                self.climber.setExtendSpeed(newClimberExtend)
+                self.dashboard.putNumber(PARAM_CLIMB_EXTEND, self.climber.getExtendSpeed())
+
+            newClimberRetract = self.dashboard.getNumber(PARAM_CLIMB_RETRACT, -1.0)
+            if newClimberRetract != -1.0:
+                self.climber.setRetractSpeed(newClimberRetract)
+                self.dashboard.putNumber(PARAM_CLIMB_RETRACT, self.climber.getRetractSpeed())
+
+
     
     def updateDashboardInfo(self):
 
