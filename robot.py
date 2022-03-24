@@ -400,8 +400,8 @@ class MyRobot(wpilib.TimedRobot):
             else:
                 if self.aimer.isInRange():
                     self.phase = "AS_TILT_PHASE"
-                    currentDistance = self.vision.getDistanceFeet()
-                    autoAimResult = self.autoAimLookup(currentDistance)
+                    currentDistanceFeet = self.vision.getDistanceFeet()
+                    autoAimResult = self.autoAimLookup(currentDistanceFeet)
                     autoAimRPM = autoAimResult[0]
                     autoAimTilt = autoAimResult[1]
                     self.tiltShooter.setTargetDegrees(autoAimTilt)
@@ -759,7 +759,7 @@ class MyRobot(wpilib.TimedRobot):
         elif timer > self.autonTimeBase and self.autonPhase == "AUTON_1_FIRING":
             print("Auton Phase: ", self.autonPhase)
             self.autonPhase = "AUTON_1_ROTATE"
-            self.autonTimeBase += self.autonFiring1Time
+            self.autonTimeBase += self.autonRotate1Time
             self.aimer.setGyroSetPoint(self.autonRotate1TargetDegrees + self.aimer.getAccumulatedYaw())
 
         elif timer > self.autonTimeBase and self.autonPhase == "AUTON_1_ROTATE":
@@ -974,18 +974,16 @@ class MyRobot(wpilib.TimedRobot):
         if (TEST_MODE):
             print(result)
 
-    def autoAimLookup(self, distanceInches):
-        if not distanceInches:
+    def autoAimLookup(self, distanceFeet):
+        if not distanceFeet:
             return (0, 0)
 
-        if distanceInches > 480 or distanceInches < 0:
+        if distanceFeet > 30 or distanceFeet < 0:
             print("Auto Aim Lookup: distanceInches out of bounds")
             return (0, 0)
 
-        distanceFeet = round(distanceInches / 12, 0)
-
-        velocity = self.aimer.interpolate(distanceFeet, 0)
-        angle = self.aimer.interpolate(distanceFeet, 1)
+        velocity = autoAimTable[distanceFeet][0]
+        angle = autoAimTable[distanceFeet][1]
 
         if velocity > self.shooter.getShooterMaxRPM() or velocity < self.shooter.getShooterMinRPM():
             print("Auto Aim Lookup: velocity out of bounds")
