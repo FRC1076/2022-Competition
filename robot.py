@@ -375,6 +375,9 @@ class MyRobot(wpilib.TimedRobot):
             self.climber.solenoids.set(climber.kReverse)
 
     def teleopPeriodic(self):
+        print(self.aimer.interpolate(10, 0))
+        print(self.aimer.interpolate(10.5, 0))
+        print(self.aimer.interpolate(11, 0))
 
         driver = self.driver.xboxController
         rta = self.driver.right_trigger_axis

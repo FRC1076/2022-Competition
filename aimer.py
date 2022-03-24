@@ -131,4 +131,6 @@ class Aimer:
     def interpolate(self, val, entry):
         a = math.floor(val)
         b = math.ceil(val)
+        if a == b:
+            b += 1
         return ((autoAimTable[b][entry] - autoAimTable[a][entry])/(b - a)) * (val - a) + autoAimTable[a][entry]
