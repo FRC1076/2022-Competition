@@ -984,8 +984,8 @@ class MyRobot(wpilib.TimedRobot):
 
         distanceFeet = round(distanceInches / 12, 0)
 
-        velocity = autoAimTable[distanceFeet][0]
-        angle = autoAimTable[distanceFeet][1]
+        velocity = self.aimer.interpolate(distanceFeet, 0)
+        angle = self.aimer.interpolate(distanceFeet, 1)
 
         if velocity > self.shooter.getShooterMaxRPM() or velocity < self.shooter.getShooterMinRPM():
             print("Auto Aim Lookup: velocity out of bounds")

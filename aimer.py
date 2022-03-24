@@ -2,6 +2,7 @@ from navx import AHRS
 import wpilib
 import math
 import wpimath.controller
+from robotconfig import autoAimTable
 
 kP = 0.1
 kI = 0.00
@@ -126,3 +127,8 @@ class Aimer:
             theta = 0.0
             # print("unknown coordinates (", x, ", ", y, ")")
         return theta
+
+    def interpolate(self, val, entry):
+        a = math.floor(val)
+        b = math.ceil(val)
+        return ((autoAimTable[b][entry] - autoAimTable[a][entry])/(b - a)) * (val - a) + autoAimTable[a][entry]
