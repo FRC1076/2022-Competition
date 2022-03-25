@@ -94,7 +94,7 @@ autonConfig = {
     'ROTATE_1_TIME': 2,
     'DRIVE_1_TIME': 2, #2
     'INTAKE_TIME': 1,
-    'ROTATE_2_TIME': 24,
+    'ROTATE_2_TIME': 2,
     'DRIVE_2_TIME': 2, #2
     'TILTING_2_TIME': 1,
     'SPINUP_2_TIME': 1,
@@ -102,18 +102,18 @@ autonConfig = {
     'ROTATE_SPEED':0.2,
     'SHOOT_SPEED': 0.8,
     'DRIVE_SPEED': 0.8,
-    'TILT_1_TARGET_DEGREES': 20,
-    'POS_1_TILT_2_TARGET_DEGREES': 10,
+    'TILT_1_TARGET_DEGREES': 25,
+    'POS_1_TILT_2_TARGET_DEGREES': 25,
     'POS_1_ROTATE_1_TARGET_DEGREES': -165.5, #-165.5,
     'POS_1_ROTATE_2_TARGET_DEGREES': 165.5, # 165.5,
     'POS_1_DRIVE_1_DISTANCE': 5, # 51.2, #inches from front bumper to middle of ball
     'POS_1_DRIVE_2_DISTANCE': 5, # 51.2, #inches from front bumper to middle of ball
-    'POS_2_TILT_2_TARGET_DEGREES': 10,
+    'POS_2_TILT_2_TARGET_DEGREES': 25,
     'POS_2_ROTATE_1_TARGET_DEGREES': 147,
     'POS_2_ROTATE_2_TARGET_DEGREES': -147,
     'POS_2_DRIVE_1_DISTANCE': 5, # 56.5, #inches from front bumper to middle of ball
     'POS_2_DRIVE_2_DISTANCE': 5, # 56.5, #inches from front bumper to middle of ball
-    'POS_3_TILT_2_TARGET_DEGREES': 10,
+    'POS_3_TILT_2_TARGET_DEGREES': 25,
     'POS_3_ROTATE_1_TARGET_DEGREES': 165,
     'POS_3_ROTATE_2_TARGET_DEGREES': -165,
     'POS_3_DRIVE_1_DISTANCE': 5, #51.9, #inches from front bumper to middle of ball
