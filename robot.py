@@ -697,8 +697,8 @@ class MyRobot(wpilib.TimedRobot):
         if operator.getAButtonPressed():
             self.climber.solenoids.toggle()
 
-        #self.climber.setWinch(self.deadzoneCorrection(operator.getLeftY(), deadzone))
-        self.climber.setWinch(operator.getLeftY(), operator.getRightY())
+        self.climber.setWinch(self.deadzoneCorrection(operator.getLeftY(), deadzone), self.deadzoneCorrection(operator.getRightY(), deadzone))
+        #self.climber.setWinch(operator.getLeftY(), operator.getRightY())
 
     def disabledInit(self):
         
