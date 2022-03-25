@@ -16,6 +16,7 @@ class Drivetrain:
         if self.rightEncoderMotor:
             self.rightEncoder = self.rightEncoderMotor.getAlternateEncoder(self.countsPerRevolution)
             self.rightEncoder.setPosition(0) # Reset position of motor to zero
+        self.resetPosition()
 
     def resetPosition(self):
         self.leftResetPosition()
@@ -57,9 +58,9 @@ class Drivetrain:
 
     def rotationsToInches(self, rotations):
         #print("Left: ", self.getLeftRotations(), " Right: ", self.getRightRotations())
-        return(abs(rotations * (12 / 55) * (20 / 54) * self.wheelCircumference))
-
-        #12 to 20 to 54 
-
-        #(12 motor rotations) * (22 gear box per motor rotation)
+        #return(abs(rotations * (12 / 55) * (20 / 54) * self.wheelCircumference))
+        #return(abs(rotations * 69.44 * self.wheelCircumference))
+        return(abs(rotations * 1309))
+        # 1309 = 15 * 12 / 0.1375
+        # OR (55 / 12) * (54 / 20) = 12.375
 

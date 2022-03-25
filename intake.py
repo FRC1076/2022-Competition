@@ -13,15 +13,18 @@ class Intake:
         self.intakeMotorSpeed = intakeMotorSpeed
 
         self.solenoid.set(kOff)
+        print("MARK")
 
     def toggle(self):
         """
         Toggles the state of the piston between kForward and kReverse.
         If the state is kOff, it defaults to kReverse
         """
+        print("Toggling Intake")
         if self.solenoid.get() == kForward:
             self.solenoid.set(kReverse)
-        elif self.solenoid.get() == kReverse or self.solenoid.get() == kOff:
+        #elif (self.solenoid.get() == kReverse or self.solenoid.get() == kOff):
+        else:
             self.solenoid.set(kForward)
 
     def extend(self):

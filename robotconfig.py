@@ -104,8 +104,8 @@ autonConfig = {
     'DRIVE_SPEED': 0.8,
     'TILT_1_TARGET_DEGREES': 20,
     'POS_1_TILT_2_TARGET_DEGREES': 10,
-    'POS_1_ROTATE_1_TARGET_DEGREES': -179, #-165.5,
-    'POS_1_ROTATE_2_TARGET_DEGREES': 179, # 165.5,
+    'POS_1_ROTATE_1_TARGET_DEGREES': -165.5, #-165.5,
+    'POS_1_ROTATE_2_TARGET_DEGREES': 165.5, # 165.5,
     'POS_1_DRIVE_1_DISTANCE': 5, # 51.2, #inches from front bumper to middle of ball
     'POS_1_DRIVE_2_DISTANCE': 5, # 51.2, #inches from front bumper to middle of ball
     'POS_2_TILT_2_TARGET_DEGREES': 10,
@@ -194,6 +194,7 @@ gull_lake = {
     'VISION': visionConfig,
     'TILTSHOOTER': tiltShooterConfig,
     'SHOOTER': shooterConfig,
+    'INTAKE': intakeConfig,
     'FEEDER': feederConfig,
     'AUTON': autonConfig,
     'CLIMBER': climberConfig,
