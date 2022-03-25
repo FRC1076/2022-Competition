@@ -527,6 +527,8 @@ class MyRobot(wpilib.TimedRobot):
             if(driver.getRawAxis(lta) > 0.95):
                 clutchMultiplier = self.clutchMultiplier
             self.drivetrain.motors.arcadeDrive(rotateSpeed * clutchMultiplier, driveSpeed * clutchMultiplier)
+            print("Left Wheel Distance (rotations): ", self.drivetrain.getLeftRotations(), " Right Wheel Distance (rotations): ", self.drivetrain.getRightRotations())
+            print("Left Wheel Distance (inches): ", self.drivetrain.getLeftInches(), " Right Wheel Distance (inches): ", self.drivetrain.getRightInches())
 
         else:  # self.drive == SWERVE
             # PANIC
@@ -541,9 +543,10 @@ class MyRobot(wpilib.TimedRobot):
         and the left trigger turns the motor on when pressed
         in fully.
         '''
+        
         if self.intake is None:
             return
-
+        
         operator = self.operator.xboxController
         lta = self.operator.left_trigger_axis
 
@@ -697,11 +700,10 @@ class MyRobot(wpilib.TimedRobot):
         if operator.getAButtonPressed():
             self.climber.solenoids.toggle()
 
-        #self.climber.setWinch(self.deadzoneCorrection(operator.getLeftY(), deadzone))
-        self.climber.setWinch(operator.getLeftY(), operator.getRightY())
+        self.climber.setWinch(self.deadzoneCorrection(operator.getLeftY(), deadzone), self.deadzoneCorrection(operator.getRightY(), deadzone))
+        #self.climber.setWinch(operator.getLeftY(), operator.getRightY())
 
     def disabledInit(self):
-        
         
         self.autonTimeBase = self.autonTilting1Time
         
@@ -734,6 +736,9 @@ class MyRobot(wpilib.TimedRobot):
 
         #if (self.intake):
         #    self.intake.extend()
+
+        if (self.drivetrain):
+            self.drivetrain.resetPosition()
 
     def autonomousPeriodic(self):
 
@@ -986,6 +991,7 @@ class MyRobot(wpilib.TimedRobot):
             return (0, 0)
 
         velocity = autoAimTable[distanceFeet][0]
+        
         angle = autoAimTable[distanceFeet][1]
 
         if velocity > self.shooter.getShooterMaxRPM() or velocity < self.shooter.getShooterMinRPM():
