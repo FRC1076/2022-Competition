@@ -375,9 +375,10 @@ class MyRobot(wpilib.TimedRobot):
             self.climber.solenoids.set(climber.kReverse)
 
     def teleopPeriodic(self):
-        print(self.aimer.interpolate(10, 0))
-        print(self.aimer.interpolate(10.5, 0))
-        print(self.aimer.interpolate(11, 0))
+        # Testing Lerp 
+        #print(self.aimer.interpolate(10, 0))
+        #print(self.aimer.interpolate(10.5, 0))
+        #print(self.aimer.interpolate(11, 0))
 
         driver = self.driver.xboxController
         rta = self.driver.right_trigger_axis
@@ -990,9 +991,8 @@ class MyRobot(wpilib.TimedRobot):
             print("Auto Aim Lookup: distanceInches out of bounds")
             return (0, 0)
 
-        velocity = autoAimTable[distanceFeet][0]
-        
-        angle = autoAimTable[distanceFeet][1]
+        velocity = self.aimer.interpolate(distanceFeet, 0)
+        angle = self.aimer.interpolate(distanceFeet, 1)
 
         if velocity > self.shooter.getShooterMaxRPM() or velocity < self.shooter.getShooterMinRPM():
             print("Auto Aim Lookup: velocity out of bounds")
