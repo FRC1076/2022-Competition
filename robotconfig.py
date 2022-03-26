@@ -100,24 +100,27 @@ autonConfig = {
     'SPINUP_2_TIME': 1,
     'FIRING_2_TIME': 0.5,
     'ROTATE_SPEED':0.2,
-    'SHOOT_SPEED': 0.8,
+    'SHOOT_1_SPEED': 0.8,
+    'SHOOT_2_SPEED': 0.8,
+    'SHOOT_1_RPM': 4150,
+    'SHOOT_2_RPM': 4150,
     'DRIVE_SPEED': 0.8,
-    'TILT_1_TARGET_DEGREES': 25,
-    'POS_1_TILT_2_TARGET_DEGREES': 25,
+    'TILT_1_TARGET_DEGREES': 23,
+    'POS_1_TILT_2_TARGET_DEGREES': 23,
     'POS_1_ROTATE_1_TARGET_DEGREES': -165.5, #-165.5,
     'POS_1_ROTATE_2_TARGET_DEGREES': 165.5, # 165.5,
-    'POS_1_DRIVE_1_DISTANCE': 5, # 51.2, #inches from front bumper to middle of ball
-    'POS_1_DRIVE_2_DISTANCE': 5, # 51.2, #inches from front bumper to middle of ball
+    'POS_1_DRIVE_1_DISTANCE': 51.2, # 51.2, #inches from front bumper to middle of ball
+    'POS_1_DRIVE_2_DISTANCE': 51.2, # 51.2, #inches from front bumper to middle of ball
     'POS_2_TILT_2_TARGET_DEGREES': 25,
     'POS_2_ROTATE_1_TARGET_DEGREES': 147,
     'POS_2_ROTATE_2_TARGET_DEGREES': -147,
-    'POS_2_DRIVE_1_DISTANCE': 5, # 56.5, #inches from front bumper to middle of ball
-    'POS_2_DRIVE_2_DISTANCE': 5, # 56.5, #inches from front bumper to middle of ball
+    'POS_2_DRIVE_1_DISTANCE': 56.5, # 56.5, #inches from front bumper to middle of ball
+    'POS_2_DRIVE_2_DISTANCE': 56.5, # 56.5, #inches from front bumper to middle of ball
     'POS_3_TILT_2_TARGET_DEGREES': 25,
     'POS_3_ROTATE_1_TARGET_DEGREES': 165,
     'POS_3_ROTATE_2_TARGET_DEGREES': -165,
-    'POS_3_DRIVE_1_DISTANCE': 5, #51.9, #inches from front bumper to middle of ball
-    'POS_3_DRIVE_2_DISTANCE': 5, #51.9, #inches from front bumper to middle of ball
+    'POS_3_DRIVE_1_DISTANCE': 51.9, #51.9, #inches from front bumper to middle of ball
+    'POS_3_DRIVE_2_DISTANCE': 51.9, #51.9, #inches from front bumper to middle of ball
 }
 
 climberConfig = {
@@ -187,7 +190,7 @@ testbot = { # Always used for unit tests ($ python robot.py sim)
     'CLIMBER': climberConfig
 }
 
-gull_lake = {
+saline = {
     'CONTROLLERS': controllerConfig,
     'DRIVETRAIN': drivetrainConfig,
     'AIMER': aimerConfig,
@@ -211,4 +214,4 @@ showbot = {
 ##########################
 ###  CONFIG TO DEPLOY  ###
 ##########################
-robotconfig = gull_lake
+robotconfig = saline

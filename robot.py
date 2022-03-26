@@ -131,8 +131,10 @@ class MyRobot(wpilib.TimedRobot):
         self.autonTilting2Time = config['TILTING_2_TIME']
         self.autonSpinUp2Time = config['SPINUP_2_TIME']
         self.autonFiring2Time = config['FIRING_2_TIME']
-
-        self.autonShootSpeed = config['SHOOT_SPEED']
+        self.autonShoot1Speed = config['SHOOT_1_SPEED']
+        self.autonShoot2Speed = config['SHOOT_2_SPEED']
+        self.autonShoot1RPM = config['SHOOT_1_RPM']
+        self.autonShoot2RPM = config['SHOOT_2_RPM']
         self.autonRotateSpeed = config['ROTATE_SPEED']
         self.autonDriveSpeed = config['DRIVE_SPEED']
 
@@ -401,7 +403,7 @@ class MyRobot(wpilib.TimedRobot):
                 if self.aimer.isInRange():
                     self.phase = "AS_TILT_PHASE"
                     currentDistanceFeet = self.vision.getDistanceFeet()
-                    autoAimResult = self.autoAimLookup(currentDistanceFeet)
+                    autoAimResult = self.autoAimLookup(currentDistanceFeet +2) # Distance to edge plus radius of hoop FIX
                     autoAimRPM = autoAimResult[0]
                     autoAimTilt = autoAimResult[1]
                     self.tiltShooter.setTargetDegrees(autoAimTilt)
@@ -547,7 +549,7 @@ class MyRobot(wpilib.TimedRobot):
         operator = self.operator.xboxController
         lta = self.operator.left_trigger_axis
 
-        if operator.getLeftBumper():
+        if operator.getLeftBumperPressed():
             self.intake.toggle()
         
         if operator.getRawAxis(lta) > 0.95:
@@ -731,8 +733,8 @@ class MyRobot(wpilib.TimedRobot):
         if (self.aimer):
             self.aimer.reset()
 
-        #if (self.intake):
-        #    self.intake.extend()
+        if (self.intake):
+            self.intake.retract()
 
         if (self.drivetrain):
             self.drivetrain.resetPosition()
@@ -825,7 +827,8 @@ class MyRobot(wpilib.TimedRobot):
         if self.autonPhase == "AUTON_1_SPINUP":
             # self.shooter.pidController.setReference(self.shooter.shooterRPM, rev.CANSparkMax.ControlType.kVelocity)
             self.tiltShooterPeriodic()
-            self.shooter.setShooterVelocity(-self.autonShootSpeed) #Start spinning shooter
+            #self.shooter.setShooterVelocity(-self.autonShoot1Speed) #Start spinning shooter
+            self.shooter.setStoredShooterRPM(self.autonShoot1RPM) #Start spinning shooter
             # Feeder not moving
             # No intake movement
             self.drivetrain.motors.arcadeDrive(0, 0) # Don't drive
@@ -843,8 +846,9 @@ class MyRobot(wpilib.TimedRobot):
         elif self.autonPhase == "AUTON_1_ROTATE":
             self.tiltShooter.setTargetDegrees(self.autonTilt2TargetDegrees)
             self.tiltShooterPeriodic()
-            # Keep spinning shooter
-            #self.intake.motorOn()
+            #self.shooter.setShooterVelocity(-self.autonShoot2Speed) # Adjust spinning shooter
+            self.shooter.setStoredShooterRPM(self.autonShoot2RPM) #Start spinning shooter
+            self.intake.motorOn()
             self.feeder.setFeeder(0.0)
 
             self.aimer.setError(self.aimer.getGyroSetPoint() - self.aimer.getAccumulatedYaw())
@@ -864,11 +868,11 @@ class MyRobot(wpilib.TimedRobot):
             # Keep spinning shooter
             # Feeder not moving
             # Keep spinning intake motor
-            #self.intake.extend()
+            self.intake.extend()
             print("Drive Distance (L/R)", self.drivetrain.getLeftInches(), self.drivetrain.getRightInches())
             print("self.utonDrive1Distance", self.autonDrive1Distance)
             if(self.drivetrain.getLeftInches() and self.drivetrain.getRightInches()):
-                if(self.drivetrain.getLeftInches() < self.autonDrive1Distance or self.drivetrain.getRightInches() < self.autonDrive1Distance):
+                if(self.drivetrain.getLeftInches() < self.autonDrive1Distance and self.drivetrain.getRightInches() < self.autonDrive1Distance):
                     self.drivetrain.motors.arcadeDrive(0, -self.autonDriveSpeed) # Drive forward
                 else:
                     self.drivetrain.motors.arcadeDrive(0, 0) # Stop driving

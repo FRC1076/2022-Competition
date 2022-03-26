@@ -79,7 +79,7 @@ class Vision:
             dist = (self.targetHeight - self.cameraHeight) / math.tan(pitch)
             return dist - self.shooterOffset + self.targetRadius
         else:
-            return None
+            return 777
 
     def calculateVelocity(self, angle):  # returns ft/s given shooter angle
         if self.result.hasTargets:
