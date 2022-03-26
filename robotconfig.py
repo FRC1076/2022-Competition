@@ -135,7 +135,7 @@ climberConfig = {
     'CABLE_WRAPPED': 'UNDER',
     # Both speeds positive.
     # Extend speed must be lower than natural extend rate
-    'EXTEND_SPEED': 0.2,
+    'EXTEND_SPEED': 0.4, # Was 0.2, operator requested 0.4
     'RETRACT_SPEED': 0.5,
 }
 
