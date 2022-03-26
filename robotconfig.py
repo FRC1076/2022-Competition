@@ -87,7 +87,7 @@ visionConfig = {
 }
 
 autonConfig = {
-    'POSITION': 1, # 1, 2, or 3
+    'POSITION': 3, # 1, 2, or 3
     'TILTING_1_TIME': 1,
     'SPINUP_1_TIME': 1,
     'FIRING_1_TIME': 0.5,

@@ -44,15 +44,15 @@ class Drivetrain:
     
     def getLeftInches(self):
         if self.getLeftRotations():
-            print("Get Left Inches: ", (100 * self.rotationsToInches(self.getLeftRotations())))
-            return(100 * self.rotationsToInches(self.getLeftRotations()))
+            print("Get Left Inches: ", (self.rotationsToInches(self.getLeftRotations())))
+            return(self.rotationsToInches(self.getLeftRotations()))
         else:
             return None
 
     def getRightInches(self):
         if self.getRightRotations():
-            print("Get Right Inches: ", (100 * self.rotationsToInches(self.getRightRotations())))
-            return(100 * self.rotationsToInches(self.getRightRotations()))
+            print("Get Right Inches: ", (self.rotationsToInches(self.getRightRotations())))
+            return(self.rotationsToInches(self.getRightRotations()))
         else:
             return None
 
