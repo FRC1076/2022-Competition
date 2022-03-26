@@ -131,6 +131,9 @@ class MyRobot(wpilib.TimedRobot):
         self.autonTilting2Time = config['TILTING_2_TIME']
         self.autonSpinUp2Time = config['SPINUP_2_TIME']
         self.autonFiring2Time = config['FIRING_2_TIME']
+        self.autonPauseTime = config['PAUSE_TIME']
+        self.autonDrive3Time = config['DRIVE_3_TIME']
+        self.autonDrive4Time = config['DRIVE_4_TIME']
 
         self.autonShootSpeed = config['SHOOT_SPEED']
         self.autonRotateSpeed = config['ROTATE_SPEED']
@@ -736,6 +739,9 @@ class MyRobot(wpilib.TimedRobot):
         #    self.intake.extend()
 
     def autonomousPeriodic(self):
+        self.autonomousPeriodic2()
+
+    def autonomousPeriodic1(self):
 
         if not self.auton:
             return
@@ -930,6 +936,223 @@ class MyRobot(wpilib.TimedRobot):
                     self.drivetrain.motors.arcadeDrive(0, 0) # Stop driving
             else:
                 self.drivetrain.motors.arcadeDrive(0, -self.autonDriveSpeed) # Drive forward
+        
+        # Re-tilt the hood
+        elif self.autonPhase == "AUTON_2_TILTING":
+            self.tiltShooterPeriodic()
+            # Keep spinning shooter
+            # Feeder not moving
+            self.drivetrain.motors.arcadeDrive(0, 0) # Don't drive
+
+        # Keep spinning motor
+        elif self.autonPhase == "AUTON_2_SPINUP": # Phase may be unnecessary
+            self.tiltShooterPeriodic()
+            # Keep spinning shooter
+            # Feeder not moving
+            self.drivetrain.motors.arcadeDrive(0, 0) #  Don't drive
+
+        # Activate the feeder/trigger motor
+        elif self.autonPhase == "AUTON_2_FIRING":
+            self.tiltShooterPeriodic()
+            #keep spinning shooter
+            self.feeder.setFeeder(self.feeder.feederSpeed) # Trigger shot
+            self.drivetrain.motors.arcadeDrive(0, 0) #  Don't drive
+
+        else:
+            # Ignore the tilter
+            self.shooter.setShooterVelocity(0) #Stop spinning shooter
+            self.drivetrain.motors.arcadeDrive(0, 0) # Don't drive
+            self.feeder.setFeeder(0.0)
+
+    def autonomousPeriodic2(self):
+
+        if not self.auton:
+            return
+
+        timer = self.autonTimer.get()
+
+        deadzone = self.driver.deadzone
+        speedratio = 1.0
+
+        print("Auton Phase: ", self.autonPhase)
+        print("Auton Timer: ", timer)
+        
+        # Phase transitions
+        if timer > self.autonTimeBase and self.autonPhase == "AUTON_1_TILTING":
+            print("Auton Phase: ", self.autonPhase)
+            self.autonPhase = "AUTON_1_SPINUP"
+            self.autonTimeBase += self.autonSpinUp1Time
+
+        elif timer > self.autonTimeBase and self.autonPhase == "AUTON_1_SPINUP":
+            print("Auton Phase: ", self.autonPhase)
+            self.autonPhase = "AUTON_1_FIRING"
+            self.autonTimeBase += self.autonFiring1Time
+        
+        elif timer > self.autonTimeBase and self.autonPhase == "AUTON_1_FIRING":
+            print("Auton Phase: ", self.autonPhase)
+            self.autonPhase = "AUTON_1_DRIVE"
+            self.autonTimeBase += self.autonDrive1Time
+
+        elif timer > self.autonTimeBase and self.autonPhase == "AUTON_1_DRIVE":
+            print("Auton Phase: ", self.autonPhase)
+            self.autonPhase = "AUTON_1_ROTATE"
+            self.autonTimeBase += self.autonRotate1Time
+            self.aimer.setGyroSetPoint(self.autonRotate1TargetDegrees + self.aimer.getAccumulatedYaw())
+
+        elif timer > self.autonTimeBase and self.autonPhase == "AUTON_1_ROTATE":
+            print("Auton Phase: ", self.autonPhase)
+            self.autonPhase = "AUTON_2_DRIVE"
+            self.autonTimeBase += self.autonDrive2Time
+
+        elif timer > self.autonTimeBase and self.autonPhase == "AUTON_2_DRIVE":
+            print("Auton Phase: ", self.autonPhase)
+            self.autonPhase = "AUTON_PAUSE"
+            self.autonTimeBase += self.autonPauseTime
+
+        elif timer > self.autonTimeBase and self.autonPhase == "AUTON_PAUSE":
+            print("Auton Phase: ", self.autonPhase)
+            self.autonPhase = "AUTON_3_DRIVE"
+            self.autonTimeBase += self.autonDrive3Time
+
+        elif timer > self.autonTimeBase and self.autonPhase == "AUTON_3_DRIVE":
+            print("Auton Phase: ", self.autonPhase)
+            self.autonPhase = "AUTON_2_ROTATE"
+            self.autonTimeBase += self.autonRotate2Time
+        
+        elif timer > self.autonTimeBase and self.autonPhase == "AUTON_2_ROTATE":
+            print("Auton Phase: ", self.autonPhase)
+            self.autonPhase = "AUTON_4_DRIVE"
+            self.autonTimeBase += self.autonDrive4Time
+
+        elif timer > self.autonTimeBase and self.autonPhase == "AUTON_4_DRIVE":
+            print("Auton Phase: ", self.autonPhase)
+            self.autonPhase = "AUTON_2_TILTING"
+            if (self.tiltShooter):
+                self.tiltShooter.setTargetDegrees(self.autonTilt2TargetDegrees)
+            self.autonTimeBase += self.autonTilting2Time
+
+        elif timer > self.autonTimeBase and self.autonPhase == "AUTON_2_TILTING":
+            print("Auton Phase: ", self.autonPhase)
+            self.autonPhase = "AUTON_2_SPINUP"
+            self.autonTimeBase += self.autonSpinUp2Time
+
+        elif timer > self.autonTimeBase and self.autonPhase == "AUTON_2_SPINUP":
+            print("Auton Phase: ", self.autonPhase)
+            self.autonPhase = "AUTON_2_FIRING"
+            self.autonTimeBase += self.autonFiring2Time
+
+        elif timer > self.autonTimeBase and self.autonPhase == "AUTON_2_FIRING":
+            print("Auton Phase: ", self.autonPhase)
+            self.autonPhase = "AUTON_DONE"
+            #self.autonTimeBase += self.autonFiring2Time
+
+        # Auton Logic
+        # Spin up the shooter motor
+
+        # Tilt the hood
+        if self.autonPhase == "AUTON_1_TILTING":
+            self.tiltShooterPeriodic()
+            # Shooter not moving
+            # Feeder not moving
+            # No intake movement
+            self.drivetrain.motors.arcadeDrive(0, 0) # Don't drive
+
+        # Start spinning motor
+        if self.autonPhase == "AUTON_1_SPINUP":
+            # self.shooter.pidController.setReference(self.shooter.shooterRPM, rev.CANSparkMax.ControlType.kVelocity)
+            self.tiltShooterPeriodic()
+            self.shooter.setShooterVelocity(-self.autonShootSpeed) #Start spinning shooter
+            # Feeder not moving
+            # No intake movement
+            self.drivetrain.motors.arcadeDrive(0, 0) # Don't drive
+
+        # Activate the feeder/trigger motor
+        elif self.autonPhase == "AUTON_1_FIRING":
+            self.tiltShooterPeriodic()
+            # Keep spinning shooter
+            # No intake movement
+            self.feeder.setFeeder(self.feeder.feederSpeed) # Trigger shot
+            self.drivetrain.motors.arcadeDrive(0, 0) # Don't drive
+            self.aimer.reset() # Reset gyro to current heading
+
+        # Drive backwards
+        elif self.autonPhase == "AUTON_1_DRIVE":
+            self.tiltShooterPeriodic()
+            # Keep spinning shooter
+            # Feeder not moving
+            # Keep spinning intake motor
+            #self.intake.extend()
+            self.drivetrain.motors.arcadeDrive(0, self.autonDriveSpeed)
+
+        # Turn off the feeder/trigger motors, and rotate to correct position
+        elif self.autonPhase == "AUTON_1_ROTATE":
+            self.tiltShooter.setTargetDegrees(self.autonTilt2TargetDegrees)
+            self.tiltShooterPeriodic()
+            # Keep spinning shooter
+            #self.intake.motorOn()
+            self.feeder.setFeeder(0.0)
+
+            self.aimer.setError(self.aimer.getGyroSetPoint() - self.aimer.getAccumulatedYaw())
+            result = (self.aimer.PIDcalc(self.aimer.getError()), 0)
+            
+            rotateSpeed = result[0]
+            driveSpeed = result[1]
+            
+            #rotateSpeed = speedratio * self.deadzoneCorrection(rotateSpeed + self.rotationCorrection, deadzone)
+            self.drivetrain.motors.arcadeDrive(rotateSpeed, driveSpeed)
+
+            self.drivetrain.resetPosition()
+
+        # Drive to new position
+        elif self.autonPhase == "AUTON_2_DRIVE":
+            self.tiltShooterPeriodic()
+            # Keep spinning shooter
+            # Feeder not moving
+            # Keep spinning intake motor
+            #self.intake.extend()
+            self.drivetrain.motors.arcadeDrive(0, self.autonDriveSpeed)
+
+        elif self.autonPhase == "AUTON_PAUSE":
+            self.tiltShooterPeriodic()
+            # Keep spinning shooter
+            # Feeder not moving
+            # Keep spinning intake motor
+            #self.intake.extend()
+            self.drivetrain.motors.arcadeDrive(0, 0)
+
+        elif self.autonPhase == "AUTON_3_DRIVE":
+            self.tiltShooterPeriodic()
+            # Keep spinning shooter
+            # Feeder not moving
+            # Keep spinning intake motor
+            #self.intake.extend()
+            self.drivetrain.motors.arcadeDrive(0, self.autonDriveSpeed)
+
+        # Rotate to target
+        elif self.autonPhase == "AUTON_2_ROTATE":
+            self.tiltShooterPeriodic()
+            # Keep spinning shooter
+            # Feeder not moving
+            #self.intake.motorOff()
+            
+            self.aimer.setError(self.aimer.getGyroSetPoint() - self.aimer.getAccumulatedYaw())
+            result = (self.aimer.PIDcalc(self.aimer.getError()), 0)
+            
+            rotateSpeed = result[0]
+            driveSpeed = result[1]
+            
+            #rotateSpeed = speedratio * self.deadzoneCorrection(rotateSpeed + self.rotationCorrection, deadzone)
+            self.drivetrain.motors.arcadeDrive(rotateSpeed, driveSpeed)
+
+            self.drivetrain.resetPosition()
+
+        elif self.autonPhase == "AUTON_4_DRIVE":
+            self.tiltShooterPeriodic()
+            # Keep spinning shooter
+            # Feeder not moving
+            # Keep spinning intake motor
+            #self.intake.extend()
+            self.drivetrain.motors.arcadeDrive(0, self.autonDriveSpeed)
         
         # Re-tilt the hood
         elif self.autonPhase == "AUTON_2_TILTING":

@@ -120,6 +120,42 @@ autonConfig = {
     'POS_3_DRIVE_2_DISTANCE': 5, #51.9, #inches from front bumper to middle of ball
 }
 
+autonConfig2 = {
+    'POSITION': 1, # 1, 2, or 3
+    'TILTING_1_TIME': 1,
+    'SPINUP_1_TIME': 2,
+    'FIRING_1_TIME': 0.5,
+    'DRIVE_1_TIME': 0.44,
+    'ROTATE_1_TIME': 2, #2
+    'DRIVE_2_TIME': 1.44,
+    'PAUSE_TIME': 2,
+    'DRIVE_3_TIME': 1.44, #2
+    'ROTATE_2_TIME': 2, #2
+    'DRIVE_4_TIME': 0.44, #2
+    'TILTING_2_TIME': 1,
+    'SPINUP_2_TIME': 2,
+    'FIRING_2_TIME': 0.5,
+    'ROTATE_SPEED':0.2,
+    'SHOOT_SPEED': 0.8,
+    'DRIVE_SPEED': 0.8,
+    'TILT_1_TARGET_DEGREES': 20,
+    'POS_1_TILT_2_TARGET_DEGREES': 10,
+    'POS_1_ROTATE_1_TARGET_DEGREES': 136.43, #-165.5,
+    'POS_1_ROTATE_2_TARGET_DEGREES': -136.43, # 165.5,
+    # Unnecessary but included because initAuton calls them
+    'INTAKE_TIME' : 2,
+    'POS_1_DRIVE_1_DISTANCE': 5, # 51.2, #inches from front bumper to middle of ball
+    'POS_1_DRIVE_2_DISTANCE': 5, # 51.2, #inches from front bumper to middle of ball
+    'POS_2_ROTATE_2_TARGET_DEGREES': -147,
+    'POS_2_DRIVE_1_DISTANCE': 5, # 56.5, #inches from front bumper to middle of ball
+    'POS_2_DRIVE_2_DISTANCE': 5, # 56.5, #inches from front bumper to middle of ball
+    'POS_3_TILT_2_TARGET_DEGREES': 10,
+    'POS_3_ROTATE_1_TARGET_DEGREES': 165,
+    'POS_3_ROTATE_2_TARGET_DEGREES': -165,
+    'POS_3_DRIVE_1_DISTANCE': 5, #51.9, #inches from front bumper to middle of ball
+    'POS_3_DRIVE_2_DISTANCE': 5, #51.9, #inches from front bumper to middle of ball
+}
+
 climberConfig = {
     'WINCH_LEFT_ID': 6,
     'WINCH_RIGHT_ID': 14,
@@ -183,7 +219,7 @@ testbot = { # Always used for unit tests ($ python robot.py sim)
     'TILTSHOOTER': tiltShooterConfig,
     'AIMER': aimerConfig,
     'VISION': visionConfig,
-    'AUTON': autonConfig,
+    'AUTON': autonConfig2,
     'CLIMBER': climberConfig
 }
 
@@ -195,7 +231,7 @@ gull_lake = {
     'TILTSHOOTER': tiltShooterConfig,
     'SHOOTER': shooterConfig,
     'FEEDER': feederConfig,
-    'AUTON': autonConfig,
+    'AUTON': autonConfig2,
     'CLIMBER': climberConfig,
 }
 
