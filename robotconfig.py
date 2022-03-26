@@ -45,7 +45,7 @@ drivetrainConfig = {
 
 shooterConfig = {
     'SHOOTER_ID': 10,
-    'SHOOTER_RPM': 3500,
+    'SHOOTER_RPM': 4250,
     'SHOOTER_MAX_RPM': 6000,
     'SHOOTER_MIN_RPM': 0,
 }
@@ -53,8 +53,8 @@ shooterConfig = {
 intakeConfig = {
     # Update IDs when known
     'INTAKE_MOTOR_ID': 17,
-    'INTAKE_SOLENOID_FORWARD_ID': 1,
-    'INTAKE_SOLENOID_REVERSE_ID': 2,
+    'INTAKE_SOLENOID_FORWARD_ID': 6,
+    'INTAKE_SOLENOID_REVERSE_ID': 7,
     'INTAKE_MOTOR_SPEED': 0.8,
 }
 
@@ -66,8 +66,8 @@ feederConfig = {
 tiltShooterConfig = {
     'TILTSHOOTER_ID': 1,
     'ROTATIONS_PER_360': 75,
-    'MIN_DEGREES': 5,
-    'MAX_DEGREES': 20,
+    'MIN_DEGREES': 0,
+    'MAX_DEGREES': 35,
     'BUFFER_DEGREES': 2,
     'SPEED': 0.1,
 }
@@ -78,54 +78,54 @@ aimerConfig = {
 }
 
 visionConfig = {
-    'TARGET_HEIGHT': 8.5,
+    'TARGET_HEIGHT': 8.9,
     'TARGET_RADIUS': 2,
     'SHOOTER_HEIGHT': 3.5,
     'SHOOTER_OFFSET': 1,
-    'CAMERA_HEIGHT': 4,
-    'CAMERA_PITCH': 0,
+    'CAMERA_HEIGHT': 2.9,
+    'CAMERA_PITCH': 27,
 }
 
 autonConfig = {
     'POSITION': 1, # 1, 2, or 3
     'TILTING_1_TIME': 1,
-    'SPINUP_1_TIME': 3,
+    'SPINUP_1_TIME': 1,
     'FIRING_1_TIME': 0.5,
     'ROTATE_1_TIME': 2,
-    'DRIVE_1_TIME': 0, #2
+    'DRIVE_1_TIME': 2, #2
     'INTAKE_TIME': 1,
     'ROTATE_2_TIME': 2,
-    'DRIVE_2_TIME': 0, #2
+    'DRIVE_2_TIME': 2, #2
     'TILTING_2_TIME': 1,
     'SPINUP_2_TIME': 1,
     'FIRING_2_TIME': 0.5,
-    'ROTATE_SPEED':0.5,
+    'ROTATE_SPEED':0.2,
     'SHOOT_SPEED': 0.8,
     'DRIVE_SPEED': 0.8,
-    'TILT_1_TARGET_DEGREES': 20,
-    'POS_1_TILT_2_TARGET_DEGREES': 10,
-    'POS_1_ROTATE_1_TARGET_DEGREES': -165.5,
-    'POS_1_ROTATE_2_TARGET_DEGREES': 165.5,
-    'POS_1_DRIVE_1_DISTANCE': 51.2, #inches from front bumper to middle of ball
-    'POS_1_DRIVE_2_DISTANCE': 51.2, #inches from front bumper to middle of ball
-    'POS_2_TILT_2_TARGET_DEGREES': 10,
+    'TILT_1_TARGET_DEGREES': 25,
+    'POS_1_TILT_2_TARGET_DEGREES': 25,
+    'POS_1_ROTATE_1_TARGET_DEGREES': -165.5, #-165.5,
+    'POS_1_ROTATE_2_TARGET_DEGREES': 165.5, # 165.5,
+    'POS_1_DRIVE_1_DISTANCE': 5, # 51.2, #inches from front bumper to middle of ball
+    'POS_1_DRIVE_2_DISTANCE': 5, # 51.2, #inches from front bumper to middle of ball
+    'POS_2_TILT_2_TARGET_DEGREES': 25,
     'POS_2_ROTATE_1_TARGET_DEGREES': 147,
     'POS_2_ROTATE_2_TARGET_DEGREES': -147,
-    'POS_2_DRIVE_1_DISTANCE': 56.5, #inches from front bumper to middle of ball
-    'POS_2_DRIVE_2_DISTANCE': 56.5, #inches from front bumper to middle of ball
-    'POS_3_TILT_2_TARGET_DEGREES': 10,
+    'POS_2_DRIVE_1_DISTANCE': 5, # 56.5, #inches from front bumper to middle of ball
+    'POS_2_DRIVE_2_DISTANCE': 5, # 56.5, #inches from front bumper to middle of ball
+    'POS_3_TILT_2_TARGET_DEGREES': 25,
     'POS_3_ROTATE_1_TARGET_DEGREES': 165,
     'POS_3_ROTATE_2_TARGET_DEGREES': -165,
-    'POS_3_DRIVE_1_DISTANCE': 51.9, #inches from front bumper to middle of ball
-    'POS_3_DRIVE_2_DISTANCE': 51.9, #inches from front bumper to middle of ball
+    'POS_3_DRIVE_1_DISTANCE': 5, #51.9, #inches from front bumper to middle of ball
+    'POS_3_DRIVE_2_DISTANCE': 5, #51.9, #inches from front bumper to middle of ball
 }
 
 climberConfig = {
     'WINCH_LEFT_ID': 6,
     'WINCH_RIGHT_ID': 14,
     # Pneumatic board IDs
-    'SOLENOID_FORWARD_ID': 6,
-    'SOLENOID_REVERSE_ID': 0,
+    'SOLENOID_FORWARD_ID': 4,
+    'SOLENOID_REVERSE_ID': 5,
     # DIO pin numbers
     'LEFT_LIMIT_ID': 0,
     'RIGHT_LIMIT_ID': 1,
@@ -138,48 +138,38 @@ climberConfig = {
 
 # keys are distances in ft. Values are (v, angle) in rpm and degrees, respectively
 autoAimTable = {
-    0: (3000, 20),
-    1: (3000, 20),
-    2: (3000, 20),
-    3: (3000, 20),
-    4: (3000, 20),
-    5: (3000, 20),
-    6: (3000, 20),
-    7: (3000, 20),
-    8: (3000, 20),
-    9: (3000, 20),
-    10: (3000, 20),
-    11: (3000, 20),
-    12: (3000, 20),
-    13: (3000, 20),
-    14: (3000, 20),
-    15: (3000, 20),
-    16: (3000, 20),
-    17: (3000, 20),
-    18: (3000, 20),
-    19: (3000, 20),
-    20: (3000, 20),
-    21: (3000, 20),
-    22: (3000, 20),
-    23: (3000, 20),
-    24: (3000, 20),
-    25: (3000, 20),
-    26: (3000, 20),
-    27: (3000, 20),
-    28: (3000, 20),
-    29: (3000, 20),
-    30: (3000, 20),
-    31: (3000, 20),
-    32: (3000, 20),
-    33: (3000, 20),
-    34: (3000, 20),
-    35: (3000, 20),
-    36: (3000, 20),
-    37: (3000, 20),
-    38: (3000, 20),
-    39: (3000, 20),
-    40: (3000, 20),
-}
+    0: (4000, 20),
+    1: (4000, 20),
+    2: (4000, 20),
+    3: (4000, 20),
+    4: (4000, 20),
+    5: (4050, 20),  # Not tested this and below
+    6: (4250, 20),
+    7: (4400, 20),
+    8: (4050, 23),
+    9: (4250, 23),
+    10: (4400, 23),
+    11: (4500, 23),
+    12: (4000, 25),
+    13: (4000, 30),
+    14: (4200, 30),
+    15: (4400, 30), # Not tested here and above
+    16: (4500, 30),
+    17: (4500, 30),
+    18: (4500, 30),
+    19: (4500, 30),
+    20: (4500, 30),
+    21: (4500, 30),
+    22: (4500, 30),
+    23: (4500, 30),
+    24: (4500, 30),
+    25: (4500, 30),
+    26: (4500, 30),
+    27: (4500, 30),
+    28: (4500, 30),
+    29: (4500, 30),
+    30: (4500, 30),
+    }
 
 #######################
 ###  ROBOT CONFIGS  ###
@@ -204,6 +194,7 @@ gull_lake = {
     'VISION': visionConfig,
     'TILTSHOOTER': tiltShooterConfig,
     'SHOOTER': shooterConfig,
+    'INTAKE': intakeConfig,
     'FEEDER': feederConfig,
     'AUTON': autonConfig,
     'CLIMBER': climberConfig,

@@ -11,41 +11,6 @@
         "vgap": 16.0,
         "titleType": 0,
         "tiles": {
-          "0,0": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/phase",
-              "_title": "phase"
-            }
-          },
-          "2,0": {
-            "size": [
-              2,
-              2
-            ],
-            "content": {
-              "_type": "Gyro",
-              "_title": "Gyro",
-              "Visuals/Major tick spacing": 45.0,
-              "Visuals/Starting angle": 180.0,
-              "Visuals/Show tick mark ring": true,
-              "Visuals/Counter clockwise": false
-            }
-          },
-          "0,1": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_title": "Sim: 127.0.0.1; Comp: 10.10.76.2"
-            }
-          },
           "4,0": {
             "size": [
               1,
@@ -53,19 +18,43 @@
             ],
             "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Periods",
-              "_title": "Periods"
+              "_source0": "network_table:///SmartDashboard/VALUE_SHOOTER_RPM",
+              "_title": "Shooter RPM"
             }
           },
-          "5,0": {
+          "4,1": {
             "size": [
               1,
               1
             ],
             "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Phase ",
-              "_title": "Phase "
+              "_source0": "network_table:///SmartDashboard/VALUE_TILT_ANGLE",
+              "_title": "Shooter Tilt"
+            }
+          },
+          "4,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/VALUE_SHOT_FIRED",
+              "_title": "Shot Fired?",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "8,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/VALUE_GYRO_RELATIVE_YAW",
+              "_title": "Gyro Rel. Yaw"
             }
           },
           "6,0": {
@@ -74,68 +63,137 @@
               1
             ],
             "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Vision Has Target",
-              "_title": "Vision Has Target",
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/VALUE_PHASE",
+              "_title": "Robot Phase"
             }
           },
-          "4,1": {
+          "8,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/VALUE_GYRO_ACCUMULATED_YAW",
+              "_title": "Gyro Total Yaw"
+            }
+          },
+          "2,0": {
             "size": [
               2,
               1
             ],
             "content": {
+              "_type": "Number Slider",
+              "_source0": "network_table:///SmartDashboard/PARAM_SHOOTER_RPM",
+              "_title": "Set Shooter RPM",
+              "Slider Settings/Min": 0.0,
+              "Slider Settings/Max": 6000.0,
+              "Slider Settings/Block increment": 250.0,
+              "Visuals/Display value": true
+            }
+          },
+          "2,1": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Number Slider",
+              "_source0": "network_table:///SmartDashboard/PARAM_TILT_ANGLE",
+              "_title": "Set Shooter Tilt",
+              "Slider Settings/Min": 0.0,
+              "Slider Settings/Max": 35.0,
+              "Slider Settings/Block increment": 1.0,
+              "Visuals/Display value": true
+            }
+          },
+          "8,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Aimer Yaw (Degrees)",
-              "_title": "Aimer Yaw (Degrees)"
+              "_source0": "network_table:///SmartDashboard/VALUE_VISION_YAW",
+              "_title": "Vision: Yaw"
+            }
+          },
+          "7,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/VALUE_VISION_HAS_TARGET",
+              "_title": "Vison Has Target?",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
             }
           },
           "7,1": {
             "size": [
-              2,
+              1,
               1
             ],
             "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Tilt Target (Degrees)",
-              "_title": "Tilt Target (Degrees)"
+              "_source0": "network_table:///SmartDashboard/VALUE_VISION_NUM_TARGETS",
+              "_title": "# Targets"
             }
           },
-          "6,1": {
+          "9,1": {
             "size": [
               1,
               1
             ],
             "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Tilt (Degrees)",
-              "_title": "Tilt (Degrees)"
+              "_source0": "network_table:///SmartDashboard/VALUE_VISION_DISTANCE",
+              "_title": "Vision: Distance"
             }
           },
-          "6,2": {
+          "9,0": {
             "size": [
               1,
               1
             ],
             "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Feeder Has Fired",
-              "_title": "Feeder Has Fired",
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/VALUE_VISION_PITCH",
+              "_title": "Vision: Pitch"
             }
           },
-          "4,2": {
+          "2,2": {
             "size": [
               2,
               1
             ],
             "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Shooter Speed (RPM)",
-              "_title": "Shooter Speed (RPM)"
+              "_type": "Number Slider",
+              "_source0": "network_table:///SmartDashboard/PARAM_CLIMB_EXTEND",
+              "_title": "Set Climber Extend Speed",
+              "Slider Settings/Min": 0.0,
+              "Slider Settings/Max": 1.0,
+              "Slider Settings/Block increment": 0.0625,
+              "Visuals/Display value": true
+            }
+          },
+          "2,3": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Number Slider",
+              "_source0": "network_table:///SmartDashboard/PARAM_CLIMB_RETRACT",
+              "_title": "Set Climber Retract Speed",
+              "Slider Settings/Min": 0.0,
+              "Slider Settings/Max": 1.0,
+              "Slider Settings/Block increment": 0.0625,
+              "Visuals/Display value": true
             }
           }
         }
@@ -189,31 +247,37 @@
                   "_type": "Text View",
                   "_source0": "network_table:///LiveWindow/Ungrouped/DoubleSolenoid[0,3]/Value",
                   "_title": "DoubleSolenoid[0,3]/Value"
+                },
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/DigitalInput[0]/Value",
+                  "_title": "LiveWindow/Ungrouped/DigitalInput[0]/Value",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/DoubleSolenoid[0,6]/Value",
+                  "_title": "LiveWindow/Ungrouped/DoubleSolenoid[0,6]/Value"
+                },
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/DigitalInput[1]/Value",
+                  "_title": "LiveWindow/Ungrouped/DigitalInput[1]/Value",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
                 }
               ]
             }
           }
         }
       }
-    },
-    {
-      "title": "Tab 3",
-      "autoPopulate": false,
-      "autoPopulatePrefix": "",
-      "widgetPane": {
-        "gridSize": 128.0,
-        "showGrid": true,
-        "hgap": 16.0,
-        "vgap": 16.0,
-        "titleType": 0,
-        "tiles": {}
-      }
     }
   ],
   "windowGeometry": {
-    "x": 0.0,
-    "y": 0.0,
-    "width": 1540.0,
-    "height": 625.5999755859375
+    "x": -91.19999694824219,
+    "y": 28.799999237060547,
+    "width": 1553.5999755859375,
+    "height": 714.4000244140625
   }
 }

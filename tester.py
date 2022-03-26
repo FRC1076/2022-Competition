@@ -139,6 +139,7 @@ class Tester():
         self.testManualClimber()
         self.testRotatePhase()
         self.testTiltShooter()
+        self.testCubicMap()
 
     def testTankDrive(self):
         self.robot.drive_type = robotconfig.TANK
@@ -289,3 +290,43 @@ class Tester():
         print('\n******************')
         print('AS_TILT_PHASE Teleop: Passed!')
         print('******************\n')
+
+    def testCubicMap(self):
+        #val, min, max, deadzone
+        _min = 0.2
+        _max = 1.0
+        _dz = 0.2
+
+        _in = 0.5
+        _out = self.robot.cubicMap(_in, _min, _max, _dz)
+        print(_in, '>', _out)
+
+        _in = 0.1
+        _out = self.robot.cubicMap(_in, _min, _max, _dz)
+        print(_in, '>', _out)
+
+        _in = 0.9
+        _out = self.robot.cubicMap(_in, _min, _max, _dz)
+        print(_in, '>', _out)
+
+        _in = 0.99
+        _out = self.robot.cubicMap(_in, _min, _max, _dz)
+        print(_in, '>', _out)
+
+        _max = 0.4
+
+        _in = 0.5
+        _out = self.robot.cubicMap(_in, _min, _max, _dz)
+        print(_in, '>', _out)
+
+        _in = 0.1
+        _out = self.robot.cubicMap(_in, _min, _max, _dz)
+        print(_in, '>', _out)
+
+        _in = 0.9
+        _out = self.robot.cubicMap(_in, _min, _max, _dz)
+        print(_in, '>', _out)
+
+        _in = 0.99
+        _out = self.robot.cubicMap(_in, _min, _max, _dz)
+        print(_in, '>', _out)
