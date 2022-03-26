@@ -126,15 +126,16 @@ autonConfig2 = {
     'SPINUP_1_TIME': 2,
     'FIRING_1_TIME': 0.5,
     'DRIVE_1_TIME': 0.44,
-    'ROTATE_1_TIME': 2, #2
+    'ROTATE_1_TIME': 1.5, #2
     'DRIVE_2_TIME': 1.44,
     'PAUSE_TIME': 2,
     'DRIVE_3_TIME': 1.44, #2
-    'ROTATE_2_TIME': 2, #2
+    'ROTATE_2_TIME': 1.5, #2
     'DRIVE_4_TIME': 0.44, #2
     'TILTING_2_TIME': 1,
-    'SPINUP_2_TIME': 2,
+    'SPINUP_2_TIME': 1, # keep spinning
     'FIRING_2_TIME': 0.5,
+
     'ROTATE_SPEED':0.2,
     'SHOOT_SPEED': 0.8,
     'DRIVE_SPEED': 0.8,
