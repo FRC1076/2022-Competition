@@ -40,7 +40,7 @@ drivetrainConfig = {
     'WHEEL_CIRCUMFERENCE': 18.84, # 6 inches * pi
     'LEFT_ENCODER': 13,
     'RIGHT_ENCODER': 15, #was 7
-    'CLUTCH_MULTIPLIER': 0.4,
+    'CLUTCH_MULTIPLIER': 0.65 ,
 }
 
 shooterConfig = {
@@ -87,26 +87,26 @@ visionConfig = {
 }
 
 autonConfig = {
-    'POSITION': 3, # 1, 2, or 3
-    'TILTING_1_TIME': 1,
-    'SPINUP_1_TIME': 1,
-    'FIRING_1_TIME': 0.5,
-    'ROTATE_1_TIME': 2,
-    'DRIVE_1_TIME': 2, #2
+    'POSITION': 2, # 1, 2, or 3
+    'TILTING_1_TIME': 2,
+    'SPINUP_1_TIME': 3,
+    'FIRING_1_TIME': 1,
+    'ROTATE_1_TIME': 0, #2
+    'DRIVE_1_TIME': 0, #0.75
     'INTAKE_TIME': 1,
-    'ROTATE_2_TIME': 2,
-    'DRIVE_2_TIME': 2, #2
+    'ROTATE_2_TIME': 0,
+    'DRIVE_2_TIME': 0, #2
     'TILTING_2_TIME': 1,
     'SPINUP_2_TIME': 1,
     'FIRING_2_TIME': 0.5,
-    'ROTATE_SPEED':0.2,
-    'SHOOT_1_SPEED': 0.8,
-    'SHOOT_2_SPEED': 0.8,
+    'ROTATE_SPEED':0.0, #0.2
+    'SHOOT_1_SPEED': 0.6,
+    'SHOOT_2_SPEED': 0.6,
     'SHOOT_1_RPM': 4150,
     'SHOOT_2_RPM': 4150,
-    'DRIVE_SPEED': 0.8,
-    'TILT_1_TARGET_DEGREES': 23,
-    'POS_1_TILT_2_TARGET_DEGREES': 23,
+    'DRIVE_SPEED': 0.0, #0.8
+    'TILT_1_TARGET_DEGREES': 19, #23
+    'POS_1_TILT_2_TARGET_DEGREES': 20, #23
     'POS_1_ROTATE_1_TARGET_DEGREES': -165.5, #-165.5,
     'POS_1_ROTATE_2_TARGET_DEGREES': 165.5, # 165.5,
     'POS_1_DRIVE_1_DISTANCE': 51.2, # 51.2, #inches from front bumper to middle of ball
