@@ -104,7 +104,7 @@ autonConfig = {
     'SHOOT_2_SPEED': 0.6,
     'SHOOT_1_RPM': 4150,
     'SHOOT_2_RPM': 4150,
-    'DRIVE_SPEED': 0.0, #0.8
+    'DRIVE_SPEED': 0.8, #0.8
     'TILT_1_TARGET_DEGREES': 19, #23
     'POS_1_TILT_2_TARGET_DEGREES': 20, #23
     'POS_1_ROTATE_1_TARGET_DEGREES': -165.5, #-165.5,
