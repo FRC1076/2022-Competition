@@ -87,24 +87,24 @@ visionConfig = {
 }
 
 autonConfig = {
-    'POSITION': 2, # 1, 2, or 3
+    'POSITION': 3, # 1, 2, or 3
     'TILTING_1_TIME': 2,
     'SPINUP_1_TIME': 3,
     'FIRING_1_TIME': 1,
-    'ROTATE_1_TIME': 0, #2
-    'DRIVE_1_TIME': 0, #0.75
+    'ROTATE_1_TIME': 2, #2
+    'DRIVE_1_TIME': 0.75, #0.75
     'INTAKE_TIME': 1,
     'ROTATE_2_TIME': 0,
-    'DRIVE_2_TIME': 0, #2
+    'DRIVE_2_TIME': 0,
     'TILTING_2_TIME': 1,
     'SPINUP_2_TIME': 1,
     'FIRING_2_TIME': 0.5,
-    'ROTATE_SPEED':0.0, #0.2
-    'SHOOT_1_SPEED': 0.6,
-    'SHOOT_2_SPEED': 0.6,
+    'ROTATE_SPEED':0.2, #0.2
+    'SHOOT_1_SPEED': 0.62,
+    'SHOOT_2_SPEED': 0.62,
     'SHOOT_1_RPM': 4150,
     'SHOOT_2_RPM': 4150,
-    'DRIVE_SPEED': 0.0, #0.8
+    'DRIVE_SPEED': 0.8, #0.8
     'TILT_1_TARGET_DEGREES': 19, #23
     'POS_1_TILT_2_TARGET_DEGREES': 20, #23
     'POS_1_ROTATE_1_TARGET_DEGREES': -165.5, #-165.5,
