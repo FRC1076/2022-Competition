@@ -11,9 +11,13 @@ from navx import AHRS
 
 from robotconfig import robotconfig
 from controller import Controller
+from swervedrive import SwerveDrive
+from swervemodule import SwerveModule
 from feeder import Feeder
 from tester import Tester
 from networktables import NetworkTables
+
+ModuleConfig = swervemodule.ModuleConfig
 
 # Drive Types
 ARCADE = 1
@@ -82,23 +86,40 @@ class MyRobot(wpilib.TimedRobot):
 
 
     def initDrivetrain(self, config):
-        left_motors = []
-        right_motors = []
+        
         motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushed
 
-        for controller_id in config['LEFT'].values():
-            left_motors.append(rev.CANSparkMax(controller_id, motor_type))
+        # Create low-level object
+        drive: swervedrive.SwerveDrive
 
-        for controller_id in config['RIGHT'].values():
-            right_motors.append(rev.CANSparkMax(controller_id, motor_type))
+        frontLeftModule: swervemodule.SwerveModule
+        frontRightModule: swervemodule.SwerveModule
+        rearLeftModule: swervemodule.SwerveModule
+        rearRightModule: swervemodule.SwerveModule
+
+        # Create configs for each module. This is before #createObjects because modules need these configs to be initialized.
+        frontLeftModule_cfg = ModuleConfig(sd_prefix='FrontLeft_Module', zero=2.97, inverted=True, allow_reverse=True)
+        frontRightModule_cfg = ModuleConfig(sd_prefix='FrontRight_Module', zero=2.69, inverted=False, allow_reverse=True)
+        rearLeftModule_cfg = ModuleConfig(sd_prefix='RearLeft_Module', zero=0.18, inverted=True, allow_reverse=True)
+        rearRightModule_cfg = ModuleConfig(sd_prefix='RearRight_Module', zero=4.76, inverted=False, allow_reverse=True)
+
+        # Drive motors
+        self.frontLeftModule_driveMotor = rev.CANSparkMax(FRONTLEFT_DRIVEMOTOR, motor_type)
+        self.frontRightModule_driveMotor = rev.CANSparkMax(FRONTRIGHT_DRIVEMOTOR, motor_type)
+        self.rearLeftModule_driveMotor = rev.CANSparkMaxF(REARLEFT_DRIVEMOTOR, motor_type)
+        self.rearRightModule_driveMotor = rev.CANSparkMax(REARRIGHT_DRIVEMOTOR, motor_type)
+
+        # Rotate motors
+        self.frontLeftModule_rotateMotor = rev.CANSparkMax(FRONTLEFT_ROTATEMOTOR, motor_type)
+        self.frontRightModule_rotateMotor = rev.CANSparkMax(FRONTRIGHT_ROTATEMOTOR, motor_type)
+        self.rearLeftModule_rotateMotor = rev.CANSparkMax(REARLEFT_ROTATEMOTOR, motor_type)
+        self.rearRightModule_rotateMotor = rev.CANSparkMax(REARRIGHT_ROTATEMOTOR, motor_type)
 
         self.drive_type = config['DRIVETYPE']  # side effect!
 
         self.rotationCorrection = config['ROTATION_CORRECTION']
 
-        # Create Controller Groups
-        left_side = wpilib.MotorControllerGroup(*left_motors)
-        right_side = wpilib.MotorControllerGroup(*right_motors)
+        
 
 
     #EXAMPLE
