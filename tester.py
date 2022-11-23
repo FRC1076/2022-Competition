@@ -1,6 +1,6 @@
 from email.policy import default
 import robotconfig
-from aimer import Aimer
+#from aimer import Aimer
 
 defaultResponses = {
     # CONTROLLER VALUES
@@ -23,7 +23,7 @@ defaultResponses = {
     'IN_RANGE': False,
 }
 
-
+"""
 class TestAimer(Aimer):
     def __init__(self, aimer):
         super().__init__(aimer.gyro, aimer.rotationSpeed, aimer.accuracyDegrees)
@@ -34,6 +34,7 @@ class TestAimer(Aimer):
 
     def getTheta(self):
         return self.responses['THETA']
+"""
 
 
 class TestController():
@@ -103,8 +104,8 @@ class TestXBC():
 class Tester():
     def __init__(self, robot):
         self.robot = robot
-        self.aimer = TestAimer(robot.aimer)
-        robot.aimer = self.aimer
+        #self.aimer = TestAimer(robot.aimer)
+        #robot.aimer = self.aimer
 
     @staticmethod
     def getTestConfig():

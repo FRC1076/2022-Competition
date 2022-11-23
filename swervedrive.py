@@ -1,7 +1,7 @@
 import math
 
-from magicbot import magiccomponent
-from components import swervemodule
+#from magicbot import magiccomponent
+import swervemodule
 
 from networktables import NetworkTables
 from networktables.util import ntproperty

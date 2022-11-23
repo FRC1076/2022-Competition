@@ -4,7 +4,7 @@ import wpilib
 import ctre
 
 from networktables import NetworkTables
-from wpilib.controller import PIDController
+from wpimath.controller import PIDController
 from collections import namedtuple
 
 # Create the structure of the config: SmartDashboard prefix, Encoder's zero point, Drive motor inverted, Allow reverse

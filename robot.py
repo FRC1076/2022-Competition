@@ -13,11 +13,10 @@ from robotconfig import robotconfig
 from controller import Controller
 from swervedrive import SwerveDrive
 from swervemodule import SwerveModule
+from swervemodule import ModuleConfig
 from feeder import Feeder
 from tester import Tester
 from networktables import NetworkTables
-
-ModuleConfig = swervemodule.ModuleConfig
 
 # Drive Types
 ARCADE = 1
@@ -104,16 +103,16 @@ class MyRobot(wpilib.TimedRobot):
         rearRightModule_cfg = ModuleConfig(sd_prefix='RearRight_Module', zero=4.76, inverted=False, allow_reverse=True)
 
         # Drive motors
-        self.frontLeftModule_driveMotor = rev.CANSparkMax(FRONTLEFT_DRIVEMOTOR, motor_type)
-        self.frontRightModule_driveMotor = rev.CANSparkMax(FRONTRIGHT_DRIVEMOTOR, motor_type)
-        self.rearLeftModule_driveMotor = rev.CANSparkMaxF(REARLEFT_DRIVEMOTOR, motor_type)
-        self.rearRightModule_driveMotor = rev.CANSparkMax(REARRIGHT_DRIVEMOTOR, motor_type)
+        self.frontLeftModule_driveMotor = rev.CANSparkMax(config['FRONTLEFT_DRIVEMOTOR'], motor_type)
+        self.frontRightModule_driveMotor = rev.CANSparkMax(config['FRONTRIGHT_DRIVEMOTOR'], motor_type)
+        self.rearLeftModule_driveMotor = rev.CANSparkMax(config['REARLEFT_DRIVEMOTOR'], motor_type)
+        self.rearRightModule_driveMotor = rev.CANSparkMax(config['REARRIGHT_DRIVEMOTOR'], motor_type)
 
         # Rotate motors
-        self.frontLeftModule_rotateMotor = rev.CANSparkMax(FRONTLEFT_ROTATEMOTOR, motor_type)
-        self.frontRightModule_rotateMotor = rev.CANSparkMax(FRONTRIGHT_ROTATEMOTOR, motor_type)
-        self.rearLeftModule_rotateMotor = rev.CANSparkMax(REARLEFT_ROTATEMOTOR, motor_type)
-        self.rearRightModule_rotateMotor = rev.CANSparkMax(REARRIGHT_ROTATEMOTOR, motor_type)
+        self.frontLeftModule_rotateMotor = rev.CANSparkMax(config['FRONTLEFT_ROTATEMOTOR'], motor_type)
+        self.frontRightModule_rotateMotor = rev.CANSparkMax(config['FRONTRIGHT_ROTATEMOTOR'], motor_type)
+        self.rearLeftModule_rotateMotor = rev.CANSparkMax(config['REARLEFT_ROTATEMOTOR'], motor_type)
+        self.rearRightModule_rotateMotor = rev.CANSparkMax(config['REARRIGHT_ROTATEMOTOR'], motor_type)
 
         self.drive_type = config['DRIVETYPE']  # side effect!
 
