@@ -23,17 +23,18 @@ defaultResponses = {
     'IN_RANGE': False,
 }
 
+"""
+class TestAimer(Aimer):
+    def __init__(self, aimer):
+        super().__init__(aimer.gyro, aimer.rotationSpeed, aimer.accuracyDegrees)
+        self.resetResponses()
 
-#class TestAimer(Aimer):
-#    def __init__(self, aimer):
-#        super().__init__(aimer.gyro, aimer.rotationSpeed, aimer.accuracyDegrees)
-#        self.resetResponses()
-#
-#    def resetResponses(self):
-#        self.responses = defaultResponses
-#
-#    def getTheta(self):
-#        return self.responses['THETA']
+    def resetResponses(self):
+        self.responses = defaultResponses
+
+    def getTheta(self):
+        return self.responses['THETA']
+"""
 
 
 class TestController():
@@ -103,8 +104,8 @@ class TestXBC():
 class Tester():
     def __init__(self, robot):
         self.robot = robot
-        self.aimer = TestAimer(robot.aimer)
-        robot.aimer = self.aimer
+        #self.aimer = TestAimer(robot.aimer)
+        #robot.aimer = self.aimer
 
     @staticmethod
     def getTestConfig():

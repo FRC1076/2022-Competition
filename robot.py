@@ -11,13 +11,12 @@ from navx import AHRS
 
 from robotconfig import robotconfig
 from controller import Controller
-import swervedrive
-import swervemodule
+from swervedrive import SwerveDrive
+from swervemodule import SwerveModule
+from swervemodule import ModuleConfig
 from feeder import Feeder
 from tester import Tester
 from networktables import NetworkTables
-
-ModuleConfig = swervemodule.ModuleConfig
 
 # Drive Types
 ARCADE = 1
