@@ -1,7 +1,7 @@
 import math
 
-from magicbot import magiccomponent
-from components import swervemodule
+#from magicbot import magiccomponent
+import swervemodule
 
 from networktables import NetworkTables
 from networktables.util import ntproperty
@@ -19,10 +19,8 @@ class SwerveDrive:
     xy_multiplier = ntproperty('/SmartDashboard/drive/drive/xy_multiplier', 0.65)
     debugging = ntproperty('/SmartDashboard/drive/drive/debugging', False) # Turn to true to run it in verbose mode.
 
-    def setup(self):
-        """
-        Called after injection.
-        """
+    def __init__(self):
+        
         # Put all the modules into a dictionary
         self.modules = {
             'front_left': self.frontLeftModule,

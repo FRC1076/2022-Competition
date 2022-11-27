@@ -1,10 +1,13 @@
 import math
 
 import wpilib
-import ctre
+import wpilib.drive
+import wpimath.controller
+#import ctre
+import rev
 
 from networktables import NetworkTables
-from wpilib.controller import PIDController
+from wpimath.controller import PIDController
 from collections import namedtuple
 
 # Create the structure of the config: SmartDashboard prefix, Encoder's zero point, Drive motor inverted, Allow reverse
@@ -14,14 +17,14 @@ MAX_VOLTAGE = 5 # Absolute encoder measures from 0V to 5V
 
 class SwerveModule:
     # Get the motors, encoder and config from injection
-    driveMotor: ctre.WPI_VictorSPX
-    rotateMotor: ctre.WPI_VictorSPX
+    #driveMotor: ctre.WPI_VictorSPX
+    #rotateMotor: ctre.WPI_VictorSPX
         
     encoder: wpilib.AnalogInput
 
     cfg: ModuleConfig
 
-    def setup(self):
+    def __init__(self):
         """
         Called after injection
         """

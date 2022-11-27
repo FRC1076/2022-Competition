@@ -1,6 +1,6 @@
 from email.policy import default
 import robotconfig
-from aimer import Aimer
+#from aimer import Aimer
 
 defaultResponses = {
     # CONTROLLER VALUES
@@ -24,16 +24,16 @@ defaultResponses = {
 }
 
 
-class TestAimer(Aimer):
-    def __init__(self, aimer):
-        super().__init__(aimer.gyro, aimer.rotationSpeed, aimer.accuracyDegrees)
-        self.resetResponses()
-
-    def resetResponses(self):
-        self.responses = defaultResponses
-
-    def getTheta(self):
-        return self.responses['THETA']
+#class TestAimer(Aimer):
+#    def __init__(self, aimer):
+#        super().__init__(aimer.gyro, aimer.rotationSpeed, aimer.accuracyDegrees)
+#        self.resetResponses()
+#
+#    def resetResponses(self):
+#        self.responses = defaultResponses
+#
+#    def getTheta(self):
+#        return self.responses['THETA']
 
 
 class TestController():

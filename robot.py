@@ -11,8 +11,8 @@ from navx import AHRS
 
 from robotconfig import robotconfig
 from controller import Controller
-from swervedrive import SwerveDrive
-from swervemodule import SwerveModule
+import swervedrive
+import swervemodule
 from feeder import Feeder
 from tester import Tester
 from networktables import NetworkTables
@@ -104,16 +104,16 @@ class MyRobot(wpilib.TimedRobot):
         rearRightModule_cfg = ModuleConfig(sd_prefix='RearRight_Module', zero=4.76, inverted=False, allow_reverse=True)
 
         # Drive motors
-        self.frontLeftModule_driveMotor = rev.CANSparkMax(FRONTLEFT_DRIVEMOTOR, motor_type)
-        self.frontRightModule_driveMotor = rev.CANSparkMax(FRONTRIGHT_DRIVEMOTOR, motor_type)
-        self.rearLeftModule_driveMotor = rev.CANSparkMaxF(REARLEFT_DRIVEMOTOR, motor_type)
-        self.rearRightModule_driveMotor = rev.CANSparkMax(REARRIGHT_DRIVEMOTOR, motor_type)
+        self.frontLeftModule_driveMotor = rev.CANSparkMax(config['FRONTLEFT_DRIVEMOTOR'], motor_type)
+        self.frontRightModule_driveMotor = rev.CANSparkMax(config['FRONTRIGHT_DRIVEMOTOR'], motor_type)
+        self.rearLeftModule_driveMotor = rev.CANSparkMax(config['REARLEFT_DRIVEMOTOR'], motor_type)
+        self.rearRightModule_driveMotor = rev.CANSparkMax(config['REARRIGHT_DRIVEMOTOR'], motor_type)
 
         # Rotate motors
-        self.frontLeftModule_rotateMotor = rev.CANSparkMax(FRONTLEFT_ROTATEMOTOR, motor_type)
-        self.frontRightModule_rotateMotor = rev.CANSparkMax(FRONTRIGHT_ROTATEMOTOR, motor_type)
-        self.rearLeftModule_rotateMotor = rev.CANSparkMax(REARLEFT_ROTATEMOTOR, motor_type)
-        self.rearRightModule_rotateMotor = rev.CANSparkMax(REARRIGHT_ROTATEMOTOR, motor_type)
+        self.frontLeftModule_rotateMotor = rev.CANSparkMax(config['FRONTLEFT_ROTATEMOTOR'], motor_type)
+        self.frontRightModule_rotateMotor = rev.CANSparkMax(config['FRONTRIGHT_ROTATEMOTOR'], motor_type)
+        self.rearLeftModule_rotateMotor = rev.CANSparkMax(config['REARLEFT_ROTATEMOTOR'], motor_type)
+        self.rearRightModule_rotateMotor = rev.CANSparkMax(config['REARRIGHT_ROTATEMOTOR'], motor_type)
 
         self.drive_type = config['DRIVETYPE']  # side effect!
 
@@ -141,6 +141,20 @@ class MyRobot(wpilib.TimedRobot):
     def teleopPeriodic(self):
         return True
 
+    def move(self, x, y, rcw):
+        """
+        This function is ment to be used by the teleOp.
+        :param x: Velocity in x axis [-1, 1]
+        :param y: Velocity in y axis [-1, 1]
+        :param rcw: Velocity in z axis [-1, 1]
+        """
+
+        if self.driver.getLeftBumper():
+            # If the button is pressed, lower the rotate speed.
+            rcw *= 0.7
+
+        self.drive.move(x, y, rcw)
+        self.drive.execute()
 
     def teleopDrivetrain(self):
         if (not self.drivetrain):
@@ -182,7 +196,22 @@ class MyRobot(wpilib.TimedRobot):
             self.drivetrain.arcadeDrive(rotateSpeed, driveSpeed)
 
         else:  # self.drive == SWERVE
-            # Panic
+            # Drive
+            self.move(driver.getRightX(), driver.getRightY(), driver.getLeftX())
+
+            # Lock
+            if self.gamempad.getRightBumper():
+                self.drive.request_wheel_lock = True
+
+            # Vectoral Button Drive
+            #if self.gamempad.getPOV() == 0:
+            #    self.drive.set_raw_fwd(-0.35)
+            #elif self.gamempad.getPOV() == 180:
+            #    self.drive.set_raw_fwd(0.35)
+            #elif self.gamempad.getPOV() == 90:
+            #    self.drive.set_raw_strafe(0.35)
+            #elif self.gamempad.getPOV() == 270:
+            #    self.drive.set_raw_strafe(-0.35)
             return
 
 
@@ -228,6 +257,6 @@ class MyRobot(wpilib.TimedRobot):
 
 
 if __name__ == "__main__":
-    if sys.argv[1] == 'sim':
-        TEST_MODE = True
+    #if sys.argv[1] == 'sim':
+    #    TEST_MODE = True
     wpilib.run(MyRobot)
