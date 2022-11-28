@@ -24,10 +24,12 @@ class SwerveModule:
 
     cfg: ModuleConfig
 
-    def __init__(self):
-        """
-        Called after injection
-        """
+    def __init__(self, _driveMotor, _rotateMotor, _config):
+        
+        self.driveMotor = _driveMotor
+        self.rotateMotor = _rotateMotor
+        self.cfg = _config
+
         # Config
         self.sd_prefix = self.cfg.sd_prefix or 'Module'
         self.encoder_zero = self.cfg.zero or 0

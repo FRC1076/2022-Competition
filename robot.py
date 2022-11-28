@@ -86,40 +86,38 @@ class MyRobot(wpilib.TimedRobot):
 
     def initDrivetrain(self, config):
         
-        motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushed
-
-        # Create low-level object
-        drive: swervedrive.SwerveDrive
-
-        frontLeftModule: swervemodule.SwerveModule
-        frontRightModule: swervemodule.SwerveModule
-        rearLeftModule: swervemodule.SwerveModule
-        rearRightModule: swervemodule.SwerveModule
-
-        # Create configs for each module. This is before #createObjects because modules need these configs to be initialized.
-        frontLeftModule_cfg = ModuleConfig(sd_prefix='FrontLeft_Module', zero=2.97, inverted=True, allow_reverse=True)
-        frontRightModule_cfg = ModuleConfig(sd_prefix='FrontRight_Module', zero=2.69, inverted=False, allow_reverse=True)
-        rearLeftModule_cfg = ModuleConfig(sd_prefix='RearLeft_Module', zero=0.18, inverted=True, allow_reverse=True)
-        rearRightModule_cfg = ModuleConfig(sd_prefix='RearRight_Module', zero=4.76, inverted=False, allow_reverse=True)
-
-        # Drive motors
-        self.frontLeftModule_driveMotor = rev.CANSparkMax(config['FRONTLEFT_DRIVEMOTOR'], motor_type)
-        self.frontRightModule_driveMotor = rev.CANSparkMax(config['FRONTRIGHT_DRIVEMOTOR'], motor_type)
-        self.rearLeftModule_driveMotor = rev.CANSparkMax(config['REARLEFT_DRIVEMOTOR'], motor_type)
-        self.rearRightModule_driveMotor = rev.CANSparkMax(config['REARRIGHT_DRIVEMOTOR'], motor_type)
-
-        # Rotate motors
-        self.frontLeftModule_rotateMotor = rev.CANSparkMax(config['FRONTLEFT_ROTATEMOTOR'], motor_type)
-        self.frontRightModule_rotateMotor = rev.CANSparkMax(config['FRONTRIGHT_ROTATEMOTOR'], motor_type)
-        self.rearLeftModule_rotateMotor = rev.CANSparkMax(config['REARLEFT_ROTATEMOTOR'], motor_type)
-        self.rearRightModule_rotateMotor = rev.CANSparkMax(config['REARRIGHT_ROTATEMOTOR'], motor_type)
-
         self.drive_type = config['DRIVETYPE']  # side effect!
 
         self.rotationCorrection = config['ROTATION_CORRECTION']
 
-        
+        motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushed
 
+        # Create configs for each module. This is before #createObjects because modules need these configs to be initialized.
+        flModule_cfg = ModuleConfig(sd_prefix='FrontLeft_Module', zero=2.97, inverted=True, allow_reverse=True)
+        frModule_cfg = ModuleConfig(sd_prefix='FrontRight_Module', zero=2.69, inverted=False, allow_reverse=True)
+        rlModule_cfg = ModuleConfig(sd_prefix='RearLeft_Module', zero=0.18, inverted=True, allow_reverse=True)
+        rrModule_cfg = ModuleConfig(sd_prefix='RearRight_Module', zero=4.76, inverted=False, allow_reverse=True)
+
+        # Drive motors
+        flModule_driveMotor = rev.CANSparkMax(config['FRONTLEFT_DRIVEMOTOR'], motor_type)
+        frModule_driveMotor = rev.CANSparkMax(config['FRONTRIGHT_DRIVEMOTOR'], motor_type)
+        rlModule_driveMotor = rev.CANSparkMax(config['REARLEFT_DRIVEMOTOR'], motor_type)
+        rrModule_driveMotor = rev.CANSparkMax(config['REARRIGHT_DRIVEMOTOR'], motor_type)
+
+        # Rotate motors
+        flModule_rotateMotor = rev.CANSparkMax(config['FRONTLEFT_ROTATEMOTOR'], motor_type)
+        frModule_rotateMotor = rev.CANSparkMax(config['FRONTRIGHT_ROTATEMOTOR'], motor_type)
+        rlModule_rotateMotor = rev.CANSparkMax(config['REARLEFT_ROTATEMOTOR'], motor_type)
+        rrModule_rotateMotor = rev.CANSparkMax(config['REARRIGHT_ROTATEMOTOR'], motor_type)
+
+        frontLeftModule = SwerveModule(flModule_driveMotor, flModule_rotateMotor, flModule_cfg)
+        frontRightModule = SwerveModule(frModule_driveMotor, frModule_rotateMotor, frModule_cfg)
+        rearLeftModule = SwerveModule(rlModule_driveMotor, rlModule_rotateMotor, rlModule_cfg)
+        rearRightModule = SwerveModule(rrModule_driveMotor, rrModule_rotateMotor, rrModule_cfg)
+
+        swerve = SwerveDrive(frontLeftModule, frontRightModule, rearLeftModule, rearRightModule)
+
+        return swerve
 
     #EXAMPLE
     def initFeeder(self, config):
@@ -152,8 +150,8 @@ class MyRobot(wpilib.TimedRobot):
             # If the button is pressed, lower the rotate speed.
             rcw *= 0.7
 
-        self.drive.move(x, y, rcw)
-        self.drive.execute()
+        self.drivetrain.move(x, y, rcw)
+        self.drivetrain.execute()
 
     def teleopDrivetrain(self):
         if (not self.drivetrain):
@@ -200,7 +198,7 @@ class MyRobot(wpilib.TimedRobot):
 
             # Lock
             if self.gamempad.getRightBumper():
-                self.drive.request_wheel_lock = True
+                self.drivetrain.request_wheel_lock = True
 
             # Vectoral Button Drive
             #if self.gamempad.getPOV() == 0:

@@ -19,8 +19,13 @@ class SwerveDrive:
     xy_multiplier = ntproperty('/SmartDashboard/drive/drive/xy_multiplier', 0.65)
     debugging = ntproperty('/SmartDashboard/drive/drive/debugging', False) # Turn to true to run it in verbose mode.
 
-    def __init__(self):
+    def __init__(self, _frontLeftModule, _frontRightModule, _rearLeftModule, _rearRightModule):
         
+        self.frontLeftModule = _frontLeftModule
+        self.frontRightModule = _frontRightModule
+        self.rearLeftModule = _rearLeftModule
+        self.rearRightModule = _rearRightModule
+
         # Put all the modules into a dictionary
         self.modules = {
             'front_left': self.frontLeftModule,
