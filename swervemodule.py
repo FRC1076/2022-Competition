@@ -3,7 +3,7 @@ import math
 import wpilib
 import wpilib.drive
 import wpimath.controller
-#import ctre
+import ctre
 import rev
 
 from networktables import NetworkTables
@@ -16,19 +16,14 @@ ModuleConfig = namedtuple('ModuleConfig', ['sd_prefix', 'zero', 'inverted', 'all
 MAX_VOLTAGE = 5 # Absolute encoder measures from 0V to 5V
 
 class SwerveModule:
-    # Get the motors, encoder and config from injection
-    #driveMotor: ctre.WPI_VictorSPX
-    #rotateMotor: ctre.WPI_VictorSPX
-        
-    encoder: wpilib.AnalogInput
-
-    cfg: ModuleConfig
 
     def __init__(self, _driveMotor, _rotateMotor, _config):
         
         self.driveMotor = _driveMotor
         self.rotateMotor = _rotateMotor
         self.cfg = _config
+
+        self.encoder = _rotateMotor.getEncoder()
 
         # Config
         self.sd_prefix = self.cfg.sd_prefix or 'Module'

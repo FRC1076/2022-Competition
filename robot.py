@@ -29,6 +29,7 @@ TEST_MODE = False
 class MyRobot(wpilib.TimedRobot):
 
     def robotInit(self):
+        print("robot init")
 
         self.drivetrain = None
         self.driver = None
@@ -45,6 +46,7 @@ class MyRobot(wpilib.TimedRobot):
         else:
             self.config = robotconfig
 
+        print(self.config)
         for key, config in self.config.items():
             if key == 'CONTROLLERS':
                 controllers = self.initControllers(config)
@@ -52,6 +54,7 @@ class MyRobot(wpilib.TimedRobot):
                 self.operator = controllers[1]
             if key == 'DRIVETRAIN':
                 self.drivetrain = self.initDrivetrain(config)
+                print(self.drivetrain)
             if key == 'FEEDER':
                 self.feeder = self.initFeeder(config)
             if key == 'AUTON':
@@ -90,13 +93,12 @@ class MyRobot(wpilib.TimedRobot):
 
         self.rotationCorrection = config['ROTATION_CORRECTION']
 
-        motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushed
-
-        # Create configs for each module. This is before #createObjects because modules need these configs to be initialized.
         flModule_cfg = ModuleConfig(sd_prefix='FrontLeft_Module', zero=2.97, inverted=True, allow_reverse=True)
         frModule_cfg = ModuleConfig(sd_prefix='FrontRight_Module', zero=2.69, inverted=False, allow_reverse=True)
         rlModule_cfg = ModuleConfig(sd_prefix='RearLeft_Module', zero=0.18, inverted=True, allow_reverse=True)
         rrModule_cfg = ModuleConfig(sd_prefix='RearRight_Module', zero=4.76, inverted=False, allow_reverse=True)
+
+        motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushed
 
         # Drive motors
         flModule_driveMotor = rev.CANSparkMax(config['FRONTLEFT_DRIVEMOTOR'], motor_type)
@@ -136,6 +138,8 @@ class MyRobot(wpilib.TimedRobot):
 
 
     def teleopPeriodic(self):
+        print("teleopPeriodic!!!!!!!")
+        self.teleopDrivetrain()
         return True
 
     def move(self, x, y, rcw):
@@ -154,7 +158,9 @@ class MyRobot(wpilib.TimedRobot):
         self.drivetrain.execute()
 
     def teleopDrivetrain(self):
+        print("teleopDrivetrain!!!!!!!")
         if (not self.drivetrain):
+            print("teleopDrivetrain :((((")
             return
 
         driver = self.driver.xboxController
@@ -195,6 +201,11 @@ class MyRobot(wpilib.TimedRobot):
         else:  # self.drive == SWERVE
             # Drive
             self.move(driver.getRightX(), driver.getRightY(), driver.getLeftX())
+
+            module = self.drivetrain.modules('front_left')
+
+            print('DRIVE_POWER = ' + module.driveMotor.get())
+            print('PIVOT_POWER = ' + module.rotateMotor.get())
 
             # Lock
             if self.gamempad.getRightBumper():

@@ -136,9 +136,14 @@ showbot = {
     'VISION': visionConfig,
     'SHOOTER': shooterConfig,
 }
+
+testBot = {
+    'DRIVETRAIN': drivetrainConfig,
+}
+
 showbot['SHOOTER']['SHOOTER_ID'] = 10 # how to override just one thing
 
 ##########################
 ###  CONFIG TO DEPLOY  ###
 ##########################
-robotconfig = drivetrainConfig
+robotconfig = testBot

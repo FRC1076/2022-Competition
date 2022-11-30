@@ -7,17 +7,12 @@ from networktables import NetworkTables
 from networktables.util import ntproperty
 
 class SwerveDrive:
-    # These modules will be injected from ../robot.py
-    frontLeftModule: swervemodule.SwerveModule
-    frontRightModule: swervemodule.SwerveModule
-    rearLeftModule: swervemodule.SwerveModule
-    rearRightModule: swervemodule.SwerveModule
 
     # Get some config options from the dashboard.
     lower_input_thresh = ntproperty('/SmartDashboard/drive/drive/lower_input_thresh', 0.1)
     rotation_multiplier = ntproperty('/SmartDashboard/drive/drive/rotation_multiplier', 0.5)
     xy_multiplier = ntproperty('/SmartDashboard/drive/drive/xy_multiplier', 0.65)
-    debugging = ntproperty('/SmartDashboard/drive/drive/debugging', False) # Turn to true to run it in verbose mode.
+    debugging = ntproperty('/SmartDashboard/drive/drive/debugging', True) # Turn to true to run it in verbose mode.
 
     def __init__(self, _frontLeftModule, _frontRightModule, _rearLeftModule, _rearRightModule):
         
