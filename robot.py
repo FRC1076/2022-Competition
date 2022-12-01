@@ -30,7 +30,6 @@ TEST_MODE = False
 class MyRobot(wpilib.TimedRobot):
 
     def robotInit(self):
-        print("robot init")
 
         self.drivetrain = None
         self.driver = None
@@ -146,7 +145,6 @@ class MyRobot(wpilib.TimedRobot):
 
 
     def teleopPeriodic(self):
-        print("teleopPeriodic!!!!!!!")
         self.teleopDrivetrain()
         return True
 
@@ -169,9 +167,7 @@ class MyRobot(wpilib.TimedRobot):
         #self.drivetrain.execute()
 
     def teleopDrivetrain(self):
-        print("teleopDrivetrain!!!!!!!")
         if (not self.drivetrain):
-            print("teleopDrivetrain :((((")
             return
 
         driver = self.driver.xboxController
