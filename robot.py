@@ -51,7 +51,7 @@ class MyRobot(wpilib.TimedRobot):
             if key == 'CONTROLLERS':
                 controllers = self.initControllers(config)
                 self.driver = controllers[0]
-                self.operator = controllers[1]
+                #self.operator = controllers[1]
             if key == 'DRIVETRAIN':
                 self.drivetrain = self.initDrivetrain(config)
                 print(self.drivetrain)
@@ -141,6 +141,7 @@ class MyRobot(wpilib.TimedRobot):
 
 
     def teleopInit(self):
+        print("teleopInit ran")
         return True
 
 
@@ -156,19 +157,19 @@ class MyRobot(wpilib.TimedRobot):
         :param rcw: Velocity in z axis [-1, 1]
         """
 
-        if self.driver.getLeftBumper():
-            # If the button is pressed, lower the rotate speed.
-            rcw *= 0.7
+        # if self.driver.getLeftBumper():
+        #     # If the button is pressed, lower the rotate speed.
+        #     rcw *= 0.7
 
-        self.testingModule.move(rcw, (math.atan(y, x) * 180 / math.pi) + 180)
+        self.testingModule.move(rcw, (math.atan2(y, x) * 180 / math.pi) + 180)
         self.testingModule.execute()
 
         #self.drivetrain.move(x, y, rcw)
         #self.drivetrain.execute()
 
     def teleopDrivetrain(self):
-        if (not self.drivetrain):
-            return
+        # if (not self.drivetrain):
+        #     return
 
         driver = self.driver.xboxController
         deadzone = self.driver.deadzone
@@ -209,11 +210,11 @@ class MyRobot(wpilib.TimedRobot):
             # Drive
             self.move(driver.getRightX(), driver.getRightY(), driver.getLeftX())
 
-            print('DRIVE_POWER = ' + self.testingModule.driveMotor.get())
-            print('PIVOT_POWER = ' + self.testingModule.rotateMotor.get())
+            print('DRIVE_POWER = ' + str(self.testingModule.driveMotor.get()))
+            print('PIVOT_POWER = ' + str(self.testingModule.rotateMotor.get()))
 
             # Lock
-            if self.gamempad.getRightBumper():
+            if self.driver.xboxController.getRightBumper():
                 self.drivetrain.request_wheel_lock = True
 
             # Vectoral Button Drive
