@@ -7,6 +7,7 @@ import wpilib.drive
 import wpimath.controller
 from wpilib import interfaces
 import rev
+import ctre
 from navx import AHRS
 
 from robotconfig import robotconfig
@@ -102,24 +103,31 @@ class MyRobot(wpilib.TimedRobot):
 
         # Drive motors
         flModule_driveMotor = rev.CANSparkMax(config['FRONTLEFT_DRIVEMOTOR'], motor_type)
-        frModule_driveMotor = rev.CANSparkMax(config['FRONTRIGHT_DRIVEMOTOR'], motor_type)
-        rlModule_driveMotor = rev.CANSparkMax(config['REARLEFT_DRIVEMOTOR'], motor_type)
-        rrModule_driveMotor = rev.CANSparkMax(config['REARRIGHT_DRIVEMOTOR'], motor_type)
+        #frModule_driveMotor = rev.CANSparkMax(config['FRONTRIGHT_DRIVEMOTOR'], motor_type)
+        #rlModule_driveMotor = rev.CANSparkMax(config['REARLEFT_DRIVEMOTOR'], motor_type)
+        #rrModule_driveMotor = rev.CANSparkMax(config['REARRIGHT_DRIVEMOTOR'], motor_type)
 
         # Rotate motors
         flModule_rotateMotor = rev.CANSparkMax(config['FRONTLEFT_ROTATEMOTOR'], motor_type)
-        frModule_rotateMotor = rev.CANSparkMax(config['FRONTRIGHT_ROTATEMOTOR'], motor_type)
-        rlModule_rotateMotor = rev.CANSparkMax(config['REARLEFT_ROTATEMOTOR'], motor_type)
-        rrModule_rotateMotor = rev.CANSparkMax(config['REARRIGHT_ROTATEMOTOR'], motor_type)
+        #frModule_rotateMotor = rev.CANSparkMax(config['FRONTRIGHT_ROTATEMOTOR'], motor_type)
+        #rlModule_rotateMotor = rev.CANSparkMax(config['REARLEFT_ROTATEMOTOR'], motor_type)
+        #rrModule_rotateMotor = rev.CANSparkMax(config['REARRIGHT_ROTATEMOTOR'], motor_type)
 
-        frontLeftModule = SwerveModule(flModule_driveMotor, flModule_rotateMotor, flModule_cfg)
-        frontRightModule = SwerveModule(frModule_driveMotor, frModule_rotateMotor, frModule_cfg)
-        rearLeftModule = SwerveModule(rlModule_driveMotor, rlModule_rotateMotor, rlModule_cfg)
-        rearRightModule = SwerveModule(rrModule_driveMotor, rrModule_rotateMotor, rrModule_cfg)
+        flModule_encoder = ctre.CANCoder(config['FRONTLEFT_ENCODER'])
+        #frModule_encoder = ctre.CANCoder(config['FRONTRIGHT_ENCODER'])
+        #rlModule_encoder = ctre.CANCoder(config['REARLEFT_ENCODER'])
+        #rrModule_encoder = ctre.CANCoder(config['REARRIGHT_ENCODER'])
 
-        swerve = SwerveDrive(frontLeftModule, frontRightModule, rearLeftModule, rearRightModule)
+        frontLeftModule = SwerveModule(flModule_driveMotor, flModule_rotateMotor, flModule_encoder, flModule_cfg)
+        #frontRightModule = SwerveModule(frModule_driveMotor, frModule_rotateMotor, frModule_cfg)
+        #rearLeftModule = SwerveModule(rlModule_driveMotor, rlModule_rotateMotor, rlModule_cfg)
+        #rearRightModule = SwerveModule(rrModule_driveMotor, rrModule_rotateMotor, rrModule_cfg)
 
-        return swerve
+        #swerve = SwerveDrive(frontLeftModule, frontRightModule, rearLeftModule, rearRightModule)
+
+        #return swerve
+
+        self.testingModule = frontLeftModule
 
     #EXAMPLE
     def initFeeder(self, config):
@@ -154,8 +162,11 @@ class MyRobot(wpilib.TimedRobot):
             # If the button is pressed, lower the rotate speed.
             rcw *= 0.7
 
-        self.drivetrain.move(x, y, rcw)
-        self.drivetrain.execute()
+        self.testingModule.move(rcw, (math.atan(y, x) * 180 / math.pi) + 180)
+        self.testingModule.execute()
+
+        #self.drivetrain.move(x, y, rcw)
+        #self.drivetrain.execute()
 
     def teleopDrivetrain(self):
         print("teleopDrivetrain!!!!!!!")
@@ -202,10 +213,8 @@ class MyRobot(wpilib.TimedRobot):
             # Drive
             self.move(driver.getRightX(), driver.getRightY(), driver.getLeftX())
 
-            module = self.drivetrain.modules('front_left')
-
-            print('DRIVE_POWER = ' + module.driveMotor.get())
-            print('PIVOT_POWER = ' + module.rotateMotor.get())
+            print('DRIVE_POWER = ' + self.testingModule.driveMotor.get())
+            print('PIVOT_POWER = ' + self.testingModule.rotateMotor.get())
 
             # Lock
             if self.gamempad.getRightBumper():
