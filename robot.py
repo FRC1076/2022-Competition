@@ -98,7 +98,7 @@ class MyRobot(wpilib.TimedRobot):
         rlModule_cfg = ModuleConfig(sd_prefix='RearLeft_Module', zero=0.18, inverted=True, allow_reverse=True)
         rrModule_cfg = ModuleConfig(sd_prefix='RearRight_Module', zero=4.76, inverted=False, allow_reverse=True)
 
-        motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushed
+        motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
 
         # Drive motors
         flModule_driveMotor = rev.CANSparkMax(config['FRONTLEFT_DRIVEMOTOR'], motor_type)
@@ -161,8 +161,13 @@ class MyRobot(wpilib.TimedRobot):
         #     # If the button is pressed, lower the rotate speed.
         #     rcw *= 0.7
 
-        self.testingModule.move(rcw, (math.atan2(y, x) * 180 / math.pi) + 180)
+        degrees = (math.atan2(y, x) * 180 / math.pi)
+
+        self.testingModule.move(rcw, degrees)
         self.testingModule.execute()
+
+        print('DRIVE_TARGET = ' + str(rcw) + ', PIVOT_TARGET = ' + str(degrees) + ", ENCODER_TICK = " + str(self.testingModule.get_ticks()))
+        print('DRIVE_POWER = ' + str(self.testingModule.driveMotor.get()) + ', PIVOT_POWER = ' + str(self.testingModule.rotateMotor.get()))
 
         #self.drivetrain.move(x, y, rcw)
         #self.drivetrain.execute()
@@ -174,59 +179,20 @@ class MyRobot(wpilib.TimedRobot):
         driver = self.driver.xboxController
         deadzone = self.driver.deadzone
 
-        # TANK DRIVE
-        if (self.drive_type == TANK):
-            speedratio = 1.0  # ratio of joystick position to motor speed
+        self.move(driver.getRightX(), driver.getRightY(), driver.getLeftY())
 
-            # Get left and right joystick values.
-            leftspeed = driver.getLeftY()
-            rightspeed = -(driver.getRightY())
+        #self.testingModule.testMove(driver.getLeftY(), driver.getRightX())
 
-            # Eliminate deadzone and correct speed
-            leftspeed = speedratio * self.deadzoneCorrection(leftspeed, deadzone)
-            rightspeed = speedratio * self.deadzoneCorrection(rightspeed, deadzone)
-
-            # Invoke Tank Drive
-            self.drivetrain.tankDrive(leftspeed, rightspeed)
-
-        # ARCADE DRIVE
-        elif self.drive_type == ARCADE:
-            # speedratio = 0.8  # ratio of joystick position to motor speed
-            speedratio = 1.0
-
-            result = (-driver.getRightX(), driver.getLeftY())
-
-            rotateSpeed = result[0]
-            driveSpeed = result[1]
-
-            #print(rotateSpeed, driveSpeed)
-            rotateSpeed = speedratio * self.deadzoneCorrection(rotateSpeed + self.rotationCorrection, deadzone)
-            driveSpeed = speedratio * self.deadzoneCorrection(driveSpeed, deadzone)
-
-            #print(rotateSpeed, driveSpeed)
-            self.drivetrain.arcadeDrive(rotateSpeed, driveSpeed)
-
-        else:  # self.drive == SWERVE
-            # Drive
-            self.move(driver.getRightX(), driver.getRightY(), driver.getLeftX())
-
-            print('DRIVE_POWER = ' + str(self.testingModule.driveMotor.get()))
-            print('PIVOT_POWER = ' + str(self.testingModule.rotateMotor.get()))
-
-            # Lock
-            if self.driver.xboxController.getRightBumper():
-                self.drivetrain.request_wheel_lock = True
-
-            # Vectoral Button Drive
-            #if self.gamempad.getPOV() == 0:
-            #    self.drive.set_raw_fwd(-0.35)
-            #elif self.gamempad.getPOV() == 180:
-            #    self.drive.set_raw_fwd(0.35)
-            #elif self.gamempad.getPOV() == 90:
-            #    self.drive.set_raw_strafe(0.35)
-            #elif self.gamempad.getPOV() == 270:
-            #    self.drive.set_raw_strafe(-0.35)
-            return
+        # Vectoral Button Drive
+        #if self.gamempad.getPOV() == 0:
+        #    self.drive.set_raw_fwd(-0.35)
+        #elif self.gamempad.getPOV() == 180:
+        #    self.drive.set_raw_fwd(0.35)
+        #elif self.gamempad.getPOV() == 90:
+        #    self.drive.set_raw_strafe(0.35)
+        #elif self.gamempad.getPOV() == 270:
+        #    self.drive.set_raw_strafe(-0.35)
+        return
 
 
     def autonomousInit(self):

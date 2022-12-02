@@ -1,4 +1,5 @@
 import math
+from util import clamp
 
 import wpilib
 import wpilib.drive
@@ -42,8 +43,8 @@ class SwerveModule:
 
         # PID Controller
         # kP = 1.5, kI = 0.0, kD = 0.0
-        self._pid_controller = PIDController(1.5, 0.0, 0.0) #swap this stuff for CANSparkMax pid controller -- see example from last year shooter
-        self._pid_controller.enableContinuousInput(0.0, 5.0) # Make this range -1 to 1 instead
+        self._pid_controller = PIDController(0.2, 0.1, 0.0) #swap this stuff for CANSparkMax pid controller -- see example from last year shooter
+        self._pid_controller.enableContinuousInput(-1.0, 1.0) # Make this range -1 to 1 instead
         self._pid_controller.setTolerance(0.05, 0.05) # may need to tweak this with PID testing
 
     def get_ticks(self):
@@ -157,6 +158,10 @@ class SwerveModule:
         self.driveMotor.set(self._requested_speed)
 
         self.update_smartdash()
+
+    def testMove(self, driveInput, rotateInput):
+        self.driveMotor.set(clamp(driveInput))
+        self.rotateMotor.set(clamp(rotateInput))
 
     def update_smartdash(self):
         """
