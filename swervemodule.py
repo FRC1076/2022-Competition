@@ -43,11 +43,11 @@ class SwerveModule:
 
         # PID Controller
         # kP = 1.5, kI = 0.0, kD = 0.0
-        self._pid_controller = PIDController(0.2, 0.1, 0.0) #swap this stuff for CANSparkMax pid controller -- see example from last year shooter
-        self._pid_controller.enableContinuousInput(-1.0, 1.0) # Make this range -1 to 1 instead
-        self._pid_controller.setTolerance(0.05, 0.05) # may need to tweak this with PID testing
+        self._pid_controller = PIDController(0.1, 0.0, 0.0) #swap this stuff for CANSparkMax pid controller -- see example from last year shooter
+        self._pid_controller.enableContinuousInput(0, 360)
+        self._pid_controller.setTolerance(2, 2) # may need to tweak this with PID testing
 
-    def get_ticks(self):
+    def get_current_angle(self):
         """
         :returns: the voltage position after the zero
         """
@@ -115,7 +115,7 @@ class SwerveModule:
             If the difference between the requested degree and the current degree is
             more than 90 degrees, don't turn the wheel 180 degrees. Instead reverse the speed.
             """
-            if abs(deg - self.get_ticks()) > 90: #make this with the new tick-degree methods
+            if abs(deg - self.get_current_angle()) > 90: #make this with the new tick-degree methods
                 speed *= -1
                 deg += 180
                 deg %= 360
@@ -137,7 +137,7 @@ class SwerveModule:
         """
         # Calculate the error using the current voltage and the requested voltage.
         # DO NOT use the #self.get_voltage function here. It has to be the raw voltage.
-        error = self._pid_controller.calculate(self.get_ticks(), self._requested_angle) #Make this an error in ticks instead of voltage
+        error = self._pid_controller.calculate(self.get_current_angle(), self._requested_angle) #Make this an error in ticks instead of voltage
 
         # Set the output 0 as the default value
         output = 0
@@ -146,7 +146,9 @@ class SwerveModule:
         # Else, the output will stay at zero.
         if not self._pid_controller.atSetpoint():
             # Use max-min to clamped the output between -1 and 1. The CANSparkMax PID controller does this automatically, so idk if this is necessary
-            output = max(min(error, 1), -1)
+            output = clamp(error)
+
+        print('ERROR = ' + str(error) + ', OUTPUT = ' + str(output))
 
         # Put the output to the dashboard
         self.sd.putNumber('drive/%s/output' % self.sd_prefix, output)
@@ -167,7 +169,7 @@ class SwerveModule:
         """
         Output a bunch on internal variables for debugging purposes.
         """
-        self.sd.putNumber('drive/%s/degrees' % self.sd_prefix, self.get_ticks())
+        self.sd.putNumber('drive/%s/degrees' % self.sd_prefix, self.get_current_angle())
 
         if self.debugging.getBoolean(False):
             self.sd.putNumber('drive/%s/requested_voltage' % self.sd_prefix, self._requested_angle)

@@ -93,10 +93,10 @@ class MyRobot(wpilib.TimedRobot):
 
         self.rotationCorrection = config['ROTATION_CORRECTION']
 
-        flModule_cfg = ModuleConfig(sd_prefix='FrontLeft_Module', zero=2.97, inverted=True, allow_reverse=True)
-        frModule_cfg = ModuleConfig(sd_prefix='FrontRight_Module', zero=2.69, inverted=False, allow_reverse=True)
-        rlModule_cfg = ModuleConfig(sd_prefix='RearLeft_Module', zero=0.18, inverted=True, allow_reverse=True)
-        rrModule_cfg = ModuleConfig(sd_prefix='RearRight_Module', zero=4.76, inverted=False, allow_reverse=True)
+        flModule_cfg = ModuleConfig(sd_prefix='FrontLeft_Module', zero=0.0, inverted=True, allow_reverse=True)
+        frModule_cfg = ModuleConfig(sd_prefix='FrontRight_Module', zero=0.0, inverted=False, allow_reverse=True)
+        rlModule_cfg = ModuleConfig(sd_prefix='RearLeft_Module', zero=0.0, inverted=True, allow_reverse=True)
+        rrModule_cfg = ModuleConfig(sd_prefix='RearRight_Module', zero=0.0, inverted=False, allow_reverse=True)
 
         motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
 
@@ -161,12 +161,12 @@ class MyRobot(wpilib.TimedRobot):
         #     # If the button is pressed, lower the rotate speed.
         #     rcw *= 0.7
 
-        degrees = (math.atan2(y, x) * 180 / math.pi)
+        degrees = (math.atan2(y, x) * 180 / math.pi) + 180
 
         self.testingModule.move(rcw, degrees)
         self.testingModule.execute()
 
-        print('DRIVE_TARGET = ' + str(rcw) + ', PIVOT_TARGET = ' + str(degrees) + ", ENCODER_TICK = " + str(self.testingModule.get_ticks()))
+        print('DRIVE_TARGET = ' + str(rcw) + ', PIVOT_TARGET = ' + str(degrees) + ", ENCODER_TICK = " + str(self.testingModule.get_current_angle()))
         print('DRIVE_POWER = ' + str(self.testingModule.driveMotor.get()) + ', PIVOT_POWER = ' + str(self.testingModule.rotateMotor.get()))
 
         #self.drivetrain.move(x, y, rcw)
