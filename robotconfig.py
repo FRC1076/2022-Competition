@@ -105,6 +105,13 @@ climberConfig = {
     'RETRACT_SPEED': 0.5,
 }
 
+hooksConfig = {
+    'FRONT_HOOK_ID': -1,
+    'BACK_HOOK_ID': -1,
+    'LEFT_HOOK_ID': -1,
+    'RIGHT_HOOK_ID': -1
+}
+
 #######################
 ###  ROBOT CONFIGS  ###
 #######################
@@ -118,7 +125,8 @@ testbot = { # Always used for unit tests ($ python robot.py sim)
     'AIMER': aimerConfig,
     'VISION': visionConfig,
     'AUTON': autonConfig,
-    'CLIMBER': climberConfig
+    'CLIMBER': climberConfig,
+    'HOOKS': hooksConfig
 }
 
 gull_lake = {
@@ -131,6 +139,7 @@ gull_lake = {
     'FEEDER': feederConfig,
     'AUTON': autonConfig,
     'CLIMBER': climberConfig,
+    'HOOKS': hooksConfig
 }
 
 showbot = {
@@ -139,11 +148,13 @@ showbot = {
     'AIMER': aimerConfig,
     'VISION': visionConfig,
     'SHOOTER': shooterConfig,
+    'HOOKS': hooksConfig
 }
 
 testBot = {
     'CONTROLLERS': controllerConfig,
     'DRIVETRAIN': drivetrainConfig,
+    'HOOKS': hooksConfig
 }
 
 showbot['SHOOTER']['SHOOTER_ID'] = 10 # how to override just one thing

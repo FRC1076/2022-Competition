@@ -18,6 +18,7 @@ from swervemodule import ModuleConfig
 from feeder import Feeder
 from tester import Tester
 from networktables import NetworkTables
+from hooks import Hooks
 
 # Drive Types
 ARCADE = 1
@@ -37,6 +38,7 @@ class MyRobot(wpilib.TimedRobot):
         self.feeder = None
         self.tester = None
         self.auton = None
+        self.hooks = None
 
         # Even if no drivetrain, defaults to drive phase
         self.phase = "DRIVE_PHASE"
@@ -59,6 +61,8 @@ class MyRobot(wpilib.TimedRobot):
                 self.feeder = self.initFeeder(config)
             if key == 'AUTON':
                 self.auton = self.initAuton(config)
+            if key == 'HOOKS':
+                self.hooks = self.initHooks(config)
 
         self.dashboard = NetworkTables.getTable('SmartDashboard')
         self.periods = 0
@@ -193,6 +197,23 @@ class MyRobot(wpilib.TimedRobot):
         #elif self.gamempad.getPOV() == 270:
         #    self.drive.set_raw_strafe(-0.35)
         return
+
+    def initHooks(self, config):
+        motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushed
+
+        #Front
+        hook1 = rev.CANSparkMax(config['FRONT_HOOK_ID'], motor_type)
+
+        #hook 2
+        hook2 = rev.CANSparkMax(config['BACK_HOOK_ID'], motor_type)
+
+        #hook 3
+        hook3 = rev.CANSparkMax(config['LEFT_HOOK_ID'], motor_type)
+
+        #hook 4
+        hook4 = rev.CANSparkMax(config['RIGHT_HOOK_ID'], motor_type)
+
+        return Hooks([hook1, hook2, hook3, hook4])
 
 
     def autonomousInit(self):
