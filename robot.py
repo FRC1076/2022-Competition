@@ -53,7 +53,7 @@ class MyRobot(wpilib.TimedRobot):
             if key == 'CONTROLLERS':
                 controllers = self.initControllers(config)
                 self.driver = controllers[0]
-                #self.operator = controllers[1]
+                self.operator = controllers[1]
             if key == 'DRIVETRAIN':
                 self.drivetrain = self.initDrivetrain(config)
                 print(self.drivetrain)
@@ -151,6 +151,7 @@ class MyRobot(wpilib.TimedRobot):
 
     def teleopPeriodic(self):
         self.teleopDrivetrain()
+        self.te
         return True
 
     def move(self, x, y, rcw):
@@ -204,16 +205,31 @@ class MyRobot(wpilib.TimedRobot):
         #Front
         hook1 = rev.CANSparkMax(config['FRONT_HOOK_ID'], motor_type)
 
-        #hook 2
+        #Back
         hook2 = rev.CANSparkMax(config['BACK_HOOK_ID'], motor_type)
 
-        #hook 3
+        #Left
         hook3 = rev.CANSparkMax(config['LEFT_HOOK_ID'], motor_type)
 
-        #hook 4
+        #Right
         hook4 = rev.CANSparkMax(config['RIGHT_HOOK_ID'], motor_type)
 
         return Hooks([hook1, hook2, hook3, hook4])
+    
+    def teleopHooks(self):
+        operator = self.operator.xboxController
+
+        if operator.xboxController.getYButtonReleased():
+            self.hooks.change_front()
+        
+        if operator.xboxController.getAButtonReleased():
+            self.hooks.change_back()
+        
+        if operator.xboxController.getXButtonReleased():
+            self.hooks.change_left()
+        
+        if operator.xboxController.getBButtonReleased():
+            self.hooks.change_right()
 
 
     def autonomousInit(self):
