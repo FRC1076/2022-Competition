@@ -29,9 +29,9 @@ class HookModule:
         self.state = 0
 
     def change_state(self):
-        self.state += 1
-        if self.state == 4:
-            self.state = 0
+        self.state -= 1
+        if self.state == -1:
+            self.state = 3
 
         #if raised or lowered
         if self.state == 0 or self.state == 2:
