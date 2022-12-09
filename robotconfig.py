@@ -106,7 +106,7 @@ climberConfig = {
 }
 
 hooksConfig = {
-    'FRONT_HOOK_ID': -1,
+    'FRONT_HOOK_ID': 13,
     'BACK_HOOK_ID': -1,
     'LEFT_HOOK_ID': -1,
     'RIGHT_HOOK_ID': -1

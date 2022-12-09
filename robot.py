@@ -105,23 +105,23 @@ class MyRobot(wpilib.TimedRobot):
         motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
 
         # Drive motors
-        flModule_driveMotor = rev.CANSparkMax(config['FRONTLEFT_DRIVEMOTOR'], motor_type)
+        #flModule_driveMotor = rev.CANSparkMax(config['FRONTLEFT_DRIVEMOTOR'], motor_type)
         #frModule_driveMotor = rev.CANSparkMax(config['FRONTRIGHT_DRIVEMOTOR'], motor_type)
         #rlModule_driveMotor = rev.CANSparkMax(config['REARLEFT_DRIVEMOTOR'], motor_type)
         #rrModule_driveMotor = rev.CANSparkMax(config['REARRIGHT_DRIVEMOTOR'], motor_type)
 
         # Rotate motors
-        flModule_rotateMotor = rev.CANSparkMax(config['FRONTLEFT_ROTATEMOTOR'], motor_type)
+        #flModule_rotateMotor = rev.CANSparkMax(config['FRONTLEFT_ROTATEMOTOR'], motor_type)
         #frModule_rotateMotor = rev.CANSparkMax(config['FRONTRIGHT_ROTATEMOTOR'], motor_type)
         #rlModule_rotateMotor = rev.CANSparkMax(config['REARLEFT_ROTATEMOTOR'], motor_type)
         #rrModule_rotateMotor = rev.CANSparkMax(config['REARRIGHT_ROTATEMOTOR'], motor_type)
 
-        flModule_encoder = ctre.CANCoder(config['FRONTLEFT_ENCODER'])
+        #flModule_encoder = ctre.CANCoder(config['FRONTLEFT_ENCODER'])
         #frModule_encoder = ctre.CANCoder(config['FRONTRIGHT_ENCODER'])
         #rlModule_encoder = ctre.CANCoder(config['REARLEFT_ENCODER'])
         #rrModule_encoder = ctre.CANCoder(config['REARRIGHT_ENCODER'])
 
-        frontLeftModule = SwerveModule(flModule_driveMotor, flModule_rotateMotor, flModule_encoder, flModule_cfg)
+        #frontLeftModule = SwerveModule(flModule_driveMotor, flModule_rotateMotor, flModule_encoder, flModule_cfg)
         #frontRightModule = SwerveModule(frModule_driveMotor, frModule_rotateMotor, frModule_cfg)
         #rearLeftModule = SwerveModule(rlModule_driveMotor, rlModule_rotateMotor, rlModule_cfg)
         #rearRightModule = SwerveModule(rrModule_driveMotor, rrModule_rotateMotor, rrModule_cfg)
@@ -130,7 +130,7 @@ class MyRobot(wpilib.TimedRobot):
 
         #return swerve
 
-        self.testingModule = frontLeftModule
+        #self.testingModule = frontLeftModule
 
     #EXAMPLE
     def initFeeder(self, config):
@@ -184,7 +184,7 @@ class MyRobot(wpilib.TimedRobot):
         driver = self.driver.xboxController
         deadzone = self.driver.deadzone
 
-        self.move(driver.getRightX(), driver.getRightY(), driver.getLeftY())
+        #self.move(driver.getRightX(), driver.getRightY(), driver.getLeftY())
 
         #self.testingModule.testMove(driver.getLeftY(), driver.getRightX())
 
