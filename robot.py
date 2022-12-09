@@ -151,7 +151,7 @@ class MyRobot(wpilib.TimedRobot):
 
     def teleopPeriodic(self):
         self.teleopDrivetrain()
-        self.te
+        self.teleopHooks()
         return True
 
     def move(self, x, y, rcw):
@@ -219,16 +219,16 @@ class MyRobot(wpilib.TimedRobot):
     def teleopHooks(self):
         operator = self.operator.xboxController
 
-        if operator.xboxController.getYButtonReleased():
+        if operator.getYButtonReleased():
             self.hooks.change_front()
         
-        if operator.xboxController.getAButtonReleased():
+        if operator.getAButtonReleased():
             self.hooks.change_back()
         
-        if operator.xboxController.getXButtonReleased():
+        if operator.getXButtonReleased():
             self.hooks.change_left()
         
-        if operator.xboxController.getBButtonReleased():
+        if operator.getBButtonReleased():
             self.hooks.change_right()
 
 

@@ -35,15 +35,15 @@ class HookModule:
 
         #if raised or lowered
         if self.state == 0 or self.state == 2:
-            self.set(0)
+            self.motor.set(0)
         
         #if raising
         if self.state == 1:
-            self.set(-0.1)
+            self.motor.set(-0.1)
         
         #if lowering
         if self.state == 3:
-            self.state(0.1)
+            self.motor.set(0.1)
     
     def get_state(self):
         return self.state

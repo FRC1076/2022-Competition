@@ -15,12 +15,12 @@ controllerConfig = {
         'LEFT_TRIGGER_AXIS': 2,
         'RIGHT_TRIGGER_AXIS': 3,
     },
-#     'OPERATOR': {
-#         'ID': 1,
-#         'DEADZONE': DEADZONE,
-#         'LEFT_TRIGGER_AXIS': 2,
-#         'RIGHT_TRIGGER_AXIS': 3,
-#     }
+    'OPERATOR': {
+        'ID': 1,
+        'DEADZONE': DEADZONE,
+        'LEFT_TRIGGER_AXIS': 2,
+        'RIGHT_TRIGGER_AXIS': 3,
+    }
 }
 
 drivetrainConfig = {
