@@ -31,6 +31,8 @@ class SwerveModule:
         self.inverted = self.cfg.inverted or False 
         self.allow_reverse = self.cfg.allow_reverse or True #def allow reverse always, so you can maybe remove this
 
+        self.moduleFlipped = False
+
         # SmartDashboard
         self.sd = NetworkTables.getTable('SmartDashboard')
         self.debugging = self.sd.getEntry('drive/drive/debugging')
@@ -57,7 +59,12 @@ class SwerveModule:
         """
         :returns: the voltage position after the zero
         """
-        return self.encoder.getAbsolutePosition() - self.encoder_zero
+        angle = self.encoder.getAbsolutePosition() - self.encoder_zero
+
+        if self.moduleFlipped:
+            angle = (angle + 180) % 360
+
+        return angle
 
     def flush(self): # rewrite this (although it isnt used anywhere) to reset the encoder to 0 and zero out the speed, if you want.
         """
@@ -116,15 +123,23 @@ class SwerveModule:
         """
         # deg %= 360 # mod 360, may want to change
 
-        # if self.allow_reverse: #addresses module-flipping
-        #     """
-        #     If the difference between the requested degree and the current degree is
-        #     more than 90 degrees, don't turn the wheel 180 degrees. Instead reverse the speed.
-        #     """
-        #     if abs(deg - self.get_current_angle()) > 90: #make this with the new tick-degree methods
-        #         speed *= -1
-        #         deg += 180
-        #         deg %= 360
+        if self.allow_reverse: #addresses module-flipping
+            """
+            If the difference between the requested degree and the current degree is
+            more than 90 degrees, don't turn the wheel 180 degrees. Instead reverse the speed.
+            """
+            diff = abs(deg - self.get_current_angle())
+
+            if (diff > 180):
+                diff = 360 - diff
+
+            if diff > 90: #make this with the new tick-degree methods
+                self.moduleFlipped = not self.moduleFlipped
+                
+            if self.moduleFlipped:
+                speed *= -1
+                #deg += 180
+                #deg %= 360
 
         self._requested_speed = speed 
         self._set_deg(deg)
