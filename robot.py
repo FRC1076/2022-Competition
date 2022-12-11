@@ -221,15 +221,17 @@ class MyRobot(wpilib.TimedRobot):
 
         if operator.getYButtonReleased():
             self.hooks.change_front()
-        
+
         if operator.getAButtonReleased():
             self.hooks.change_back()
-        
+
         if operator.getXButtonReleased():
             self.hooks.change_left()
-        
+
         if operator.getBButtonReleased():
             self.hooks.change_right()
+
+        self.hooks.update()
 
 
     def autonomousInit(self):

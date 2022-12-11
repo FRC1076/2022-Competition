@@ -106,10 +106,19 @@ climberConfig = {
 }
 
 hooksConfig = {
-    'FRONT_HOOK_ID': 13,
-    'BACK_HOOK_ID': -1,
-    'LEFT_HOOK_ID': -1,
-    'RIGHT_HOOK_ID': -1
+    'FRONT_HOOK_ID': 5,
+    'BACK_HOOK_ID': 6,
+    'LEFT_HOOK_ID': 7,
+    'RIGHT_HOOK_ID': 8,
+
+    'FRONT_TOP_PORT': 0,
+    'FRONT_BOTTOM_PORT': 1,
+    'BACK_TOP_PORT': 2,
+    'BACK_BOTTOM_PORT': 3,
+    'RIGHT_TOP_PORT': 4,
+    'RIGHT_BOTTOM_PORT': 5,
+    'LEFT_TOP_PORT': 6,
+    'LEFT_BOTTOM_PORT': 7
 }
 
 #######################
