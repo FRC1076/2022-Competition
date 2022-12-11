@@ -7,10 +7,14 @@ import wpilib.drive
 import wpimath.controller
 from wpilib import interfaces
 import rev
+import ctre
 from navx import AHRS
 
 from robotconfig import robotconfig
 from controller import Controller
+from swervedrive import SwerveDrive
+from swervemodule import SwerveModule
+from swervemodule import ModuleConfig
 from feeder import Feeder
 from tester import Tester
 from networktables import NetworkTables
@@ -42,13 +46,15 @@ class MyRobot(wpilib.TimedRobot):
         else:
             self.config = robotconfig
 
+        print(self.config)
         for key, config in self.config.items():
             if key == 'CONTROLLERS':
                 controllers = self.initControllers(config)
                 self.driver = controllers[0]
-                self.operator = controllers[1]
+                #self.operator = controllers[1]
             if key == 'DRIVETRAIN':
                 self.drivetrain = self.initDrivetrain(config)
+                print(self.drivetrain)
             if key == 'FEEDER':
                 self.feeder = self.initFeeder(config)
             if key == 'AUTON':
@@ -82,24 +88,45 @@ class MyRobot(wpilib.TimedRobot):
 
 
     def initDrivetrain(self, config):
-        left_motors = []
-        right_motors = []
-        motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushed
-
-        for controller_id in config['LEFT'].values():
-            left_motors.append(rev.CANSparkMax(controller_id, motor_type))
-
-        for controller_id in config['RIGHT'].values():
-            right_motors.append(rev.CANSparkMax(controller_id, motor_type))
-
+        
         self.drive_type = config['DRIVETYPE']  # side effect!
 
         self.rotationCorrection = config['ROTATION_CORRECTION']
 
-        # Create Controller Groups
-        left_side = wpilib.MotorControllerGroup(*left_motors)
-        right_side = wpilib.MotorControllerGroup(*right_motors)
+        flModule_cfg = ModuleConfig(sd_prefix='FrontLeft_Module', zero=0.0, inverted=True, allow_reverse=True)
+        frModule_cfg = ModuleConfig(sd_prefix='FrontRight_Module', zero=0.0, inverted=False, allow_reverse=True)
+        rlModule_cfg = ModuleConfig(sd_prefix='RearLeft_Module', zero=0.0, inverted=True, allow_reverse=True)
+        rrModule_cfg = ModuleConfig(sd_prefix='RearRight_Module', zero=0.0, inverted=False, allow_reverse=True)
 
+        motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
+
+        # Drive motors
+        flModule_driveMotor = rev.CANSparkMax(config['FRONTLEFT_DRIVEMOTOR'], motor_type)
+        #frModule_driveMotor = rev.CANSparkMax(config['FRONTRIGHT_DRIVEMOTOR'], motor_type)
+        #rlModule_driveMotor = rev.CANSparkMax(config['REARLEFT_DRIVEMOTOR'], motor_type)
+        #rrModule_driveMotor = rev.CANSparkMax(config['REARRIGHT_DRIVEMOTOR'], motor_type)
+
+        # Rotate motors
+        flModule_rotateMotor = rev.CANSparkMax(config['FRONTLEFT_ROTATEMOTOR'], motor_type)
+        #frModule_rotateMotor = rev.CANSparkMax(config['FRONTRIGHT_ROTATEMOTOR'], motor_type)
+        #rlModule_rotateMotor = rev.CANSparkMax(config['REARLEFT_ROTATEMOTOR'], motor_type)
+        #rrModule_rotateMotor = rev.CANSparkMax(config['REARRIGHT_ROTATEMOTOR'], motor_type)
+
+        flModule_encoder = ctre.CANCoder(config['FRONTLEFT_ENCODER'])
+        #frModule_encoder = ctre.CANCoder(config['FRONTRIGHT_ENCODER'])
+        #rlModule_encoder = ctre.CANCoder(config['REARLEFT_ENCODER'])
+        #rrModule_encoder = ctre.CANCoder(config['REARRIGHT_ENCODER'])
+
+        frontLeftModule = SwerveModule(flModule_driveMotor, flModule_rotateMotor, flModule_encoder, flModule_cfg)
+        #frontRightModule = SwerveModule(frModule_driveMotor, frModule_rotateMotor, frModule_cfg)
+        #rearLeftModule = SwerveModule(rlModule_driveMotor, rlModule_rotateMotor, rlModule_cfg)
+        #rearRightModule = SwerveModule(rrModule_driveMotor, rrModule_rotateMotor, rrModule_cfg)
+
+        #swerve = SwerveDrive(frontLeftModule, frontRightModule, rearLeftModule, rearRightModule)
+
+        #return swerve
+
+        self.testingModule = frontLeftModule
 
     #EXAMPLE
     def initFeeder(self, config):
@@ -114,55 +141,58 @@ class MyRobot(wpilib.TimedRobot):
 
 
     def teleopInit(self):
+        print("teleopInit ran")
         return True
 
 
     def teleopPeriodic(self):
+        self.teleopDrivetrain()
         return True
 
+    def move(self, x, y, rcw):
+        """
+        This function is ment to be used by the teleOp.
+        :param x: Velocity in x axis [-1, 1]
+        :param y: Velocity in y axis [-1, 1]
+        :param rcw: Velocity in z axis [-1, 1]
+        """
+
+        # if self.driver.getLeftBumper():
+        #     # If the button is pressed, lower the rotate speed.
+        #     rcw *= 0.7
+
+        degrees = (math.atan2(y, x) * 180 / math.pi) + 180
+
+        self.testingModule.move(rcw, degrees)
+        self.testingModule.execute()
+
+        print('DRIVE_TARGET = ' + str(rcw) + ', PIVOT_TARGET = ' + str(degrees) + ", ENCODER_TICK = " + str(self.testingModule.get_current_angle()))
+        print('DRIVE_POWER = ' + str(self.testingModule.driveMotor.get()) + ', PIVOT_POWER = ' + str(self.testingModule.rotateMotor.get()))
+
+        #self.drivetrain.move(x, y, rcw)
+        #self.drivetrain.execute()
 
     def teleopDrivetrain(self):
-        if (not self.drivetrain):
-            return
+        # if (not self.drivetrain):
+        #     return
 
         driver = self.driver.xboxController
         deadzone = self.driver.deadzone
 
-        # TANK DRIVE
-        if (self.drive_type == TANK):
-            speedratio = 1.0  # ratio of joystick position to motor speed
+        self.move(driver.getRightX(), driver.getRightY(), driver.getLeftY())
 
-            # Get left and right joystick values.
-            leftspeed = driver.getLeftY()
-            rightspeed = -(driver.getRightY())
+        #self.testingModule.testMove(driver.getLeftY(), driver.getRightX())
 
-            # Eliminate deadzone and correct speed
-            leftspeed = speedratio * self.deadzoneCorrection(leftspeed, deadzone)
-            rightspeed = speedratio * self.deadzoneCorrection(rightspeed, deadzone)
-
-            # Invoke Tank Drive
-            self.drivetrain.tankDrive(leftspeed, rightspeed)
-
-        # ARCADE DRIVE
-        elif self.drive_type == ARCADE:
-            # speedratio = 0.8  # ratio of joystick position to motor speed
-            speedratio = 1.0
-
-            result = (-driver.getRightX(), driver.getLeftY())
-
-            rotateSpeed = result[0]
-            driveSpeed = result[1]
-
-            #print(rotateSpeed, driveSpeed)
-            rotateSpeed = speedratio * self.deadzoneCorrection(rotateSpeed + self.rotationCorrection, deadzone)
-            driveSpeed = speedratio * self.deadzoneCorrection(driveSpeed, deadzone)
-
-            #print(rotateSpeed, driveSpeed)
-            self.drivetrain.arcadeDrive(rotateSpeed, driveSpeed)
-
-        else:  # self.drive == SWERVE
-            # Panic
-            return
+        # Vectoral Button Drive
+        #if self.gamempad.getPOV() == 0:
+        #    self.drive.set_raw_fwd(-0.35)
+        #elif self.gamempad.getPOV() == 180:
+        #    self.drive.set_raw_fwd(0.35)
+        #elif self.gamempad.getPOV() == 90:
+        #    self.drive.set_raw_strafe(0.35)
+        #elif self.gamempad.getPOV() == 270:
+        #    self.drive.set_raw_strafe(-0.35)
+        return
 
 
     def autonomousInit(self):
@@ -207,6 +237,6 @@ class MyRobot(wpilib.TimedRobot):
 
 
 if __name__ == "__main__":
-    if sys.argv[1] == 'sim':
-        TEST_MODE = True
+    #if sys.argv[1] == 'sim':
+    #    TEST_MODE = True
     wpilib.run(MyRobot)
