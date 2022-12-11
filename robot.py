@@ -93,10 +93,15 @@ class MyRobot(wpilib.TimedRobot):
 
         self.rotationCorrection = config['ROTATION_CORRECTION']
 
-        flModule_cfg = ModuleConfig(sd_prefix='FrontLeft_Module', zero=0.0, inverted=True, allow_reverse=True)
-        frModule_cfg = ModuleConfig(sd_prefix='FrontRight_Module', zero=0.0, inverted=False, allow_reverse=True)
-        rlModule_cfg = ModuleConfig(sd_prefix='RearLeft_Module', zero=0.0, inverted=True, allow_reverse=True)
-        rrModule_cfg = ModuleConfig(sd_prefix='RearRight_Module', zero=0.0, inverted=False, allow_reverse=True)
+        flModule_cfg = ModuleConfig(sd_prefix='FrontLeft_Module', zero=190.0, inverted=True, allow_reverse=True)
+        frModule_cfg = ModuleConfig(sd_prefix='FrontRight_Module', zero=152.0, inverted=False, allow_reverse=True)
+        rlModule_cfg = ModuleConfig(sd_prefix='RearLeft_Module', zero=143.0, inverted=True, allow_reverse=True)
+        rrModule_cfg = ModuleConfig(sd_prefix='RearRight_Module', zero=162.0, inverted=True, allow_reverse=True)
+
+        # flModule_cfg = ModuleConfig(sd_prefix='FrontLeft_Module', zero=0.0, inverted=True, allow_reverse=True)
+        # frModule_cfg = ModuleConfig(sd_prefix='FrontRight_Module', zero=0.0, inverted=False, allow_reverse=True)
+        # rlModule_cfg = ModuleConfig(sd_prefix='RearLeft_Module', zero=0.0, inverted=True, allow_reverse=True)
+        # rrModule_cfg = ModuleConfig(sd_prefix='RearRight_Module', zero=0.0, inverted=False, allow_reverse=True)
 
         motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
 
@@ -118,11 +123,11 @@ class MyRobot(wpilib.TimedRobot):
         rrModule_encoder = ctre.CANCoder(config['REARRIGHT_ENCODER'])
 
         frontLeftModule = SwerveModule(flModule_driveMotor, flModule_rotateMotor, flModule_encoder, flModule_cfg)
-        frontRightModule = SwerveModule(frModule_driveMotor, frModule_rotateMotor, frModule_cfg)
-        rearLeftModule = SwerveModule(rlModule_driveMotor, rlModule_rotateMotor, rlModule_cfg)
-        rearRightModule = SwerveModule(rrModule_driveMotor, rrModule_rotateMotor, rrModule_cfg)
+        frontRightModule = SwerveModule(frModule_driveMotor, frModule_rotateMotor, frModule_encoder, frModule_cfg)
+        rearLeftModule = SwerveModule(rlModule_driveMotor, rlModule_rotateMotor, rlModule_encoder, rlModule_cfg)
+        rearRightModule = SwerveModule(rrModule_driveMotor, rrModule_rotateMotor, rrModule_encoder, rrModule_cfg)
 
-        swerve = SwerveDrive(frontLeftModule, frontRightModule, rearLeftModule, rearRightModule)
+        swerve = SwerveDrive(rearLeftModule, frontLeftModule, rearRightModule, frontRightModule)
 
         return swerve
 
@@ -179,7 +184,7 @@ class MyRobot(wpilib.TimedRobot):
         driver = self.driver.xboxController
         deadzone = self.driver.deadzone
 
-        self.move(driver.getRightX(), driver.getRightY(), driver.getLeftX())
+        self.move(self.deadzoneCorrection(driver.getRightX(), 0.1), self.deadzoneCorrection(driver.getRightY(), 0.1), self.deadzoneCorrection(driver.getLeftX(), 0.1))
 
         # Vectoral Button Drive
         #if self.gamempad.getPOV() == 0:
