@@ -102,31 +102,31 @@ class MyRobot(wpilib.TimedRobot):
 
         # Drive motors
         flModule_driveMotor = rev.CANSparkMax(config['FRONTLEFT_DRIVEMOTOR'], motor_type)
-        #frModule_driveMotor = rev.CANSparkMax(config['FRONTRIGHT_DRIVEMOTOR'], motor_type)
-        #rlModule_driveMotor = rev.CANSparkMax(config['REARLEFT_DRIVEMOTOR'], motor_type)
-        #rrModule_driveMotor = rev.CANSparkMax(config['REARRIGHT_DRIVEMOTOR'], motor_type)
+        frModule_driveMotor = rev.CANSparkMax(config['FRONTRIGHT_DRIVEMOTOR'], motor_type)
+        rlModule_driveMotor = rev.CANSparkMax(config['REARLEFT_DRIVEMOTOR'], motor_type)
+        rrModule_driveMotor = rev.CANSparkMax(config['REARRIGHT_DRIVEMOTOR'], motor_type)
 
         # Rotate motors
         flModule_rotateMotor = rev.CANSparkMax(config['FRONTLEFT_ROTATEMOTOR'], motor_type)
-        #frModule_rotateMotor = rev.CANSparkMax(config['FRONTRIGHT_ROTATEMOTOR'], motor_type)
-        #rlModule_rotateMotor = rev.CANSparkMax(config['REARLEFT_ROTATEMOTOR'], motor_type)
-        #rrModule_rotateMotor = rev.CANSparkMax(config['REARRIGHT_ROTATEMOTOR'], motor_type)
+        frModule_rotateMotor = rev.CANSparkMax(config['FRONTRIGHT_ROTATEMOTOR'], motor_type)
+        rlModule_rotateMotor = rev.CANSparkMax(config['REARLEFT_ROTATEMOTOR'], motor_type)
+        rrModule_rotateMotor = rev.CANSparkMax(config['REARRIGHT_ROTATEMOTOR'], motor_type)
 
         flModule_encoder = ctre.CANCoder(config['FRONTLEFT_ENCODER'])
-        #frModule_encoder = ctre.CANCoder(config['FRONTRIGHT_ENCODER'])
-        #rlModule_encoder = ctre.CANCoder(config['REARLEFT_ENCODER'])
-        #rrModule_encoder = ctre.CANCoder(config['REARRIGHT_ENCODER'])
+        frModule_encoder = ctre.CANCoder(config['FRONTRIGHT_ENCODER'])
+        rlModule_encoder = ctre.CANCoder(config['REARLEFT_ENCODER'])
+        rrModule_encoder = ctre.CANCoder(config['REARRIGHT_ENCODER'])
 
         frontLeftModule = SwerveModule(flModule_driveMotor, flModule_rotateMotor, flModule_encoder, flModule_cfg)
-        #frontRightModule = SwerveModule(frModule_driveMotor, frModule_rotateMotor, frModule_cfg)
-        #rearLeftModule = SwerveModule(rlModule_driveMotor, rlModule_rotateMotor, rlModule_cfg)
-        #rearRightModule = SwerveModule(rrModule_driveMotor, rrModule_rotateMotor, rrModule_cfg)
+        frontRightModule = SwerveModule(frModule_driveMotor, frModule_rotateMotor, frModule_cfg)
+        rearLeftModule = SwerveModule(rlModule_driveMotor, rlModule_rotateMotor, rlModule_cfg)
+        rearRightModule = SwerveModule(rrModule_driveMotor, rrModule_rotateMotor, rrModule_cfg)
 
-        #swerve = SwerveDrive(frontLeftModule, frontRightModule, rearLeftModule, rearRightModule)
+        swerve = SwerveDrive(frontLeftModule, frontRightModule, rearLeftModule, rearRightModule)
 
-        #return swerve
+        return swerve
 
-        self.testingModule = frontLeftModule
+        #self.testingModule = frontLeftModule
 
     #EXAMPLE
     def initFeeder(self, config):
@@ -161,16 +161,16 @@ class MyRobot(wpilib.TimedRobot):
         #     # If the button is pressed, lower the rotate speed.
         #     rcw *= 0.7
 
-        degrees = (math.atan2(y, x) * 180 / math.pi) + 180
+        # degrees = (math.atan2(y, x) * 180 / math.pi) + 180
 
-        self.testingModule.move(rcw, degrees)
-        self.testingModule.execute()
+        # self.testingModule.move(rcw, degrees)
+        # self.testingModule.execute()
 
-        print('DRIVE_TARGET = ' + str(rcw) + ', PIVOT_TARGET = ' + str(degrees) + ", ENCODER_TICK = " + str(self.testingModule.get_current_angle()))
-        print('DRIVE_POWER = ' + str(self.testingModule.driveMotor.get()) + ', PIVOT_POWER = ' + str(self.testingModule.rotateMotor.get()))
+        # print('DRIVE_TARGET = ' + str(rcw) + ', PIVOT_TARGET = ' + str(degrees) + ", ENCODER_TICK = " + str(self.testingModule.get_current_angle()))
+        # print('DRIVE_POWER = ' + str(self.testingModule.driveMotor.get()) + ', PIVOT_POWER = ' + str(self.testingModule.rotateMotor.get()))
 
-        #self.drivetrain.move(x, y, rcw)
-        #self.drivetrain.execute()
+        self.drivetrain.move(x, y, rcw)
+        self.drivetrain.execute()
 
     def teleopDrivetrain(self):
         # if (not self.drivetrain):
@@ -179,9 +179,7 @@ class MyRobot(wpilib.TimedRobot):
         driver = self.driver.xboxController
         deadzone = self.driver.deadzone
 
-        self.move(driver.getRightX(), driver.getRightY(), driver.getLeftY())
-
-        #self.testingModule.testMove(driver.getLeftY(), driver.getRightX())
+        self.move(driver.getRightX(), driver.getRightY(), driver.getLeftX())
 
         # Vectoral Button Drive
         #if self.gamempad.getPOV() == 0:
