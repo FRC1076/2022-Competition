@@ -59,7 +59,7 @@ class SwerveModule:
         """
         :returns: the voltage position after the zero
         """
-        angle = self.encoder.getAbsolutePosition() - self.encoder_zero
+        angle = (self.encoder.getAbsolutePosition() - self.encoder_zero) % 360
 
         if self.moduleFlipped:
             angle = (angle + 180) % 360
@@ -113,7 +113,7 @@ class SwerveModule:
         Round the value to within 360. Set the requested rotate position (requested voltage).
         Intended to be used only by the move function.
         """
-        self._requested_angle = (value + self.encoder_zero) % 360
+        self._requested_angle = value % 360
 
     def move(self, speed, deg): #this is all good mostly
         """
@@ -199,7 +199,6 @@ class SwerveModule:
 
         if self.debugging.getBoolean(False):
 
-            self.sd.putNumber('drive/%s/requested_voltage' % self.sd_prefix, self._requested_angle)
             self.sd.putNumber('drive/%s/requested_speed' % self.sd_prefix, self._requested_speed)
             self.sd.putNumber('drive/%s/encoder position' % self.sd_prefix, self.encoder.getAbsolutePosition())
             self.sd.putNumber('drive/%s/encoder_zero' % self.sd_prefix, self.encoder_zero)
