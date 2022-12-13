@@ -214,8 +214,24 @@ class SwerveDrive:
         :param strafe: the requested movement in the X direction of the 2D plane
         :param rcw: the requestest magnatude of the rotational vector of a 2D plane
         """
-        self.set_fwd(fwd)
-        self.set_strafe(strafe)
+
+        #Convert field-oriented translate to chassis-oriented translate
+        current_angle = self.getGyroAngle() % 360
+        desired_angle = math.atan2(fwd, strafe) % 360
+        chassis_angle = (desired_angle - current_angle) % 360
+        magnitude = math.hypot(fwd, strafe)
+
+        chassis_strafe = magnitude*math.cos(chassis_angle)
+        chassis_fwd = magnitude*math.sin(chassis_angle)
+
+        print("modified strafe: " + str(chassis_strafe) + ", modified fwd: " + str(chassis_fwd))
+
+        self.set_fwd(chassis_fwd)
+        self.set_strafe(chassis_strafe)
+
+        # self.set_fwd(fwd)
+        # self.set_strafe(strafe)
+
         self.set_rcw(rcw)
 
     def _calculate_vectors(self):
