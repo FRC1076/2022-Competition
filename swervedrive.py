@@ -14,7 +14,7 @@ class SwerveDrive:
     xy_multiplier = ntproperty('/SmartDashboard/drive/drive/xy_multiplier', 0.65)
     debugging = ntproperty('/SmartDashboard/drive/drive/debugging', True) # Turn to true to run it in verbose mode.
 
-    def __init__(self, _frontLeftModule, _frontRightModule, _rearLeftModule, _rearRightModule):
+    def __init__(self, _frontLeftModule, _frontRightModule, _rearLeftModule, _rearRightModule, _gyro):
         
         self.frontLeftModule = _frontLeftModule
         self.frontRightModule = _frontRightModule
@@ -28,6 +28,9 @@ class SwerveDrive:
             'rear_left': self.rearLeftModule,
             'rear_right': self.rearRightModule
         }
+
+        self.gyro = _gyro
+        self.gyro_zero = 0.0
 
         # Get Smart Dashboard
         self.sd = NetworkTables.getTable('SmartDashboard')
@@ -106,6 +109,14 @@ class SwerveDrive:
                 data[key] = data[key] / maxMagnitude
         
         return data
+
+    def getGyroAngle(self):
+        angle = (self.gyro.getAngle() - self.gyro_zero) % 360
+
+        return angle
+
+    def resetGyro(self):
+        self.gyro.reset()
 
     def flush(self):
         """
