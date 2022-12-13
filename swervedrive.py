@@ -1,4 +1,5 @@
 import math
+from util import clamp
 
 #from magicbot import magiccomponent
 import swervemodule
@@ -217,12 +218,12 @@ class SwerveDrive:
 
         #Convert field-oriented translate to chassis-oriented translate
         current_angle = self.getGyroAngle() % 360
-        desired_angle = math.atan2(fwd, strafe) % 360
+        desired_angle = ((math.atan2(fwd, strafe) / math.pi) * 180) % 360
         chassis_angle = (desired_angle - current_angle) % 360
-        magnitude = math.hypot(fwd, strafe)
+        magnitude = clamp(math.hypot(fwd, strafe), 0, 1)
 
-        chassis_strafe = magnitude*math.cos(chassis_angle)
-        chassis_fwd = magnitude*math.sin(chassis_angle)
+        chassis_strafe = magnitude * math.cos(math.radians(chassis_angle))
+        chassis_fwd = magnitude * math.sin(math.radians(chassis_angle))
 
         print("modified strafe: " + str(chassis_strafe) + ", modified fwd: " + str(chassis_fwd))
 
