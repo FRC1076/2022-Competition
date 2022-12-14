@@ -191,7 +191,7 @@ class MyRobot(wpilib.TimedRobot):
 
         print("gyro yaw: " + str(self.drivetrain.getGyroAngle()))
 
-        self.move(self.deadzoneCorrection(-driver.getRightX(), 0.1), self.deadzoneCorrection(driver.getRightY(), 0.1), self.deadzoneCorrection(driver.getLeftX(), 0.1))
+        self.move(self.deadzoneCorrection(-driver.getRightX(), 0.4), self.deadzoneCorrection(driver.getRightY(), 0.4), self.deadzoneCorrection(driver.getLeftX(), 0.4))
 
         # Vectoral Button Drive
         #if self.gamempad.getPOV() == 0:
