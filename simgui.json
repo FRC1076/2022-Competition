@@ -9,19 +9,7 @@
     }
   },
   "NetworkTables": {
-    "LiveWindow": {
-      ".status": {
-        "open": true
-      },
-      "open": true
-    },
     "SmartDashboard": {
-      "drive": {
-        "drive": {
-          "open": true
-        },
-        "open": true
-      },
       "open": true
     }
   }
