@@ -31,34 +31,47 @@ class SwerveModule:
         self.inverted = self.cfg.inverted or False 
         self.allow_reverse = self.cfg.allow_reverse or True #def allow reverse always, so you can maybe remove this
 
+        self.moduleFlipped = False
+
         # SmartDashboard
         self.sd = NetworkTables.getTable('SmartDashboard')
         self.debugging = self.sd.getEntry('drive/drive/debugging')
 
         # Motor
         self.driveMotor.setInverted(self.inverted)
+        self.rotateMotor.setInverted(False)
 
         self._requested_angle = 0 # change this to something like 'requested angle' or 'requested encoder value', whatever makes more sense
         self._requested_speed = 0 #class variable which execute() passes to the drive motor at the end of the robot loop
 
         # PID Controller
         # kP = 1.5, kI = 0.0, kD = 0.0
-        self._pid_controller = PIDController(0.1, 0.0, 0.0) #swap this stuff for CANSparkMax pid controller -- see example from last year shooter
+        self._pid_controller = PIDController(0.005, 0.00001, 0.00001) #swap this stuff for CANSparkMax pid controller -- see example from last year shooter
         self._pid_controller.enableContinuousInput(0, 360)
-        self._pid_controller.setTolerance(2, 2) # may need to tweak this with PID testing
+        self._pid_controller.setTolerance(0.5, 0.5) # may need to tweak this with PID testing
+
+        self.sd.putNumber('kP', self._pid_controller.getP())
+        self.sd.putNumber('kI', self._pid_controller.getI())
+        self.sd.putNumber('kD', self._pid_controller.getD())
+        
 
     def get_current_angle(self):
         """
         :returns: the voltage position after the zero
         """
-        return self.encoder.getAbsolutePosition() - self.encoder_zero
+        angle = (self.encoder.getAbsolutePosition() - self.encoder_zero) % 360
+
+        if self.moduleFlipped:
+            angle = (angle + 180) % 360
+
+        return angle
 
     def flush(self): # rewrite this (although it isnt used anywhere) to reset the encoder to 0 and zero out the speed, if you want.
         """
         Flush the modules requested speed and voltage.
         Resets the PID controller.
         """
-        self._requested_angle = self.encoder_zero
+        self._requested_angle = 0
         self._requested_speed = 0
         self._pid_controller.reset()
 
@@ -100,7 +113,7 @@ class SwerveModule:
         Round the value to within 360. Set the requested rotate position (requested voltage).
         Intended to be used only by the move function.
         """
-        self._requested_angle = (value + self.encoder_zero) % 360
+        self._requested_angle = value % 360
 
     def move(self, speed, deg): #this is all good mostly
         """
@@ -108,17 +121,25 @@ class SwerveModule:
         :param speed: requested speed of wheel from -1 to 1
         :param deg: requested angle of wheel from 0 to 359 (Will wrap if over or under)
         """
-        deg %= 360 # mod 360, may want to change
+        # deg %= 360 # mod 360, may want to change
 
         if self.allow_reverse: #addresses module-flipping
             """
             If the difference between the requested degree and the current degree is
             more than 90 degrees, don't turn the wheel 180 degrees. Instead reverse the speed.
             """
-            if abs(deg - self.get_current_angle()) > 90: #make this with the new tick-degree methods
+            diff = abs(deg - self.get_current_angle())
+
+            if (diff > 180):
+                diff = 360 - diff
+
+            if diff > 90: #make this with the new tick-degree methods
+                self.moduleFlipped = not self.moduleFlipped
+                
+            if self.moduleFlipped:
                 speed *= -1
-                deg += 180
-                deg %= 360
+                #deg += 180
+                #deg %= 360
 
         self._requested_speed = speed 
         self._set_deg(deg)
@@ -135,6 +156,11 @@ class SwerveModule:
         Set the speed requested of the drive motor.
         Called every robot iteration/loop.
         """
+
+        self._pid_controller.setP(self.sd.getNumber('kP', 0))
+        self._pid_controller.setI(self.sd.getNumber('kI', 0))
+        self._pid_controller.setD(self.sd.getNumber('kD', 0))
+
         # Calculate the error using the current voltage and the requested voltage.
         # DO NOT use the #self.get_voltage function here. It has to be the raw voltage.
         error = self._pid_controller.calculate(self.get_current_angle(), self._requested_angle) #Make this an error in ticks instead of voltage
@@ -148,7 +174,7 @@ class SwerveModule:
             # Use max-min to clamped the output between -1 and 1. The CANSparkMax PID controller does this automatically, so idk if this is necessary
             output = clamp(error)
 
-        print('ERROR = ' + str(error) + ', OUTPUT = ' + str(output))
+        # print('ERROR = ' + str(error) + ', OUTPUT = ' + str(output))
 
         # Put the output to the dashboard
         self.sd.putNumber('drive/%s/output' % self.sd_prefix, output)
@@ -172,7 +198,7 @@ class SwerveModule:
         self.sd.putNumber('drive/%s/degrees' % self.sd_prefix, self.get_current_angle())
 
         if self.debugging.getBoolean(False):
-            self.sd.putNumber('drive/%s/requested_voltage' % self.sd_prefix, self._requested_angle)
+
             self.sd.putNumber('drive/%s/requested_speed' % self.sd_prefix, self._requested_speed)
             self.sd.putNumber('drive/%s/encoder position' % self.sd_prefix, self.encoder.getAbsolutePosition())
             self.sd.putNumber('drive/%s/encoder_zero' % self.sd_prefix, self.encoder_zero)
