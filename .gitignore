@@ -1,6 +1,6 @@
 __pycache__
 .idea
-.json
+*.json
 imgui.ini
-simgui*
+*simgui
 .OutlineViewer
