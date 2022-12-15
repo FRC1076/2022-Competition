@@ -13,46 +13,37 @@
         "tiles": {
           "0,0": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/drive/FrontLeft_Module/requested_voltage",
-              "_title": "drive/FrontLeft_Module/requested_voltage"
-            }
-          },
-          "1,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/drive/FrontLeft_Module/requested_speed",
-              "_title": "drive/FrontLeft_Module/requested_speed"
+              "_source0": "network_table:///SmartDashboard/phase",
+              "_title": "phase"
             }
           },
           "2,0": {
             "size": [
-              1,
-              1
+              2,
+              2
             ],
             "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/drive/drive/lower_input_thresh",
-              "_title": "drive/drive/lower_input_thresh"
+              "_type": "Gyro",
+              "_title": "Gyro",
+              "Visuals/Major tick spacing": 45.0,
+              "Visuals/Starting angle": 180.0,
+              "Visuals/Show tick mark ring": true,
+              "Visuals/Counter clockwise": false
             }
           },
-          "3,0": {
+          "0,1": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/drive/FrontLeft_Module/PID Error",
-              "_title": "drive/FrontLeft_Module/PID Error"
+              "_title": "Sim: 127.0.0.1; Comp: 10.10.76.2"
             }
           },
           "4,0": {
@@ -61,11 +52,9 @@
               1
             ],
             "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/drive/drive/debugging",
-              "_title": "drive/drive/debugging",
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Periods",
+              "_title": "Periods"
             }
           },
           "5,0": {
@@ -74,11 +63,9 @@
               1
             ],
             "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/drive/FrontLeft_Module/PID isAligned",
-              "_title": "drive/FrontLeft_Module/PID isAligned",
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Phase ",
+              "_title": "Phase "
             }
           },
           "6,0": {
@@ -87,128 +74,68 @@
               1
             ],
             "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/drive/FrontLeft_Module/output",
-              "_title": "drive/FrontLeft_Module/output"
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Vision Has Target",
+              "_title": "Vision Has Target",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
             }
           },
-          "7,0": {
+          "4,1": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Aimer Yaw (Degrees)",
+              "_title": "Aimer Yaw (Degrees)"
+            }
+          },
+          "7,1": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Tilt Target (Degrees)",
+              "_title": "Tilt Target (Degrees)"
+            }
+          },
+          "6,1": {
             "size": [
               1,
               1
             ],
             "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/drive/FrontLeft_Module/PID Setpoint",
-              "_title": "drive/FrontLeft_Module/PID Setpoint"
+              "_source0": "network_table:///SmartDashboard/Tilt (Degrees)",
+              "_title": "Tilt (Degrees)"
             }
           },
-          "8,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/drive/FrontLeft_Module/encoder position",
-              "_title": "drive/FrontLeft_Module/encoder position"
-            }
-          },
-          "9,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/drive/drive/rotation_multiplier",
-              "_title": "drive/drive/rotation_multiplier"
-            }
-          },
-          "10,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/drive/drive/xy_multiplier",
-              "_title": "drive/drive/xy_multiplier"
-            }
-          },
-          "11,0": {
+          "6,2": {
             "size": [
               1,
               1
             ],
             "content": {
               "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/drive/FrontLeft_Module/allow_reverse",
-              "_title": "drive/FrontLeft_Module/allow_reverse",
+              "_source0": "network_table:///SmartDashboard/Feeder Has Fired",
+              "_title": "Feeder Has Fired",
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "7,2": {
+          "4,2": {
             "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Graph",
-              "_source0": "network_table:///SmartDashboard/drive/FrontLeft_Module/degrees",
-              "_title": "drive/FrontLeft_Module/degrees",
-              "Graph/Visible time": 10.0,
-              "Graph/X-axis auto scrolling": true,
-              "Y-axis/Automatic bounds": true,
-              "Y-axis/Upper bound": 1.0,
-              "Y-axis/Lower bound": -1.0,
-              "Y-axis/Unit": "ul",
-              "Visible data/SmartDashboard/drive/FrontLeft_Module/degrees": true
-            }
-          },
-          "0,1": {
-            "size": [
-              1,
+              2,
               1
             ],
             "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/drive/FrontLeft_Module/encoder_zero",
-              "_title": "drive/FrontLeft_Module/encoder_zero"
-            }
-          },
-          "9,1": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/kP",
-              "_title": "kP"
-            }
-          },
-          "9,2": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/kI",
-              "_title": "kI"
-            }
-          },
-          "9,3": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/kD",
-              "_title": "kD"
+              "_source0": "network_table:///SmartDashboard/Shooter Speed (RPM)",
+              "_title": "Shooter Speed (RPM)"
             }
           }
         }
@@ -224,14 +151,69 @@
         "hgap": 16.0,
         "vgap": 16.0,
         "titleType": 0,
+        "tiles": {
+          "0,0": {
+            "size": [
+              2,
+              4
+            ],
+            "content": {
+              "_type": "Subsystem Layout",
+              "_source0": "network_table:///LiveWindow/Ungrouped",
+              "_title": "Ungrouped",
+              "Layout/Label position": "BOTTOM",
+              "_children": [
+                {
+                  "_type": "Differential Drivebase",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/DifferentialDrive[1]",
+                  "_title": "DifferentialDrive[1]",
+                  "Wheels/Number of wheels": 4,
+                  "Wheels/Wheel diameter": 80.0,
+                  "Visuals/Show velocity vectors": true
+                },
+                {
+                  "_type": "Gyro",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/navX-Sensor[4]",
+                  "_title": "navX-Sensor[4]",
+                  "Visuals/Major tick spacing": 45.0,
+                  "Visuals/Starting angle": 180.0,
+                  "Visuals/Show tick mark ring": true,
+                  "Visuals/Counter clockwise": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/DoubleSolenoid[0,1]/Value",
+                  "_title": "DoubleSolenoid[0,1]/Value"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/DoubleSolenoid[0,3]/Value",
+                  "_title": "DoubleSolenoid[0,3]/Value"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "Tab 3",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "",
+      "widgetPane": {
+        "gridSize": 128.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "titleType": 0,
         "tiles": {}
       }
     }
   ],
   "windowGeometry": {
-    "x": -8.0,
-    "y": -8.0,
-    "width": 1936.0,
-    "height": 1048.0
+    "x": 0.0,
+    "y": 0.0,
+    "width": 1540.0,
+    "height": 625.5999755859375
   }
 }

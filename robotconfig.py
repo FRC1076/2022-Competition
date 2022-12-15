@@ -15,28 +15,24 @@ controllerConfig = {
         'LEFT_TRIGGER_AXIS': 2,
         'RIGHT_TRIGGER_AXIS': 3,
     },
-#     'OPERATOR': {
-#         'ID': 1,
-#         'DEADZONE': DEADZONE,
-#         'LEFT_TRIGGER_AXIS': 2,
-#         'RIGHT_TRIGGER_AXIS': 3,
-#     }
+    'OPERATOR': {
+        'ID': 1,
+        'DEADZONE': DEADZONE,
+        'LEFT_TRIGGER_AXIS': 2,
+        'RIGHT_TRIGGER_AXIS': 3,
+    }
 }
 
 drivetrainConfig = {
-    'FRONTLEFT_DRIVEMOTOR': 1,
-    'FRONTRIGHT_DRIVEMOTOR': 2,
-    'REARRIGHT_DRIVEMOTOR': 3,
-    'REARLEFT_DRIVEMOTOR': 4,
-    'FRONTLEFT_ROTATEMOTOR': 11,
-    'FRONTRIGHT_ROTATEMOTOR': 12,
-    'REARRIGHT_ROTATEMOTOR': 13,
-    'REARLEFT_ROTATEMOTOR': 14,
-    'FRONTLEFT_ENCODER': 21,
-    'FRONTRIGHT_ENCODER': 22,
-    'REARRIGHT_ENCODER': 23,
-    'REARLEFT_ENCODER': 24,
-    'DRIVETYPE': SWERVE,
+    'LEFT': {
+        'LEFT_LEADER_ID': 13,
+        'LEFT_FOLLOWER_ID': 8,
+    },
+    'RIGHT': {
+        'RIGHT_LEADER_ID': 15,
+        'RIGHT_FOLLOWER_ID': 7,
+    },
+    'DRIVETYPE': ARCADE,
     'ROTATION_CORRECTION': 0.0,
 }
 
@@ -140,15 +136,9 @@ showbot = {
     'VISION': visionConfig,
     'SHOOTER': shooterConfig,
 }
-
-testBot = {
-    'CONTROLLERS': controllerConfig,
-    'DRIVETRAIN': drivetrainConfig,
-}
-
 showbot['SHOOTER']['SHOOTER_ID'] = 10 # how to override just one thing
 
 ##########################
 ###  CONFIG TO DEPLOY  ###
 ##########################
-robotconfig = testBot
+robotconfig = gull_lake
