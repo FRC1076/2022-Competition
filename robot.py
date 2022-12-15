@@ -18,6 +18,7 @@ from swervemodule import ModuleConfig
 from feeder import Feeder
 from tester import Tester
 from networktables import NetworkTables
+from hooks import Hooks
 
 # Drive Types
 ARCADE = 1
@@ -37,6 +38,7 @@ class MyRobot(wpilib.TimedRobot):
         self.feeder = None
         self.tester = None
         self.auton = None
+        self.hooks = None
 
         # Even if no drivetrain, defaults to drive phase
         self.phase = "DRIVE_PHASE"
@@ -51,7 +53,7 @@ class MyRobot(wpilib.TimedRobot):
             if key == 'CONTROLLERS':
                 controllers = self.initControllers(config)
                 self.driver = controllers[0]
-                #self.operator = controllers[1]
+                self.operator = controllers[1]
             if key == 'DRIVETRAIN':
                 self.drivetrain = self.initDrivetrain(config)
                 print(self.drivetrain)
@@ -59,6 +61,8 @@ class MyRobot(wpilib.TimedRobot):
                 self.feeder = self.initFeeder(config)
             if key == 'AUTON':
                 self.auton = self.initAuton(config)
+            if key == 'HOOKS':
+                self.hooks = self.initHooks(config)
 
         self.dashboard = NetworkTables.getTable('SmartDashboard')
         self.periods = 0
@@ -154,6 +158,7 @@ class MyRobot(wpilib.TimedRobot):
 
     def teleopPeriodic(self):
         self.teleopDrivetrain()
+        self.teleopHooks()
         return True
 
     def move(self, x, y, rcw):
@@ -203,6 +208,40 @@ class MyRobot(wpilib.TimedRobot):
         #elif self.gamempad.getPOV() == 270:
         #    self.drive.set_raw_strafe(-0.35)
         return
+
+    def initHooks(self, config):
+        motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushed
+
+        #Front
+        hook1 = rev.CANSparkMax(config['FRONT_HOOK_ID'], motor_type)
+
+        #Back
+        hook2 = rev.CANSparkMax(config['BACK_HOOK_ID'], motor_type)
+
+        #Left
+        hook3 = rev.CANSparkMax(config['LEFT_HOOK_ID'], motor_type)
+
+        #Right
+        hook4 = rev.CANSparkMax(config['RIGHT_HOOK_ID'], motor_type)
+
+        return Hooks([hook1, hook2, hook3, hook4])
+    
+    def teleopHooks(self):
+        operator = self.operator.xboxController
+
+        if operator.getYButtonReleased():
+            self.hooks.change_front()
+
+        if operator.getAButtonReleased():
+            self.hooks.change_back()
+
+        if operator.getXButtonReleased():
+            self.hooks.change_left()
+
+        if operator.getBButtonReleased():
+            self.hooks.change_right()
+
+        self.hooks.update()
 
 
     def autonomousInit(self):
