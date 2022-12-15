@@ -127,7 +127,9 @@ class MyRobot(wpilib.TimedRobot):
         rearLeftModule = SwerveModule(rlModule_driveMotor, rlModule_rotateMotor, rlModule_encoder, rlModule_cfg)
         rearRightModule = SwerveModule(rrModule_driveMotor, rrModule_rotateMotor, rrModule_encoder, rrModule_cfg)
 
-        swerve = SwerveDrive(rearLeftModule, frontLeftModule, rearRightModule, frontRightModule)
+        gyro = AHRS.create_spi()
+
+        swerve = SwerveDrive(rearLeftModule, frontLeftModule, rearRightModule, frontRightModule, gyro)
 
         return swerve
 
@@ -184,7 +186,12 @@ class MyRobot(wpilib.TimedRobot):
         driver = self.driver.xboxController
         deadzone = self.driver.deadzone
 
-        self.move(self.deadzoneCorrection(driver.getRightX(), 0.1), self.deadzoneCorrection(driver.getRightY(), 0.1), self.deadzoneCorrection(driver.getLeftX(), 0.1))
+        if (driver.getLeftTriggerAxis() > 0.7 and driver.getRightTriggerAxis() > 0.7):
+            self.drivetrain.resetGyro()
+
+        print("gyro yaw: " + str(self.drivetrain.getGyroAngle()))
+
+        self.move(self.deadzoneCorrection(-driver.getRightX(), 0.4), self.deadzoneCorrection(driver.getRightY(), 0.4), self.deadzoneCorrection(driver.getLeftX(), 0.4))
 
         # Vectoral Button Drive
         #if self.gamempad.getPOV() == 0:

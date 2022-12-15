@@ -1,4 +1,5 @@
 import math
+from util import clamp
 
 #from magicbot import magiccomponent
 import swervemodule
@@ -14,7 +15,7 @@ class SwerveDrive:
     xy_multiplier = ntproperty('/SmartDashboard/drive/drive/xy_multiplier', 0.65)
     debugging = ntproperty('/SmartDashboard/drive/drive/debugging', True) # Turn to true to run it in verbose mode.
 
-    def __init__(self, _frontLeftModule, _frontRightModule, _rearLeftModule, _rearRightModule):
+    def __init__(self, _frontLeftModule, _frontRightModule, _rearLeftModule, _rearRightModule, _gyro):
         
         self.frontLeftModule = _frontLeftModule
         self.frontRightModule = _frontRightModule
@@ -28,6 +29,9 @@ class SwerveDrive:
             'rear_left': self.rearLeftModule,
             'rear_right': self.rearRightModule
         }
+
+        self.gyro = _gyro
+        self.gyro_zero = 0.0
 
         # Get Smart Dashboard
         self.sd = NetworkTables.getTable('SmartDashboard')
@@ -106,6 +110,14 @@ class SwerveDrive:
                 data[key] = data[key] / maxMagnitude
         
         return data
+
+    def getGyroAngle(self):
+        angle = (self.gyro.getAngle() - self.gyro_zero) % 360
+
+        return angle
+
+    def resetGyro(self):
+        self.gyro.reset()
 
     def flush(self):
         """
@@ -203,8 +215,24 @@ class SwerveDrive:
         :param strafe: the requested movement in the X direction of the 2D plane
         :param rcw: the requestest magnatude of the rotational vector of a 2D plane
         """
-        self.set_fwd(fwd)
-        self.set_strafe(strafe)
+
+        #Convert field-oriented translate to chassis-oriented translate
+        current_angle = self.getGyroAngle() % 360
+        desired_angle = ((math.atan2(fwd, strafe) / math.pi) * 180) % 360
+        chassis_angle = (desired_angle - current_angle) % 360
+        magnitude = clamp(math.hypot(fwd, strafe), 0, 1)
+
+        chassis_strafe = magnitude * math.cos(math.radians(chassis_angle))
+        chassis_fwd = magnitude * math.sin(math.radians(chassis_angle))
+
+        print("modified strafe: " + str(chassis_strafe) + ", modified fwd: " + str(chassis_fwd))
+
+        self.set_fwd(chassis_fwd)
+        self.set_strafe(chassis_strafe)
+
+        # self.set_fwd(fwd)
+        # self.set_strafe(strafe)
+
         self.set_rcw(rcw)
 
     def _calculate_vectors(self):

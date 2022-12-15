@@ -71,7 +71,7 @@ class SwerveModule:
         Flush the modules requested speed and voltage.
         Resets the PID controller.
         """
-        self._requested_angle = self.encoder_zero
+        self._requested_angle = 0
         self._requested_speed = 0
         self._pid_controller.reset()
 
@@ -174,7 +174,7 @@ class SwerveModule:
             # Use max-min to clamped the output between -1 and 1. The CANSparkMax PID controller does this automatically, so idk if this is necessary
             output = clamp(error)
 
-        print('ERROR = ' + str(error) + ', OUTPUT = ' + str(output))
+        # print('ERROR = ' + str(error) + ', OUTPUT = ' + str(output))
 
         # Put the output to the dashboard
         self.sd.putNumber('drive/%s/output' % self.sd_prefix, output)
