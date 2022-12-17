@@ -4,6 +4,7 @@ from robotconfig import robotconfig
 
 class Hooks:
     def __init__(self, motors):
+        #self.hookSpeed = 0.5
         config = robotconfig["HOOKS"]
         #front, back, left, right
         self.motors = motors
@@ -34,6 +35,7 @@ class Hooks:
 class HookModule:
     #motor, top limit switch port number, bottom limit switch port number
     def __init__(self, motor, top_port, bottom_port):
+        self.hookSpeed = 0.5
         self.motor = motor
         #0:raised, 1:raising, 2:lowered, 3:lowering
         self.state = 2
@@ -57,11 +59,11 @@ class HookModule:
         
         #if raising
         if self.state == 1:
-            self.motor.set(-0.2)
+            self.motor.set(-self.hookSpeed)
         
         #if lowering
         if self.state == 3:
-            self.motor.set(0.2)
+            self.motor.set(self.hookSpeed)
     
     #set the state of hook
     def set_state(self, state):
@@ -72,11 +74,11 @@ class HookModule:
         
         #if raising
         if self.state == 1:
-            self.motor.set(-0.2)
+            self.motor.set(-self.hookSpeed)
         
         #if lowering
         if self.state == 3:
-            self.motor.set(0.2)
+            self.motor.set(self.hookSpeed)
     
     #get the state of hook
     def get_state(self):

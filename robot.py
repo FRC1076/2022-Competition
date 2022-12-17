@@ -88,6 +88,7 @@ class MyRobot(wpilib.TimedRobot):
 
 
     def initAuton(self, config):
+        self.autononmousInit();
         return True
 
 
@@ -191,12 +192,20 @@ class MyRobot(wpilib.TimedRobot):
         driver = self.driver.xboxController
         deadzone = self.driver.deadzone
 
+        speedMulti = 1.0
+
         if (driver.getLeftTriggerAxis() > 0.7 and driver.getRightTriggerAxis() > 0.7):
             self.drivetrain.resetGyro()
 
+        if (driver.getAButton()):
+            speedMulti = 0.25
+
         print("gyro yaw: " + str(self.drivetrain.getGyroAngle()))
 
-        self.move(self.deadzoneCorrection(-driver.getRightX(), 0.4), self.deadzoneCorrection(driver.getRightY(), 0.4), self.deadzoneCorrection(driver.getLeftX(), 0.4))
+        if (driver.getLeftBumper()):
+            self.request_wheel_lock = True
+
+        self.move(self.deadzoneCorrection(-driver.getRightX(), 0.4 * speedMulti), self.deadzoneCorrection(driver.getRightY(), 0.4 * speedMulti), self.deadzoneCorrection(driver.getLeftX(), 0.2 * speedMulti))
 
         # Vectoral Button Drive
         #if self.gamempad.getPOV() == 0:
@@ -247,6 +256,7 @@ class MyRobot(wpilib.TimedRobot):
     def autonomousInit(self):
         if not self.auton:
             return
+        self.drivetrain.resetGyro()
 
 
     def autonomousPeriodic(self):
@@ -255,15 +265,17 @@ class MyRobot(wpilib.TimedRobot):
 
         self.autonForwardAndBack()
 
-
     def autonForwardAndBack(self):
         driver = self.driver.xboxController
         if driver.getLeftBumper() and driver.getRightBumper():
             if self.autonTimer.get() < 1.0:
-                self.drivetrain.arcadeDrive(0, -0.75)
+                self.move(self.deadzoneCorrection(0, 0.4 * 0.25), self.deadzoneCorrection(0.5, 0.4 * 0.25), self.deadzoneCorrection(0, 0.2 * 0.25))
             elif 1.0 <= self.autonTimer.get() < 2.0:
-                self.drivetrain.arcadeDrive(0, 0.75)
-        
+                self.hooks.change_front()
+            elif 2.0 <= self.autonTimer.get() < 3.0:
+                self.hooks.change_front()
+            elif 3.0 <= self.autonTimer.get() < 4.0:
+                self.move(self.deadzoneCorrection(0, 0.4 * 0.25), self.deadzoneCorrection(-0.5, 0.4 * 0.25), self.deadzoneCorrection(0, 0.2 * 0.25))
 
     def deadzoneCorrection(self, val, deadzone):
         """
