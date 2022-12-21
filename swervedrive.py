@@ -225,7 +225,7 @@ class SwerveDrive:
         chassis_strafe = magnitude * math.cos(math.radians(chassis_angle))
         chassis_fwd = magnitude * math.sin(math.radians(chassis_angle))
 
-        print("modified strafe: " + str(chassis_strafe) + ", modified fwd: " + str(chassis_fwd))
+        #print("modified strafe: " + str(chassis_strafe) + ", modified fwd: " + str(chassis_fwd))
 
         self.set_fwd(chassis_fwd)
         self.set_strafe(chassis_strafe)

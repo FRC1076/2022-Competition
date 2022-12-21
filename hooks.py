@@ -13,6 +13,18 @@ class Hooks:
                                 HookModule(motors[2], config['LEFT_TOP_PORT'], config['LEFT_BOTTOM_PORT']), 
                                     HookModule(motors[3], config['RIGHT_TOP_PORT'], config['RIGHT_BOTTOM_PORT'])]
 
+    def get_front(self):
+        return(self.modules[0].get_state())
+
+    def get_back(self):
+        return(self.modules[1].get_state())
+
+    def get_left(self):
+        return(self.modules[2].get_state())
+
+    def get_right(self):
+        return(self.modules[3].get_state())
+        
     def change_front(self):
         self.modules[0].change_state()
     
@@ -98,4 +110,4 @@ class HookModule:
         if self.bottom_switch.get() == False and self.top_switch.get() == False:
             self.trigger_once = False
 
-        print(self.state, self.top_switch.get(), self.bottom_switch.get())
+        #print(self.state, self.top_switch.get(), self.bottom_switch.get())

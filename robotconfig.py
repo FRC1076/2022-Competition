@@ -81,12 +81,12 @@ visionConfig = {
 }
 
 autonConfig = {
-    'TILTING_TIME': 2,
-    'SPINUP_TIME': 3,
-    'FIRING_TIME': 3,
-    'BACKUP_TIME': 1.5,
-    'TILT_TARGET_DEGREES': 20,
-    'SHOOT_SPEED': 0.5,
+    'HOOK_UP_TIME': 0.5,
+    'DRIVE_FORWARD_TIME': 0.75,
+    'HOOK_DOWN_TIME': 2.0,
+    'DRIVE_BACKWARD_TIME': 2.5,
+    'AUTON_SPEED_FORWARD': 0.8,
+    'AUTON_SPEED_BACKWARD': 0.5,
 }
 
 climberConfig = {
@@ -163,7 +163,8 @@ showbot = {
 testBot = {
     'CONTROLLERS': controllerConfig,
     'DRIVETRAIN': drivetrainConfig,
-    'HOOKS': hooksConfig
+    'HOOKS': hooksConfig,
+    'AUTON': autonConfig
 }
 
 showbot['SHOOTER']['SHOOTER_ID'] = 10 # how to override just one thing
