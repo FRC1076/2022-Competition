@@ -1,4 +1,4 @@
-DEADZONE = 0.2
+DEADZONE = 0.0
 
 # Drive Types
 ARCADE = 1

@@ -205,6 +205,10 @@ class MyRobot(wpilib.TimedRobot):
 
         speedMulti = 1.0
 
+        self.dashboard.putNumber('ctrl right x', driver.getRightX())
+        self.dashboard.putNumber('ctrl right y', driver.getRightY())
+        
+
         if (driver.getLeftTriggerAxis() > 0.7 and driver.getRightTriggerAxis() > 0.7):
             self.drivetrain.resetGyro()
 
