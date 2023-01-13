@@ -88,6 +88,12 @@ class MyRobot(wpilib.TimedRobot):
 
 
     def initAuton(self, config):
+        self.autonHookUpTime = config['HOOK_UP_TIME']
+        self.autonDriveForwardTime = config['DRIVE_FORWARD_TIME']
+        self.autonHookDownTime = config['HOOK_DOWN_TIME']
+        self.autonDriveBackwardTime = config['DRIVE_BACKWARD_TIME']
+        self.autonForwardSpeed = config['AUTON_SPEED_FORWARD']
+        self.autonBackwardSpeed = config['AUTON_SPEED_BACKWARD']
         return True
 
 
@@ -114,6 +120,12 @@ class MyRobot(wpilib.TimedRobot):
         frModule_driveMotor = rev.CANSparkMax(config['FRONTRIGHT_DRIVEMOTOR'], motor_type)
         rlModule_driveMotor = rev.CANSparkMax(config['REARLEFT_DRIVEMOTOR'], motor_type)
         rrModule_driveMotor = rev.CANSparkMax(config['REARRIGHT_DRIVEMOTOR'], motor_type)
+
+        # Set ramp rates of drive motors
+        #flModule_driveMotor.setClosedLoopRampRate(0.5)
+        #frModule_driveMotor.setClosedLoopRampRate(0.5)
+        #rlModule_driveMotor.setClosedLoopRampRate(0.5)
+        #rrModule_driveMotor.setClosedLoopRampRate(0.5)
 
         # Rotate motors
         flModule_rotateMotor = rev.CANSparkMax(config['FRONTLEFT_ROTATEMOTOR'], motor_type)
@@ -191,12 +203,24 @@ class MyRobot(wpilib.TimedRobot):
         driver = self.driver.xboxController
         deadzone = self.driver.deadzone
 
+        speedMulti = 1.0
+
+        self.dashboard.putNumber('ctrl right x', driver.getRightX())
+        self.dashboard.putNumber('ctrl right y', driver.getRightY())
+        
+
         if (driver.getLeftTriggerAxis() > 0.7 and driver.getRightTriggerAxis() > 0.7):
             self.drivetrain.resetGyro()
 
-        print("gyro yaw: " + str(self.drivetrain.getGyroAngle()))
+        if (driver.getRightBumper()):
+            speedMulti = 0.125
 
-        self.move(self.deadzoneCorrection(-driver.getRightX(), 0.4), self.deadzoneCorrection(driver.getRightY(), 0.4), self.deadzoneCorrection(driver.getLeftX(), 0.4))
+        #print("gyro yaw: " + str(self.drivetrain.getGyroAngle()))
+
+        if (driver.getLeftBumper()):
+            self.request_wheel_lock = True
+
+        self.move(self.deadzoneCorrection(-driver.getRightX(), 0.55 * speedMulti), self.deadzoneCorrection(driver.getRightY(), 0.55 * speedMulti), self.deadzoneCorrection(driver.getLeftX(), 0.2 * speedMulti))
 
         # Vectoral Button Drive
         #if self.gamempad.getPOV() == 0:
@@ -247,23 +271,46 @@ class MyRobot(wpilib.TimedRobot):
     def autonomousInit(self):
         if not self.auton:
             return
-
+        if not self.drivetrain:
+            return
+        self.drivetrain.resetGyro()
+        self.autonTimer = wpilib.Timer()
+        self.autonTimer.start()
+        self.autonHookUp = False
+        self.autonHookDown = False
 
     def autonomousPeriodic(self):
         if not self.auton:
+            print("failed self.auton")
             return
-
-        self.autonForwardAndBack()
-
-
-    def autonForwardAndBack(self):
-        driver = self.driver.xboxController
-        if driver.getLeftBumper() and driver.getRightBumper():
-            if self.autonTimer.get() < 1.0:
-                self.drivetrain.arcadeDrive(0, -0.75)
-            elif 1.0 <= self.autonTimer.get() < 2.0:
-                self.drivetrain.arcadeDrive(0, 0.75)
+        if not self.drivetrain:
+            print("failed self.drivetrain")
+            return
         
+        print("autonomousPeriodic")
+        #return
+        driver = self.driver.xboxController
+        #if driver.getLeftBumper() and driver.getRightBumper():
+        
+        if self.autonTimer.get() < self.autonHookUpTime:
+            print("hook up")
+            #if self.autonHookUp == False:
+                #self.hooks.change_right()
+                #self.autonHookUp == True
+            #self.hooks.update()
+        elif self.autonHookUpTime <= self.autonTimer.get() < self.autonDriveForwardTime:
+            print("move forwards")
+            #self.move(0, -self.autonForwardSpeed, 0)
+        elif self.autonDriveForwardTime <= self.autonTimer.get() < self.autonHookDownTime:
+            print("hook down")
+            #if self.autonHookDown == False:
+                #self.hooks.change_right()
+                #self.autonHookDown = True
+            #self.hooks.update()
+        elif self.autonHookDownTime <= self.autonTimer.get() < self.autonDriveBackwardTime:
+            print("move backwards")
+            #self.move(0, self.autonBackwardSpeed, 0)
+        #self.hooks.update()
 
     def deadzoneCorrection(self, val, deadzone):
         """
