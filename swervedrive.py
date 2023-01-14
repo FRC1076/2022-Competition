@@ -31,7 +31,9 @@ class SwerveDrive:
         }
 
         self.gyro = _gyro
-        self.gyro_zero = 0.0
+        self.gyro_angle_zero = 0.0
+        #assuming level at initialization
+        self.gyro_level_zero = self.getGyroRoll()
 
         # Get Smart Dashboard
         self.sd = NetworkTables.getTable('SmartDashboard')
@@ -111,10 +113,37 @@ class SwerveDrive:
         
         return data
 
+    #angle off of gyro zero
     def getGyroAngle(self):
-        angle = (self.gyro.getAngle() - self.gyro_zero) % 360
+        angle = (self.gyro.getAngle() - self.gyro_angle_zero) % 360
 
         return angle
+
+    def getGyroLevel(self):
+        level = (self.gyro.getPitch() - self.gyro_level_zero)
+
+        return level
+
+    #raw level side to side
+    def getGyroPitch(self):
+        pitch = self.gyro.getPitch()
+
+        return pitch
+
+    #raw angle
+    def getGyroYaw(self):
+        yaw = self.gyro.getYaw()
+
+        return yaw
+
+    #raw level front to back
+    def getGyroRoll(self):
+        roll = self.gyro.getRoll()
+
+        return roll
+
+    def printGyro(self):
+        print("Angle: ", self.getGyroAngle(), ", Pitch: ", self.getGyroPitch(), ", Yaw: ", self.getGyroYaw(), ", Roll: ", self.getGyroRoll())
 
     def resetGyro(self):
         self.gyro.reset()

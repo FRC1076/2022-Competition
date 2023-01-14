@@ -208,6 +208,7 @@ class MyRobot(wpilib.TimedRobot):
         self.dashboard.putNumber('ctrl right x', driver.getRightX())
         self.dashboard.putNumber('ctrl right y', driver.getRightY())
         
+        self.drivetrain.printGyro()
 
         if (driver.getLeftTriggerAxis() > 0.7 and driver.getRightTriggerAxis() > 0.7):
             self.drivetrain.resetGyro()
@@ -219,8 +220,21 @@ class MyRobot(wpilib.TimedRobot):
 
         if (driver.getLeftBumper()):
             self.request_wheel_lock = True
-
-        self.move(self.deadzoneCorrection(-driver.getRightX(), 0.55 * speedMulti), self.deadzoneCorrection(driver.getRightY(), 0.55 * speedMulti), self.deadzoneCorrection(driver.getLeftX(), 0.2 * speedMulti))
+        
+        LEVEL_TOLERANCE = 0.001 
+        if(driver.getAButton()):
+            print(self.drivetrain.getGyroLevel())
+            if (self.drivetrain.getGyroLevel() > LEVEL_TOLERANCE):
+                print("big positive")
+                self.move(0.3, 0.0, 0.0)
+            elif (self.drivetrain.getGyroLevel() < -LEVEL_TOLERANCE):
+                print("big negative")
+                self.move(-0.3, 0.0, 0.0)
+            else:
+                self.move(0.0, 0.0, 0.0)
+        else:
+            self.move(self.deadzoneCorrection(-driver.getRightX(), 0.55 * speedMulti), self.deadzoneCorrection(driver.getRightY(), 0.55 * speedMulti), self.deadzoneCorrection(driver.getLeftX(), 0.2 * speedMulti))
+            #print("Driver right x", driver.getRightX())
 
         # Vectoral Button Drive
         #if self.gamempad.getPOV() == 0:
