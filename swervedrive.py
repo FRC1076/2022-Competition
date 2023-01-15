@@ -33,7 +33,8 @@ class SwerveDrive:
         self.gyro = _gyro
         self.gyro_angle_zero = 0.0
         #assuming level at initialization
-        self.gyro_level_zero = self.getGyroRoll()
+        #self.gyro_level_zero = self.getGyroRoll()
+        self.gyro_level_zero = 0.0
 
         # Get Smart Dashboard
         self.sd = NetworkTables.getTable('SmartDashboard')
